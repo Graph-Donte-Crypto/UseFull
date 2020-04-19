@@ -149,7 +149,7 @@ namespace str {
         size_t in_len = strlen(in);
         //Right Shift for out
         size_t shift = pos + in_len;
-        long long count = - pos + strlen(out);
+        long long count = strlen(out) - pos;
         if (overwrite == false) count -= in_len + 1;
         for (long long i = (long long)count; i >= 0; i--)
             out[i + shift] = out[i + pos];
