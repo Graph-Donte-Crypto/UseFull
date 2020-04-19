@@ -12,6 +12,7 @@
 #define PI 3.1415926535897931
 #define C const
 #define D double
+#define EPS 0.001
 
 namespace math {
 	template <size_t dimension>
@@ -94,12 +95,20 @@ namespace math {
 			return *this;
 		}
 		
-		bool operator == (C Vector<dimension> & p1) C {
+		bool compareHard(C Vector<dimension> & p1) C {
 			return (!memcmp(coords, p1.coords, dimension * sizeof(D)));
 		}
 		
+		bool operator == (C Vector<dimension> & p1) C {
+			for (size_t i = 0; i < dimension; i++) 
+				if ( abs(coords[i] - p1[i]) > EPS) return false;
+			return true;
+		}
+		
 		bool operator != (C Vector<dimension> & p1) C {
-			return (memcmp(coords, p1.coords, dimension * sizeof(D)));
+			for (size_t i = 0; i < dimension; i++) 
+				if ( abs(coords[i] - p1[i]) < EPS) return false;
+			return true;
 		}
 		
 		bool operator >= (C Vector<dimension> & p1) C {
@@ -171,7 +180,8 @@ namespace math {
 
 	
 }
-	
+
+#undef EPS
 #undef C
 #undef D
 
