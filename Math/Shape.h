@@ -8,6 +8,8 @@
 //Version 1.0 alfa
 //Make by Graph Don'te-Crypto
 
+#define EPS 0.001
+
 namespace math {
 	template <size_t dimension>
 	struct Line {
@@ -46,7 +48,7 @@ namespace math {
 		}
 		Sphere(const Vector<dimension> & xcenter, double xr) {center = xcenter; r = xr;}
 		bool operator == (const Sphere<dimension> & circle) {
-			return center == circle.center && r == circle.r;
+			return center == circle.center && abs(r - circle.r) < EPS;
 		}
 		
 	};
@@ -67,5 +69,7 @@ namespace math {
 		Vector<2> a, b, c, d;
 	};
 }
+
+#undef EPS
 
 #endif
