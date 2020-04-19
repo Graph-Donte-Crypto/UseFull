@@ -15,10 +15,9 @@
 
 namespace math {
 	
-	
-	template <size_t height, size_t width>
+	template <size_t height, size_t width = height>
 	struct Matrix {
-		Vector<width> set[height];
+		Vector<width> array[height];
 		/*
 		//Матрица это
 
@@ -26,31 +25,37 @@ namespace math {
 		4   5   6
 		7   8   9
 
-		где set[i] -> строка номер i
-		где set[i][j] -> элемент в строке i под номером j
+		где array[i] -> строка номер i
+		где array[i][j] -> элемент в строке i под номером j
 
 		*/
 		Matrix() {}
 		Matrix(C Matrix & matrix) {
-			for (size_t i = 0; i < height; i++) set[i] = matrix[i];
+			for (size_t i = 0; i < height; i++) array[i] = matrix[i];
 		}
 		Matrix(std::initializer_list<Vector<width>> list) {
 			
 			if (list.size() != height) {
 				::printf("Matrix height and list.size() have different values\n", (unsigned long)height, (unsigned long)list.size());
 			}
-			for (size_t i = 0; i < list.size(); i++) set[i] = *(list.begin() + i);
+			for (size_t i = 0; i < list.size(); i++) array[i] = *(list.begin() + i);
 		}
+		
+		Matrix<height, width> & set(size_t i, size_t j, double d) {
+			array[i][j] = d; return *this;
+		}
+		
+		
 		void swapRows(size_t line1, size_t line2) {
-			auto buf = set[line1];
-			set[line1] = set[line2];
-			set[line2] = buf;
+			auto buf = array[line1];
+			array[line1] = array[line2];
+			array[line2] = buf;
 		}
 		void swapColumns(size_t col1, size_t col2) {
-			for (size_t i = 0; i < height; i++) set[i].swap(col1, col2);
+			for (size_t i = 0; i < height; i++) array[i].swap(col1, col2);
 		}
 		void printf(C char * format = "%04.1lf ") {
-			for (size_t i = 0; i < height; i++) set[i].printf(format);
+			for (size_t i = 0; i < height; i++) array[i].printf(format);
 			::printf("\n");
 		}
 		
@@ -58,15 +63,15 @@ namespace math {
 			Matrix<width, height> out;
 			for (size_t i = 0; i < height; i++)
 				for (size_t j = 0; j < width; j++)
-					out[j][i] = set[i][j];
+					out[j][i] = array[i][j];
 			return out;
 		}
 
-		Vector<width> & operator[] (size_t i)   {return set[i];}
-		Vector<width>   operator[] (size_t i) C {return set[i];}
+		Vector<width> & operator[] (size_t i)   {return array[i];}
+		Vector<width>   operator[] (size_t i) C {return array[i];}
 
 		Matrix<height, width> & operator = (C Matrix<height, width> & mat) {
-			for (size_t i = 0; i < height; i++) set[i]= mat[i];
+			for (size_t i = 0; i < height; i++) array[i]= mat[i];
 			return *this;
 		}
 
@@ -75,10 +80,20 @@ namespace math {
 			Matrix<height, new_width> out;
 			for (size_t i = 0; i < height; i++) {
 				out[i] = 0;
-				for (size_t j = 0; j < width; j++) out[i] += set[i][j] * mat[j];
+				for (size_t j = 0; j < width; j++) out[i] += array[i][j] * mat[j];
 			}
 			return out;
 		}
+		
+		Vector<height> operator * (C Vector<width> & vector) C {
+			Vector<height> out;
+			for (size_t i = 0; i < height; i++) {
+				out[i] = 0;
+				for (size_t j = 0; j < width; j++) out[i] += array[i][j] * vector[j];
+			}
+			return out;
+		}
+		
 		Matrix<height, width>   operator + (C Matrix<height, width> & mat) C {
 			Matrix out(*this);
 			for (size_t i = 0; i < height; i++) out[i] += mat[i];
@@ -91,12 +106,12 @@ namespace math {
 		}
 
 		
-		Matrix<height, width> & operator *= (C D & a)   { for (size_t i = 0; i < height; i++) set[i] *= a; return *this;}
-		Matrix<height, width> & operator /= (C D & a)   { for (size_t i = 0; i < height; i++) set[i] /= a; return *this;}
-		Matrix<height, width> & operator -= (C D & a)   { for (size_t i = 0; i < height; i++) set[i] -= a; return *this;}
-		Matrix<height, width> & operator += (C D & a)   { for (size_t i = 0; i < height; i++) set[i] += a; return *this;}
+		Matrix<height, width> & operator *= (C D & a)   { for (size_t i = 0; i < height; i++) array[i] *= a; return *this;}
+		Matrix<height, width> & operator /= (C D & a)   { for (size_t i = 0; i < height; i++) array[i] /= a; return *this;}
+		Matrix<height, width> & operator -= (C D & a)   { for (size_t i = 0; i < height; i++) array[i] -= a; return *this;}
+		Matrix<height, width> & operator += (C D & a)   { for (size_t i = 0; i < height; i++) array[i] += a; return *this;}
 
-		Matrix<height, width> & operator =  (C D & d)   { for (size_t i = 0; i < height; i++) set[i] =  d; return *this;}
+		Matrix<height, width> & operator =  (C D & d)   { for (size_t i = 0; i < height; i++) array[i] =  d; return *this;}
 		
 		Matrix<height, width>   operator *  (C D & a) C { return Matrix<height, width>() *= a;}
 		Matrix<height, width>   operator /  (C D & a) C { return Matrix<height, width>() /= a;}
@@ -104,7 +119,7 @@ namespace math {
 		Matrix<height, width>   operator +  (C D & a) C { return Matrix<height, width>() += a;}
 		
 		Matrix<height, 1> & operator = (C Vector<height> & vector) {
-			for (size_t i = 0; i < height; i++) set[i][0] = vector[i];
+			for (size_t i = 0; i < height; i++) array[i][0] = vector[i];
 			return *this;
 		}
 		
@@ -112,7 +127,7 @@ namespace math {
 			if (list.size() != height) {
 				::printf("Matrix height and list.size() have different values\n", (unsigned long)height, (unsigned long)list.size());
 			}
-			for (size_t i = 0; i < list.size(); i++) set[i] = *(list.begin() + i);
+			for (size_t i = 0; i < list.size(); i++) array[i] = *(list.begin() + i);
 			return *this;
 		}
 		
@@ -123,17 +138,17 @@ namespace math {
 			}; 
 			for (size_t i = 0; i < width; i++) {
 				//if diagonal element ~ 0, try to find non zero
-				if (abs(set[i][i]) < EPS) {
+				if (abs(array[i][i]) < EPS) {
 					for (size_t j = i + 1; j < height; j++) {
-						if (abs(set[j][i]) > EPS) {
+						if (abs(array[j][i]) > EPS) {
 							swapRows(i, j);
 							break;
 						}
 					}
 				}
-				if (abs(set[i][i]) < EPS) continue; 
+				if (abs(array[i][i]) < EPS) continue; 
 				for (size_t j = i + 1; j < height; j++)
-					set[j] -= set[i] * set[j][i] / set[i][i];
+					array[j] -= array[i] * array[j][i] / array[i][i];
 			}
 			return *this;
 		}
@@ -151,6 +166,27 @@ namespace math {
 			return ans;
 		}
 		
+		Matrix<height> & toE() {
+			for (size_t i = 0; i < height; i++) array[i] = 0;
+			for (size_t i = 0; i < height; i++) array[i][i] = 1;
+			return *this;
+		}
+		
+		
+		static Matrix<height> E() {
+			return Matrix<height>().toE();
+		}
+		
+		Matrix<height> & setRotateAngle(size_t i, size_t j, double angle) {
+			return set(i, i,  cos(angle))
+				  .set(i, j, -sin(angle))
+				  .set(j, i,  sin(angle))
+				  .set(j, j,  cos(angle));
+		}
+		
+		static Matrix<height> Rotate(size_t i, size_t j, double angle) {
+			return Matrix<height>::E().setRotateAngle(i, j, angle);
+		}
 	};
 	
 	template <size_t width>

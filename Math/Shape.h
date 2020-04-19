@@ -56,13 +56,8 @@ namespace math {
 	struct Codir {
 		Vector<dimension> left_up, right_down;
 		Codir(const Vector<dimension> & a, const Vector<dimension> & b) {
-			double min1, max1;
-			
-			for (size_t i = 0; i < dimension; i++) {
-				minmax(a[i], b[i], min1, max1);
-				left_up[i] = min1;
-				right_down[i] = max1;
-			}
+			for (size_t i = 0; i < dimension; i++) 
+				minmax(a[i], b[i], left_up[i], right_down[i]);
 		}
 	};
 	struct Rectangle2D {

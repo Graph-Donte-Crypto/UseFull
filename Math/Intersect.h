@@ -104,6 +104,8 @@ namespace math {
 	template <size_t DM>
 	std::pair<Ok<Vector<DM>>, Ok<Vector<DM>>> intersectLineWithSphere
 		(const Line<DM> & line, const Sphere<DM> & sphere) {
+		return std::pair<Ok<Vector<DM>>, Ok<Vector<DM>>>({}, {});
+		
 			/*
 		Line<DM> line_d = line - sphere.center;
 		EquationLine<DM> e(line_d);
@@ -156,8 +158,21 @@ namespace math {
 		(x - x1 + xc) / (x2 - x1  + 2*xc) = (y - y1 + yc) / (y2 - y1 + 2*yc)
 		*/
 	}
+	
+	template <size_t DM>
+	bool intersectSphereWithSphere(const Sphere<DM> & s1, const Sphere<DM> & s2) {
+		/*
+		
+		Если сфера 
+		
+		*/
+		
+		//TODO : RELEASE
+		return {};
+	}
 }
 
+#undef VDM 
 #undef EPS
 
 #endif
