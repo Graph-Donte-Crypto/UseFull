@@ -15,6 +15,10 @@ namespace utils {
 		bool isOk = true;
 		Ok(const type & value) {this->value = value;}
 		Ok() {isOk = false;}
+		Ok(const Ok<type> & o) {
+			value = o.value;
+			isOk = o.isOk;
+		}
 		//Ok(void) {isOk = false;}
 		bool get(type & value) const {
 			if (isOk) value = this->value;

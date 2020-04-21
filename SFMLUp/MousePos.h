@@ -3,16 +3,16 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "../Math/xy.h"
+#include "../Math/Vector.h"
 
 //UseFull SFML Up Mouse Position in XY module
 //Version 1.0 alfa
 //Make by Graph Don'te-Crypto
 
 namespace sfup {
-	math::XY getMousePos(sf::RenderWindow & window) {
+	math::Vector<2> getMousePos(sf::RenderWindow & window) {
 		sf::Vector2i pos = sf::Mouse::getPosition(window);
-		return math::XY(pos.x, pos.y);
+		return math::Vector<2>({pos.x, pos.y});
 	}
 }
 

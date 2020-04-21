@@ -38,6 +38,10 @@ namespace math {
 			return *this;
 		}
 		
+		Vector<dimension> pointOnParam(double t) const {
+			return point + t * vector;
+		}
+		
 	};
 	
 	template <size_t dimension>
@@ -69,35 +73,7 @@ namespace math {
 			::printf("c = %lf\n", c); 
 			return *this;
 		}
-	};
-	
-	struct EquationLine2D {
-		/*
-		A * x + B * y + C = 0	
-		*/
-		double a = 0;
-		double b = 0;
-		double c = 0;
-		
-		EquationLine(double xa, double xb, double xc) {
-			a = xa;
-			b = xb;
-			c = xc;
-		}
-		
-		EquationLine(const Line2D & line) {
-			/*
-				(y - y1) / (y2 - y1) = (x - x1) / (x2 - x1)
-				
-				(y1 - y2) * x + (x2 - x1) * y + (x1 * y2 - x2 * y1) = 0
-					A				B					 C
-			*/
-			a = line.a[1] - line.b[1];
-			b = line.b[0] - line.a[0];
-			c = line.a[0] * line.b[1] - line.b[0] * line.a[1];
-		}
-		
-	};
+	};	
 }
 
 #endif

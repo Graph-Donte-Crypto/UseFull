@@ -73,7 +73,7 @@ namespace math {
 	}
 	
 	template <size_t DM>
-	bool intersectPointWithLine(const Vector<DM> & point, const Line<DM> & line) {
+	bool intersectPointWithLine(const VDM & point, const Line<DM> & line) {
 		if (intersectPointWithEquationLine(point, EquationLine<DM>(line))) {
 			return checkPointInCodir(point, Codir<DM>(line.a, line.b));
 		}
@@ -102,9 +102,30 @@ namespace math {
 		*/
 	}
 	template <size_t DM>
-	std::pair<Ok<Vector<DM>>, Ok<Vector<DM>>> intersectLineWithSphere
+	std::pair<Ok<VDM>, Ok<VDM>> intersectLineWithSphere
 		(const Line<DM> & line, const Sphere<DM> & sphere) {
-		return std::pair<Ok<Vector<DM>>, Ok<Vector<DM>>>({}, {});
+		Line<DM> line_0(line - sphere.center);
+		EquationLine<DM> e(&line_0);
+		double a = e.vector * e.vector;
+		double b = e.point  * e.vector * 2;
+		double c = e.point  * e.point - sphere.r * sphere.r;
+		double d = b * b - 4 * a * c;
+		if (d <= - EPS) 
+			return std::pair<Ok<VDM>, Ok<VDM>>({}, {});
+		else if (abs(d) < EPS) {
+			Ok<VDM> ans = e.pointOnParam( - b / (2 * a)) + sphere.center;
+			if (!checkPointInCodir(ans.value, Codir<DM>(line))) ans.isOk = false;
+			return std::pair<Ok<VDM>, Ok<VDM>>(ans, {});
+		}
+		else {
+			Ok<VDM> ans0 = e.pointOnParam( (- b + sqrt(d))/ (2 * a)) + sphere.center;
+			Ok<VDM>	ans1 = e.pointOnParam( (- b - sqrt(d))/ (2 * a)) + sphere.center;
+			
+			if (!checkPointInCodir(ans0.value, Codir<DM>(line))) ans0.isOk = false;
+			if (!checkPointInCodir(ans1.value, Codir<DM>(line))) ans1.isOk = false;
+			
+			return std::pair<Ok<VDM>, Ok<VDM>>(ans0, ans1);
+		}
 		
 			/*
 		Line<DM> line_d = line - sphere.center;

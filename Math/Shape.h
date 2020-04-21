@@ -25,19 +25,6 @@ namespace math {
 		
 	};
 	
-	struct Line2D {
-		Vector<2> a, b;
-		
-		Line2D(const Vector<2> & xa, const Vector<2> & xb) {a  = xa; b  = xb;}
-		
-		Line2D & operator += (const Vector<2> & xy) {a += xy; b += xy; return *this;}
-		Line2D & operator -= (const Vector<2> & xy) {a -= xy; b -= xy; return *this;}
-		
-		Line2D   operator -  (const Vector<2> & xy) const {return Line2D(a - xy, b - xy);}
-		Line2D   operator +  (const Vector<2> & xy) const {return Line2D(a + xy, b + xy);}
-		
-	};
-	
 	template <size_t dimension>
 	struct Sphere {
 		Vector<dimension> center;
@@ -58,6 +45,10 @@ namespace math {
 		Codir(const Vector<dimension> & a, const Vector<dimension> & b) {
 			for (size_t i = 0; i < dimension; i++) 
 				minmax(a[i], b[i], left_up[i], right_down[i]);
+		}
+		Codir(const Line<dimension> & line) {
+			for (size_t i = 0; i < dimension; i++) 
+				minmax(line.a[i], line.b[i], left_up[i], right_down[i]);
 		}
 	};
 	struct Rectangle2D {
