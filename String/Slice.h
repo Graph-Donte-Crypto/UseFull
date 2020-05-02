@@ -5,6 +5,7 @@
 #include "../Templates/Asr.h"
 #include "../Templates/List.h"
 #include "../Utils/stalloc.h"
+#include "Semantic.h"
 
 /*
 	Строка должна уметь
@@ -18,12 +19,299 @@
 
 namespace str {
 		
-	template <typename T>
-	struct List {
+	struct SliceSet;
+	
+	struct ReadOnlySlice;
+
+	
+	struct ReadOnlySliceSet : public uft::List<ReadOnlySlice> {
+		ReadOnlySliceSet() : List<ReadOnlySlice>() {
+			
+		}
+		~ReadOnlySliceSet() {
+			
+		}
+		
+		ReadOnlySliceSet pickBeetwenChar  (char c1, char c2);
+		ReadOnlySliceSet pickBeetwenSubstr(char * substr1, char * substr2);
+		ReadOnlySliceSet pickBeforeChar   (char c);
+		ReadOnlySliceSet pickBeforeSubstr (char * substr);
+		ReadOnlySliceSet pickAfterChar    (char c);
+		ReadOnlySliceSet pickAfterSubstr  (char * substr);
+		ReadOnlySliceSet pickSubstr       (char * substr);
+		ReadOnlySliceSet pickChar         (char c);
+		ReadOnlySliceSet pickSplitByChar  (char c);
+		ReadOnlySliceSet pickSplitBySubstr(char * substr);
+		
+		ReadOnlySliceSet pickBeetwenCharFirst  (char c1, char c2);
+		ReadOnlySliceSet pickBeetwenSubstrFirst(char * substr1, char * substr2);
+		ReadOnlySliceSet pickBeforeCharFirst   (char c);
+		ReadOnlySliceSet pickBeforeSubstrFirst (char * substr);
+		ReadOnlySliceSet pickAfterCharFirst    (char c);
+		ReadOnlySliceSet pickAfterSubstrFirst  (char * substr);
+		ReadOnlySliceSet pickSubstrFirst       (char * substr);
+		ReadOnlySliceSet pickCharFirst         (char c);
+		
+		ReadOnlySliceSet pickBeetwenCharLast  (char c1, char c2);
+		ReadOnlySliceSet pickBeetwenSubstrLast(char * substr1, char * substr2);
+		ReadOnlySliceSet pickBeforeCharLast   (char c);
+		ReadOnlySliceSet pickBeforeSubstrLast (char * substr);
+		ReadOnlySliceSet pickAfterCharLast    (char c);
+		ReadOnlySliceSet pickAfterSubstrLast  (char * substr);
+		ReadOnlySliceSet pickSubstrLast       (char * substr);
+		ReadOnlySliceSet pickCharLast         (char c);
+	};
+	
+	struct ReadOnlySlice {
+		const char * ptr = nullptr;
+		size_t len = 0;
+		size_t size = 0;
+		
+        operator const char * () const { return (const char *)ptr;}
+		
+		void constructor(const char * ptr, size_t len, size_t size) {
+			this->ptr = ptr;
+			this->len = len;
+			this->size = size;
+		}
+		
+		void print() {
+			char * buf = stalloc(size + 1, char);
+			memcpy(buf, ptr, size);
+			buf[size] = 0;
+			printf("%s\n", buf);
+		}
+		
+		void _printInfo() {
+			char * buf = stalloc(size + 1, char);
+			memcpy(buf, ptr, size);
+			buf[size] = 0;
+			printf("ptr(%lu) -> %s\n    this = %lu\n    size = %lu\n    length = %lu\n", (unsigned long)(size_t)ptr, buf, (long unsigned)(size_t)this, (long unsigned)size, (long unsigned)len);
+		}
+		
+		ReadOnlySlice() {}
+		ReadOnlySlice(const char * ptr, size_t len, size_t size) 
+			{constructor(ptr,         len, size       );}
+		ReadOnlySlice(const char * ptr) 
+			{constructor(ptr, strlen(ptr), strlen(ptr));}
+		ReadOnlySlice(const char * ptr, size_t size) 
+			{constructor(ptr, strlen(ptr), size       );}
+		
+		ReadOnlySlice(const ReadOnlySlice & slice) {
+			ptr = slice.ptr;
+			len = slice.len;
+			size = slice.size;
+		}
+		~ReadOnlySlice() {
+			
+		}
+
+		ReadOnlySlice pick(size_t from, size_t to) {
+			return ReadOnlySlice(ptr + from, strnlen(ptr + from, to - from), to - from);
+		}
+		ReadOnlySliceSet pickBeetwenChar  (char c1, char c2) {
+			ReadOnlySliceSet set;
+			
+			long long index1 = 0, index2 = 0;
+			
+			while (true) {
+				index1 = str::Pos(ptr + index2, c1);
+				if (index1 == -1) return set;
+				index2 = str::Pos(ptr + index1 + 1, c2);
+				if (index2 == -1) return set;
+				set.addCopy(pick(index1, index2));
+			}
+			
+		}
+		ReadOnlySliceSet pickBeetwen(char * substr1, char * substr2) {
+			ReadOnlySliceSet set;
+			
+			long long index1 = 0, index2 = 0;
+			
+			while (true) {
+				index1 = str::Pos(ptr + index2, substr1);
+				if (index1 == -1) return set;
+				index2 = str::Pos(ptr + index1 + 1, substr2);
+				if (index2 == -1) return set;
+				set.addCopy(pick(index1, index2));
+			}
+		}
+		ReadOnlySliceSet pickBefore (char c) {
+			ReadOnlySliceSet set;
+			long long index = str::Pos(ptr, c);
+			
+			while (index != -1) {
+				set.addCopy(pick(0, index));
+				index = str::Pos(ptr + index + 1, c);
+			}
+			return set;
+		}
+		ReadOnlySliceSet pickBefore (char * substr) {
+			ReadOnlySliceSet set;
+			long long index = str::Pos(ptr, substr);
+			
+			while (index != -1) {
+				set.addCopy(pick(0, index));
+				index = str::Pos(ptr + index + 1, substr);
+			}
+			return set;
+		}
+		ReadOnlySliceSet pickAfter  (char c) {
+			ReadOnlySliceSet set;
+			long long index = str::Pos(ptr, c);
+			
+			while (index != -1) {
+				set.addCopy(pick(index, len));
+				index = str::Pos(ptr + index + 1, c);
+			}
+			return set;
+		}
+		ReadOnlySliceSet pickAfter  (char * substr) {
+			ReadOnlySliceSet set;
+			long long index = str::Pos(ptr, substr);
+			
+			while (index != -1) {
+				set.addCopy(pick(index, len));
+				index = str::Pos(ptr + index + 1, substr);
+			}
+			return set;
+		}
+		ReadOnlySliceSet pickSubstr (char * substr) {
+			ReadOnlySliceSet set;
+			size_t s_len = strlen(substr);
+			long long index = str::Pos(ptr, substr);
+			
+			while (index != -1) {
+				set.addCopy(pick(index, index + s_len));
+				index = str::Pos(ptr + index + 1, substr);
+			}
+			return set;
+		}
+		ReadOnlySliceSet pickChar   (char c) {
+			ReadOnlySliceSet set;
+			long long index = str::Pos(ptr, c);
+			
+			while (index != -1) {
+				set.addCopy(pick(index, index + 1));
+				index = str::Pos(ptr + index + 1, c);
+			}
+			return set;
+		}
+		ReadOnlySliceSet pickSplitByChar  (char c) {
+			ReadOnlySliceSet set;
+			long long index1 = 0;
+			long long index2 = str::Pos(ptr, c);
+			
+			while (index2 != -1) {
+				set.addCopy(pick(index1, index2 - 1));
+				index1 = index2 + 1;
+				index2 = str::Pos(ptr + index1, c);
+			}
+			return set;
+		}
+		ReadOnlySliceSet pickSplitBySubstr(char * substr) {
+			ReadOnlySliceSet set;
+			size_t s_len = strlen(substr);
+			long long index1 = 0;
+			long long index2 = str::Pos(ptr, substr);
+			
+			while (index2 != -1) {
+				set.addCopy(pick(index1, index2 - 1));
+				index1 = index2 + s_len + 1;
+				index2 = str::Pos(ptr + index1, substr);
+			}
+			return set;
+		}
+		
+		
+		Ok<ReadOnlySlice> pickBeetwenFirst(char c1, char c2) {
+			long long i1 = str::Pos(ptr, c1);
+			long long i2 = str::Pos(ptr + i1 + 1, c2);
+			if (i1 == -1 || i2 == -1) return {};
+			else return pick(i1 + 1, i2 - 1);
+		}
+		Ok<ReadOnlySlice> pickBeetwenFirst(char * substr1, char * substr2) {
+			long long i1 = str::Pos(ptr, substr1);
+			long long i2 = str::Pos(ptr + i1 + strlen(substr1), substr2);
+			if (i1 == -1 || i2 == -1) return {};
+			else return pick(i1 + strlen(substr1), i2 - 1);
+		}
+		Ok<ReadOnlySlice> pickBeforeFirst (char c) {
+			long long i = str::Pos(ptr, c);
+			if (i == -1) return {};
+			return pick(0, i - 1);
+		}
+		Ok<ReadOnlySlice> pickBeforeFirst (char * substr) {
+			long long i = str::Pos(ptr, substr);
+			if (i == -1) return {};
+			return pick(0, i - 1);
+		}
+		Ok<ReadOnlySlice> pickAfterFirst  (char c) {
+			long long i = str::Pos(ptr, c);
+			if (i == -1) return {};
+			return pick(i + 1, len);
+		}
+		Ok<ReadOnlySlice> pickAfterFirst  (char * substr) {
+			long long i = str::Pos(ptr, substr);
+			if (i == -1) return {};
+			return pick(i + strlen(substr), len);
+		}
+		Ok<ReadOnlySlice> pickCharFirst   (char c) {
+			long long i = str::Pos(ptr, c);
+			if (i == -1) return {};
+			return pick(i, i + 1);
+		}
+		Ok<ReadOnlySlice> pickSubstrFirst (char * substr) {
+			long long i = str::Pos(ptr, substr);
+			if (i == -1) return {};
+			return pick(i, i + strlen(substr));
+		}
+		
+		
+		Ok<ReadOnlySlice> pickBeetwenLast (char c1, char c2) {
+			long long i1 = str::PosLast(ptr, c1);
+			long long i2 = str::PosLast(ptr + i1 + 1, c2);
+			if (i1 == -1 || i2 == -1) return {};
+			else return pick(i1 + 1, i2 - 1);
+		}
+		Ok<ReadOnlySlice> pickBeetwenLast (char * substr1, char * substr2) {
+			long long i1 = str::PosLast(ptr, substr1);
+			long long i2 = str::PosLast(ptr + i1 + strlen(substr1), substr2);
+			if (i1 == -1 || i2 == -1) return {};
+			else return pick(i1 + strlen(substr1), i2 - 1);
+		}
+		Ok<ReadOnlySlice> pickBeforeLast  (char c) {
+			long long i = str::PosLast(ptr, c);
+			if (i == -1) return {};
+			return pick(0, i - 1);
+		}
+		Ok<ReadOnlySlice> pickBeforeLast  (char * substr) {
+			long long i = str::PosLast(ptr, substr);
+			if (i == -1) return {};
+			return pick(0, i - 1);
+		}
+		Ok<ReadOnlySlice> pickAfterLast   (char c) {
+			long long i = str::PosLast(ptr, c);
+			if (i == -1) return {};
+			return pick(i + 1, len);
+		}
+		Ok<ReadOnlySlice> pickAfterLast   (char * substr) {
+			long long i = str::PosLast(ptr, substr);
+			if (i == -1) return {};
+			return pick(i + strlen(substr), len);
+		}
+		Ok<ReadOnlySlice> pickCharLast    (char c) {
+			long long i = str::PosLast(ptr, c);
+			if (i == -1) return {};
+			return pick(i, i + 1);
+		}
+		Ok<ReadOnlySlice> pickSubstrLast  (char * substr) {
+			long long i = str::PosLast(ptr, substr);
+			if (i == -1) return {};
+			return pick(i, i + strlen(substr));
+		}
 		
 	};
-		
-	struct SliceSet;
 	
 	struct Slice {
 		bool read_only = false;
@@ -180,20 +468,6 @@ namespace str {
 		Slice pickAfterSubstrLast  (char * substr);
 		Slice pickSubstrLast       (char * substr);
 		Slice pickCharLast         (char c);
-	};
-	
-	struct SliceSet : List<Slice> {
-		
-	};
-
-	template <size_t SIZE>
-	struct SliceBuf : public Slice {
-		char buf[SIZE];
-		SliceBuf() : Slice() {
-			buf[0] = 0;
-			ptr = buf;
-			size = SIZE;
-		}
 	};
 
 }

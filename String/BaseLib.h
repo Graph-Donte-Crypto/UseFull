@@ -190,6 +190,21 @@ namespace str {
     char & Last(char * in) {
         return *(in + strlen(in) - 1);
     }
+	
+	size_t CountSubstr(const char * where, const char * what) {
+		size_t what_len = strlen(what);
+		size_t count = 0;
+		while (*where != 0) {
+			if (strncmp(where, what, what_len) == 0) {
+				count += 1;
+				where += what_len;
+				continue;
+			}
+			where += 1;
+		}
+		return count;
+	}
+	
     size_t CountChar(const char * where, const char what) {
         size_t count = 0;
         while (*where++ != 0) if (*where == what) count++;

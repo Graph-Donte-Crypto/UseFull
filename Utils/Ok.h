@@ -2,6 +2,9 @@
 #define UF_U_Option_H
 
 #include <stdlib.h>
+#include <stdio.h>
+
+#include <functional>
 
 //UseFull Utils Ok module
 //Version 1.0 release
@@ -35,6 +38,11 @@ namespace utils {
 		type valueOr(type value) const {
 			if (isOk) return this->value;
 			else      return value;
+		}
+		
+		type actionOr(std::function<type (void)> func) const {
+			if (isOk) return value;
+			else      return func();
 		}
 		operator bool () const { return isOk;}
 		operator type () const { return ok();}
