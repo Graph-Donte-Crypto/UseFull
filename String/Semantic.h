@@ -99,7 +99,7 @@ namespace str  {
 		return source;
 	}
 	
-	char * getSemanticChar
+	const char * getSemanticChar
 		/*
 		s  - source
 		q  - queue
@@ -116,7 +116,7 @@ namespace str  {
 					*qi += 1;
 					q[*qi] = i;
 					*s += sh->sems[i].l_begin;
-					goto ret;
+					return nullptr;
 				}
 			*s += 1;
 			return *s - 1;
@@ -126,18 +126,20 @@ namespace str  {
 			if (strncmp(*s, sh->sems[q[*qi]].end, sh->sems[q[*qi]].l_end) == 0) {
 				*s += sh->sems[q[*qi]].l_end;
 				*qi -= 1;
+				return nullptr;
 			}
 			else {
 				//Если не прошло, то уже чекаем на handle_internal
 				if (sh->sems[q[*qi]].handle_internal) {
 					//Если можно - ищем начало всех семантик
-					for (size_t i = 0; i < sh->count; i++)
+					for (size_t i = 0; i < sh->count; i++) {
 						if (strncmp(*s, sh->sems[i].begin, sh->sems[i].l_begin) == 0) {
 							*s += sh->sems[i].l_begin;
 							*qi += 1;
 							q[*qi] = i;
-							goto ret;
+							return nullptr;
 						}
+					}
 				}
 				else {
 					//Иначе - только текущей
@@ -145,11 +147,11 @@ namespace str  {
 						*s += sh->sems[q[*qi]].l_begin;
 						*qi += 1;
 						q[*qi] = q[*qi - 1];
+						return nullptr;
 					}
 				}
 			}
 		}
-		ret:
 		*s += 1;
 		return nullptr;
 	}
@@ -163,7 +165,7 @@ namespace str  {
 			sh = newSemanticHandler(s, c);
 		}		
 		
-	}
+	};
 }
 
 #endif
