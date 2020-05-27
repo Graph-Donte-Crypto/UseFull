@@ -7,61 +7,97 @@
 using namespace utils;
 
 namespace uft {
-	template<typename type>
-	struct ICollection {
-		virtual type & operator[] (size_t index) const = 0;
+	
+	struct ISerializible {
+		virtual size_t getDataSize() = 0;
+		virtual void * packData(void * output) = 0;
+		virtual void * unpackData(void * input) = 0;
+	};
+	struct IAllocatable {
+		virtual void allocMemory(size_t size) = 0;
+		virtual void freeMemory() = 0;
+	};
+		
+	template<typename Type>
+	struct IBaseCollection {
+		virtual Type & operator[] (size_t index) const = 0;
 		virtual size_t size() const = 0;
 		virtual size_t length() const = 0;
-		virtual ICollection & foreach(std::function<void (type *)> lambda) = 0;
+		virtual IBaseCollection & foreach(std::function<void (Type *)> lambda) = 0;
 	};
 	
-	template<typename type>
-	struct ICollectionAdvancedFunctions {
-		virtual ICollectionAdvancedFunctions & addCopy    (type * obj) = 0;
-		virtual ICollectionAdvancedFunctions & addCopy    (type   obj) = 0;
-		virtual ICollectionAdvancedFunctions & addRef     (type * obj) = 0;
-		virtual ICollectionAdvancedFunctions & addCopy    (size_t index, type * obj) = 0;
-		virtual ICollectionAdvancedFunctions & addCopy    (size_t index, type   obj) = 0;
-		virtual ICollectionAdvancedFunctions & addRef     (size_t index, type * obj) = 0;
-		virtual ICollectionAdvancedFunctions & addAllCopy (size_t index, ICollection<type> & col) = 0;
-		virtual ICollectionAdvancedFunctions & addAllRef  (size_t index, ICollection<type> & col) = 0;
-		virtual ICollectionAdvancedFunctions & remove     (size_t index) = 0;
-		virtual ICollectionAdvancedFunctions & removeFirst(const type * obj) = 0;
-		virtual ICollectionAdvancedFunctions & removeLast (const type * obj) = 0;
-		virtual ICollectionAdvancedFunctions & removeAll  (const type * obj) = 0;
-		virtual ICollectionAdvancedFunctions & removeFirst() = 0;
-		virtual ICollectionAdvancedFunctions & removeLast () = 0;
-		virtual ICollectionAdvancedFunctions & removeAll  () = 0;
-		virtual Ok<size_t> indexOf     (const type * obj) const = 0;
-		virtual Ok<size_t> indexOfLast (const type * obj) const = 0;
+	struct <typename Type>
+	struct IAllocatableCollection : 
+		public virtual IBaseCollection, 
+		public virtual IAllocatable, 
+		public virtual ISerializible 
+	{	
+ 		void checkSizeWithKeepValues(size_t length) {
+			if (length >= size()) {
+				size_t max_size = size();
+				do {
+					max_size *= 2;
+				} while (length > max_size);
+				void * buf = stalloc(getDataSize(), char);
+				packData(buf);
+				freeMemory();
+				allocMemory(max_size);
+				unpackData(buf);
+			}
+		}
+		void checkSizeWithoutKeepValues(size_t length) {
+			if (length >= size()) {
+				size_t max_size = size();
+				do {
+					max_size *= 2;
+				} while (length > max_size);
+				freeMemory();
+				allocMemory(max_size);
+			}
+		}
+	};
+	
+	template<typename Type>
+	struct IFuncCollection : public virtual IBaseCollection {
+		virtual IFuncCollection & addCopy (size_t index,       Type * obj) = 0;
+		IFuncCollection & addCopy         (size_t index, const Type & obj) {return addCopy(index, &obj);}
+		
+		virtual IFuncCollection & addCopy (                    Type * obj) = 0;
+		IFuncCollection & addCopy         (              const Type & obj) {return addCopy(&obj);}
+		
+		
+		IFuncCollection & addAllCopy (IBaseCollection<Type> & col) {
+			col.foreach([this] (Type * obj) {addCopy(obj);});
+			return *this;
+		}
+		IFuncCollection & addAllCopy (size_t index, IBaseCollection<Type> & col) {
+			col.foreach([this, &index] (Type * obj) {addCopy(index++, obj);});
+			return *this;
+		}
+		virtual IFuncCollection & remove     (size_t index) = 0;
+		virtual IFuncCollection & removeAll  () = 0;
+		
+		IFuncCollection & removeFirst() {return remove(0);}
+		IFuncCollection & removeLast () {return remove(length() - 1);}
+		
+		virtual Ok<size_t> indexByCondition(std::function<bool (Type *)> lambda) {
+			for (size_t i = 0; i < length(); i++) 
+				if (lambda( &( (*this)[i]) ) == true) return i;
+			return {};
+		}
+	};
+	
+	template<typename Type>
+	struct ICollectionEvent public ICollection {
+		virtual void onRemove(Type * obj) = 0;
+		virtual void onAdd(Type * obj) = 0;
 	};
 
-	//MB concept?
-	template<typename type>
-	struct ICopyble {
-	public:
-		virtual type copy() const = 0;
-	};
-
-	//MB use std realization?
-	template<typename type>
-	struct IIterible {
-	public:
-		virtual type * begin() = 0;
-		virtual type * next() = 0;
-		virtual type * end() = 0;
-	};
-	template<typename type>
-	struct ISerializible {
-	public:	
-		virtual type serialize  (type to) = 0;
-		virtual type deserialize(type from) = 0;
-	};
-	template<typename type>
+	template<typename Type>
 	struct IComparable {
 	public:		
-		virtual bool equals(type object) = 0;
-		virtual int compare(type object) = 0;
+		virtual bool equals(Type object) = 0;
+		virtual int compare(Type object) = 0;
 	};
 	
 }
