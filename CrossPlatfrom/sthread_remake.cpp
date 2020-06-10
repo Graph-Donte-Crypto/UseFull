@@ -1,4 +1,4 @@
-#include "sthread.h"
+#include "sthread.hpp"
 
 namespace sthread {
 	static void ThreadCallback(Thread * who) {

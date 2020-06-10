@@ -1,0 +1,258 @@
+#ifndef UF_T_List_H
+#define UF_T_List_H
+
+#include "Interface.hpp"
+
+//UseFull Template List module
+//Version 1.0 alfa
+//Make by Graph Don'te-Crypto
+
+namespace uft {	
+	template <typename type>
+	struct List : public ICollection<type>, public ICollectionAdvancedFunctions<type> {
+		
+		//CHECKED
+		template <typename>
+		struct ListRec {
+			type * value = nullptr;
+			void setptr(type * val) {value = val;}
+			ListRec<type> * next = nullptr;
+			ListRec<type> * prev = nullptr;
+		};
+		
+		template <typename>
+		struct ListRecCopy : public ListRec<type> {
+			type   value_r;
+			ListRecCopy() { ListRec<type>::setptr(&value_r);}
+		};
+		
+		ListRec<type> * list_head = nullptr;
+		ListRec<type> * list_last = nullptr;
+		size_t count = 0;
+		template <typename>
+		struct ListCursor {
+			size_t index = 0;
+			List<type> * current = nullptr;
+		};
+		
+		
+		void ListDoubleLink(ListRec<type> * rec1, ListRec<type> * rec2) {
+			rec1->next = rec2;
+			rec2->prev = rec1;
+		}
+
+		
+		List() {
+			list_head = new ListRec<type>;
+			list_last = new ListRec<type>;
+
+			ListDoubleLink(list_head, list_last);
+		}
+		//
+		~List() {
+			ListRec<type> * buf = list_head->next;
+			while (buf->next != nullptr) {
+				buf = buf->next;
+				delete buf->prev;
+			}
+
+			delete list_head;
+			delete list_last;
+		}
+		//CHECKED
+		
+		type * get(size_t index) const {
+			return & ((*this)[index]);
+		}
+		
+		virtual type & operator[] (size_t index) const {
+			ListRec<type> * record = list_head->next;
+			for (size_t i = 0; i < index; i++) record = record->next;
+			return *(record->value);
+		};
+		
+		virtual size_t size() const {return count;};
+		virtual size_t length() const {return count;};
+		
+		virtual List<type> & foreach(std::function<void (type *)> lambda) {
+			for (ListRec<type> * i = list_head->next; i != list_last; i = i->next) lambda(i->value);
+			return *this;
+		}
+		virtual List<type> & addCopy    (type * obj) {
+			count += 1;
+
+			ListRec<type> * add_record = new ListRecCopy<type>;
+			*(add_record->value) = *obj;
+
+			ListRec<type> * local_prev = list_last->prev;
+			ListDoubleLink(local_prev, add_record);
+			ListDoubleLink(add_record, list_last);
+
+			return *this;
+		}		
+		virtual List<type> & addCopy    (type   obj) {return addCopy(&obj);}
+		virtual List<type> & addRef     (type * obj) {
+			count += 1;
+		
+			ListRec<type> * add_record = new ListRec<type>;
+			add_record->value = obj;
+
+			ListRec<type> * local_prev = list_last->prev;
+			ListDoubleLink(local_prev, add_record);
+			ListDoubleLink(add_record, list_last);
+			
+			return *this;
+		}
+		//
+		virtual List<type> & addCopy    (size_t index, type * obj) {
+			count += 1;
+
+			ListRec<type> * add_record = new ListRecCopy<type>;
+			*(add_record->value) = *obj;
+
+			ListRec<type> * local_next = list_head->next;
+			for (size_t i = 0; i < index; i++) local_next = local_next->next;
+			
+			ListDoubleLink(list_head, add_record);
+			ListDoubleLink(add_record, local_next);
+
+			return *this;
+		}
+		virtual List<type> & addCopy    (size_t index, type   obj) {
+			return addCopy(index, &obj);
+		}
+		virtual List<type> & addRef     (size_t index, type * obj) {
+			count += 1;
+
+			ListRec<type> * add_record = new ListRec<type>;
+			add_record->value = obj;
+
+			ListRec<type> * local_next = list_head->next;
+			for (size_t i = 0; i < index; i++) local_next = local_next->next;
+			
+			ListDoubleLink(list_head, add_record);
+			ListDoubleLink(add_record, local_next);
+			
+			return *this;
+		}
+		//CHECKED
+		virtual List<type> & addAllCopy (ICollection<type> & col) {
+			col.foreach([this](type * obj){this->addCopy(obj);});
+			return *this;
+		}
+		virtual List<type> & addAllRef  (ICollection<type> & col) {
+			col.foreach([this](type * obj){this->addRef(obj);});
+			return *this;
+		};
+		//
+		//TODO: REALIZE
+		virtual List<type> & addAllCopy (size_t index, ICollection<type> & col) {
+			return *this;
+		}
+		virtual List<type> & addAllRef  (size_t index, ICollection<type> & col) {
+			return *this;
+		}
+		//
+		//CHECKED
+		void removeListRecord(ListRec<type> * remove_record) {
+			if (remove_record) {
+				count -= 1;
+				ListRec<type> * local_prev = remove_record->prev;
+				ListRec<type> * local_next = remove_record->next;
+				ListDoubleLink(local_prev, local_next);
+				delete remove_record;
+			}
+		}
+		
+		void removeListRecordSave(ListRec<type> * & remove_record) {
+			if (remove_record) {
+				count -= 1;
+				ListRec<type> * local_prev = remove_record->prev;
+				ListRec<type> * local_next = remove_record->next;
+				ListDoubleLink(local_prev, local_next);
+				remove_record = local_prev;
+			}
+		}
+		
+		virtual List<type> & remove     (size_t index) {
+			ListRec<type> * remove_record = list_head->next;
+			for (size_t i = 0; i < index; i++) remove_record = remove_record->next;
+			removeListRecord(remove_record);
+			return *this;
+		};
+		
+		virtual List<type> & removeFirst() {return remove(0);}
+		virtual List<type> & removeLast () {return remove(count - 1);}
+		//
+		virtual List<type> & removeFirst(const type * obj) {
+			removeListRecord(recOf(obj)); 
+			return *this;
+		}
+		virtual List<type> & removeLast (const type * obj) {
+			removeListRecord(recOfLast(obj)); 
+			return *this;
+		}
+		
+		virtual List<type> & removeAll  (const type * obj) {
+			for (ListRec<type> * i = list_head->next; i != list_last; i = i->next) {
+				if ( *(i->value) == * (type *)obj) {
+					//TODO: make removeListRecordSave
+					//void removeListRecordSave(ListRec<type> * & rec)
+					//if remove, rec = rec->next
+					i = i->prev;
+					removeListRecord(i->next);
+					//
+				}
+			}
+			return *this;
+		}
+		
+		virtual List<type> & removeAll  () {
+			ListRec<type> * buf = list_head->next;
+			while (buf->next != nullptr) {
+				buf = buf->next;
+				delete buf->prev;
+			}
+			ListDoubleLink(list_head, list_last);
+			return *this;
+		}
+		virtual Ok<size_t>      indexOf     (const type * obj) const {
+			Ok<size_t> ans;
+			size_t count = 0;
+			for (ListRec<type> * i = list_head->next; i != list_last; i = i->next) {
+				if ( *(i->value) == *obj) return ans = count;
+				count++;
+			}
+		}
+		virtual Ok<size_t>      indexOfLast (const type * obj) const {
+			Ok<size_t> ans;
+			size_t count = 0;
+			for (ListRec<type> * i = list_head->next; i != list_last; i = i->next) {
+				if ( *(i->value) == *obj) return count;
+				count++;
+			}
+			return ans;
+		}
+		virtual ListRec<type> * recOf       (const type * obj) const {
+			for (ListRec<type> * i = list_head->next; i != list_last; i = i->next) {
+				if ( *(i->value) == *obj) return i;
+			}
+			return nullptr;
+		}
+		ListRec<type> * recOfRef            (const type * obj) const {
+			for (ListRec<type> * i = list_head->next; i != list_last; i = i->next) {
+				if ( i->value == obj) return i;
+			}
+			return nullptr;
+		}
+		virtual ListRec<type> * recOfLast   (const type * obj) const {
+			ListRec<type> * ans = nullptr;
+			for (ListRec<type> * i = list_head->next; i != list_last; i = i->next) {
+				if ( *(i->value) == *obj) ans = i;
+			}
+			return ans;
+		}
+	};
+}
+
+#endif
