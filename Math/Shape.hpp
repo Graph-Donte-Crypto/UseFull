@@ -11,18 +11,54 @@
 #define EPS 0.001
 
 namespace math {
+	
+	using namespace utils;
+	
+	enum class LengthenWay {
+		TowardsA,
+		TowardsB,
+		Equally,
+		Evenly
+	};
+	
 	template <size_t dimension>
 	struct Line {
 		Vector<dimension> a, b;
 		
 		Line(const Vector<dimension> & xa, const Vector<dimension> & xb) {a  = xa; b  = xb;}
+		Line(const Line<dimension> & l) {a = l.a; b = l.b;}
+		Line() {}
 		
-		Line & operator += (const Vector<dimension> & xy) {a += xy; b += xy; return *this;}
-		Line & operator -= (const Vector<dimension> & xy) {a -= xy; b -= xy; return *this;}
+		Line & operator += (const Vector<dimension> & vec) {a += vec; b += vec; return *this;}
+		Line & operator -= (const Vector<dimension> & vec) {a -= vec; b -= vec; return *this;}
 		
-		Line   operator -  (const Vector<dimension> & xy) const {return Line(a - xy, b - xy);}
-		Line   operator +  (const Vector<dimension> & xy) const {return Line(a + xy, b + xy);}
+		Line   operator -  (const Vector<dimension> & vec) const {return Line(a - vec, b - vec);}
+		Line   operator +  (const Vector<dimension> & vec) const {return Line(a + vec, b + vec);}
 		
+		void printf(const char * format = "%07.3lf ") const {
+			::printf("A: "); a.printf(format);
+			::printf("B: "); b.printf(format);
+		}
+		
+		Line & lengthenBy(double value, LengthenWay way = LengthenWay::Equally) {
+			Vector<dimension> ort = (b - a).ort();
+			switch (way) {
+			case LengthenWay::TowardsA: 
+				a -= ort * value;
+				break;
+			case LengthenWay::TowardsB: 
+				b += ort * value;
+				break;
+			case LengthenWay::Equally: 
+				b += ort * value;
+				a -= ort * value;
+				break;
+			case LengthenWay::Evenly: 
+				b += ort * value / 2;
+				a -= ort * value / 2;
+				break;
+			}
+		}
 	};
 	
 	template <size_t dimension>
@@ -37,11 +73,21 @@ namespace math {
 		bool operator == (const Sphere<dimension> & circle) {
 			return center == circle.center && abs(r - circle.r) < EPS;
 		}
+		void printf(const char * format = "%07.3lf ") const {
+			::printf("Center: "); center.printf(format);
+			::printf("Radius: "); ::printf(format, r);
+			::printf("\n");
+		}
 		
 	};
+	/*
+	Прямоугольное тело, рёбра которого соответственно параллельны осям координат
+	Rectangular body, which's edges are respectively parallel to the coordinate axes
+	*/
 	template <size_t dimension>	
 	struct Codir {
 		Vector<dimension> left_up, right_down;
+		Codir() {}
 		Codir(const Vector<dimension> & a, const Vector<dimension> & b) {
 			for (size_t i = 0; i < dimension; i++) 
 				minmax(a[i], b[i], left_up[i], right_down[i]);
@@ -49,6 +95,10 @@ namespace math {
 		Codir(const Line<dimension> & line) {
 			for (size_t i = 0; i < dimension; i++) 
 				minmax(line.a[i], line.b[i], left_up[i], right_down[i]);
+		}
+		void printf(const char * format = "%07.3lf ") const {
+			::printf("LU: "); left_up.printf(format);
+			::printf("RD: "); right_down.printf(format);
 		}
 	};
 	struct Rectangle2D {

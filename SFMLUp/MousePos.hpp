@@ -5,7 +5,7 @@
 
 #include "../Math/Vector.hpp"
 
-//UseFull SFML Up Mouse Position in XY module
+//UseFull SFML Up Mouse Position in Vector module
 //Version 1.0 alfa
 //Make by Graph Don'te-Crypto
 

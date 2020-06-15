@@ -26,16 +26,23 @@ namespace math {
 			point = *a;
 			vector = (*b - *a).ort();
 		}
+		EquationLine(const Vector<dimension> & a, const Vector<dimension> & b) {
+			point = a;
+			vector = (b - a).ort();
+		}
 		
 		EquationLine(const Line<dimension> * line) {
 			point = line->a;
 			vector = (line->b - line->a).ort();
 		}
+		EquationLine(const Line<dimension> & line) {
+			point = line.a;
+			vector = (line.b - line.a).ort();
+		}
 		
-		EquationLine<dimension> & printf() {
-			::printf("point = "); point.printf();
-			::printf("vector = "); vector.printf();
-			return *this;
+		void printf(const char * format = "%07.3lf ") const {
+			::printf("point  = "); point.printf(format);
+			::printf("vector = "); vector.printf(format);
 		}
 		
 		Vector<dimension> pointOnParam(double t) const {
@@ -68,10 +75,9 @@ namespace math {
 			c = - (point * ort);
 		}
 		
-		EquationHyperplane<dimension> & printf() {
-			::printf("a = "); a.printf();
-			::printf("c = %lf\n", c); 
-			return *this;
+		void printf(const char * format = "%07.3lf ") const {
+			::printf("a = "); a.printf(printf);
+			::printf("c = "); ::printf(format, c); 
 		}
 	};	
 }

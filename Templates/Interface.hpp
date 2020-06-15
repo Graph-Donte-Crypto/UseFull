@@ -70,6 +70,11 @@ namespace uft {
 				if (lambda(&(coll[i])) == true) return i;
 			return {};
 		}
+		static Ok<size_t> indexByEquation(CoCollection<Type> auto & coll, const Type & obj) {
+			for (size_t i = 0; i < coll.length(); i++)
+				if (obj == coll[i]) return i;
+			return {};
+		}
 	};
 		
 	template<typename Type>

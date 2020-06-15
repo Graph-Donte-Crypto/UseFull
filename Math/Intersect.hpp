@@ -9,7 +9,7 @@
 #define EPS 0.001
 
 //UseFull Math Intersect module
-//Version 1.0 alfa
+//Version 2.0 alfa
 //Make by Graph Don'te-Crypto
 
 //DM ~ DiMention
@@ -19,45 +19,58 @@
 
 namespace math {
 	
+	using namespace utils;
+	
 	template <size_t DM>
-	VDM projectionPointOnSphere
-		(const VDM * base, const Sphere<DM> * sphere) {
+	VDM projectionPointOnSphere(const VDM * base, const Sphere<DM> * sphere) {
 		return (*base - sphere->center).ort() * sphere->r + sphere->center;
 	}
 	
 	template <size_t DM>
-	VDM projectionPointOnSphere
-		(const VDM & base, const Sphere<DM> & sphere) {
+	VDM projectionPointOnSphere(const VDM & base, const Sphere<DM> & sphere) {
 		return projectionPointOnSphere(&base, &sphere);
 	}
 	
+	//TODO: CHECK
 	template <size_t DM>
-	VDM projectionPointOnEquationLine
-		(const VDM * base, const EquationLine<DM> * line) {
-		//point = line->point + t * line->vector;
+	Ok<VDM> projectionPointOnEquationLine(const VDM & base, const EquationLine<DM> & el) {
+		//point = el.point + t * el.vector;
 		//eh.a * point + eh.c = 0
-		//eh.a * line->point + t * line->vector * eh.a + eh.c = 0
-		//t = (-eh.c - eh.a * line->point) / (line->vector * eh.a)
-		//point = line->point + ( (-eh.c - eh.a * line->point) / (line->vector * eh.a) ) * line->vector;
-		EquationHyperplane<DM> eh(*base, line->vector);
-		for (size_t i = 0; i < DM; i++) printf("a[%i](%lf) ", i, eh.a[i]);
-		printf("c(%lf)\n", eh.c);
-		return line->point + ( (-eh.c - (eh.a * line->point)) / (line->vector * eh.a) ) * line->vector;
+		//eh.a * el.point + t * el.vector * eh.a + eh.c = 0
+		//t = (-eh.c - eh.a * el.point) / (el.vector * eh.a)
+		//point = el.point + ( (-eh.c - eh.a * el.point) / (el->vector * eh.a) ) * el.vector;
+		EquationHyperplane<DM> eh(base, el.vector);
+		double elv_eha = el.vector * eh.a;
+		if (abs(elv_eha) <= EPS) return {};
+		//if _ret == {} -> something goes wrong;
+		//return el.point + el.vector * ( (-eh.c - (eh.a * el.point)) / elv_eha );
+		return el.pointOnParam((-eh.c - (eh.a * el.point)) / elv_eha);
+	}
+	//
+	
+	template <size_t DM>
+	const VDM & nearestPointToPoint(const VDM & base, const VDM & one, const VDM & two) {
+		return (one - base).norm() < (two - base).norm() ? one : two;
 	}
 	
 	template <size_t DM>
-	void nearestPointToPoint
-		(const VDM & base, const VDM & one, const VDM & two, VDM & ans) {
-		ans = (one - base).norm() < (two - base).norm() ? one : two;
+	bool checkPointInCodir(const VDM & point, const Codir<DM> & codir, double eps = 0) {
+		return (point > codir.left_up - VDM(eps)) && (point < codir.right_down + VDM(eps));
 	}
 	
-	template <size_t DM>
-	bool checkPointInCodir(const VDM & point, const Codir<DM> & codir) {
-		return point > codir.left_up && point < codir.right_down;
+	//TODO: CHECK
+	template<size_t DM>
+	Ok<VDM> projectionPointOnLine(const VDM & base, const Line<DM> & line) {
+		Ok<VDM> projection = projectionPointOnEquationLine(base, line);
+		if (projection.isOk && checkPointInCodir(projection.value, line, EPS)) 
+			return projection;
+		else return {};
 	}
+	//
 	
+	//TODO: CHECK
 	template <size_t DM>
-	bool intersectPointWithEquationLine(const VDM & point, const EquationLine<DM> & e) {
+	bool checkIntersectPointWithEquationLine(const VDM & point, const EquationLine<DM> & e) {
 		//return abs(e.a * xy.x + e.b * xy.y + e.c) < EPS;
 		double t = 0;
 		for (size_t i = 0; i < DM; i++) {
@@ -66,19 +79,79 @@ namespace math {
 				break;
 			}
 		}
+		
+		if ( (point - e.pointOnParam(t)).getAbsVec() <= EPS ) return true;
+		else return false;
+		/*
 		for (size_t i = 0; i < DM; i++) {
 			if (abs(point[i] - e.point[i] - t * e.vector[i]) > EPS) return false;
 		}
 		return true;
+		*/
 	}
+	//
 	
 	template <size_t DM>
-	bool intersectPointWithLine(const VDM & point, const Line<DM> & line) {
-		if (intersectPointWithEquationLine(point, EquationLine<DM>(line)))
-			return checkPointInCodir(point, Codir<DM>(line.a, line.b));
+	bool checkIntersectPointWithLine(const VDM & point, const Line<DM> & line) {
+		if (checkIntersectPointWithEquationLine(point, EquationLine<DM>(line)))
+			return checkPointInCodir(point, Codir<DM>(line));
 		return false;
 	}
 	
+	bool checkIntersectEquationLineWithEquationLine2D(const EquationLine<2> & el0, const EquationLine<2> & el1) {
+		if (abs(el1.vector[1] * el0.vector[0] - el0.vector[1] * el1.vector[0]) < EPS) return false;
+		else return true;
+	}
+	
+	Ok<Vector<2>> intersectEquationLineWithEquationLine2D(const EquationLine<2> & el0, const EquationLine<2> & el1) {		
+		Vector<2> c = el0.point - el1.point;
+		
+		double del = el1.vector[1] * el0.vector[0] - el0.vector[1] * el1.vector[0];
+		
+		if (abs(del) < EPS) return {};
+
+		return el0.pointOnParam((el1.vector[0] * c[1] - el1.vector[1] * c[0]) / del);
+		
+		/*
+		//Strange code
+		return Vector<2>({
+			el0.pointOnParam((el1.vector[1] * c[1] - el1.vector[0] * c[0]) / del),
+			el1.pointOnParam((el0.vector[1] * c[1] - el0.vector[0] * c[0]) / del)
+		});
+		*/
+	}
+		
+	Ok<Vector<2>> intersectLineWithLine2D(const Line<2> & l0, const Line<2> & l1) {
+		Ok<Vector<2>> mb_point = intersectEquationLineWithEquationLine2D(l0, l1);
+		if (mb_point.isOk && 
+			checkPointInCodir<2>(mb_point, l0, EPS) && 
+			checkPointInCodir<2>(mb_point, l1, EPS)
+			) return mb_point;
+		return {};
+	}
+		
+	template <size_t DM>
+	double distanceBeetweenLines(const Line<DM> & l1, const Line<DM> & l2) {
+		Ok<VDM> proj[4] = {
+			projectionPointOnLine(l1.a, l2),
+			projectionPointOnLine(l1.b, l2),
+			projectionPointOnLine(l2.a, l1),
+			projectionPointOnLine(l2.b, l1)
+		};
+		bool is_ok = proj[0].isOk || proj[1].isOk || proj[2].isOk || proj[3].isOk;
+		if (is_ok) {
+			
+		}
+		return min(
+			l1.a.distanceTo(l2.a),
+			l1.a.distanceTo(l2.b),
+			l1.b.distanceTo(l2.a),
+			l1.b.distanceTo(l2.b)
+		);
+	}
+	
+	
+	//TODO: RELEASE
 	template <size_t DM>
 	Ok<VDM> intersectLineWithLine(const Line<DM> & line1, const Line<DM> & line2) {
 		//X = line1_e.point + t1 * line1_e.vector;
@@ -101,6 +174,8 @@ namespace math {
 		else return VDM((e1.b * e2.c - e2.b * e1.c) / del, (e1.c * e2.a - e2.c * e1.a) / del);
 		*/
 	}
+	//
+	
 	template <size_t DM>
 	std::pair<Ok<VDM>, Ok<VDM>> intersectLineWithSphere
 		(const Line<DM> & line, const Sphere<DM> & sphere) {
@@ -126,101 +201,58 @@ namespace math {
 			
 			return std::pair<Ok<VDM>, Ok<VDM>>(ans0, ans1);
 		}
-		
-			/*
-		Line<DM> line_d = line - sphere.center;
-		EquationLine<DM> e(line_d);
-		//Mb EquationLine e(line - circle.center);
-		
-		double del = e.a * e.a + e.b * e.b;
-		if (abs(e.c) > circle.r * sqrt(del) + EPS) return std::pair<Ok<Vector<2>>, Ok<Vector<2>>>({}, {});
-		double x0 = - e.a * e.c / del,  y0 = - e.b * e.c / del;
-		RectangleCodir recod(line.a, line.b);
-		if (abs(abs(e.c) - circle.r * sqrt(del)) < EPS) {
-			Vector<2> temp({x0, y0});
-			//if point on endless line and in rectangle, created by line points, point on line
-			if (checkPointInRectangleCodir(temp, recod)) {
-				return std::pair<Ok<Vector<2>>, Ok<Vector<2>>>(temp + circle.center, {});
-			} 
-			else {
-				return std::pair<Ok<Vector<2>>, Ok<Vector<2>>>({}, {});
-			}
-		} 
-		else {
-			double d = circle.r * circle.r - e.c * e.c / del;
-			double mult = sqrt (d / del);
-			Vector<2> temp({x0 + e.b * mult, y0 - e.a * mult});
-			std::pair<Ok<Vector<2>>, Ok<Vector<2>>> ret;
-			if (checkPointInRectangleCodir(temp, recod)) {
-				ret.first = temp + circle.center;
-				temp(x0 - e.b * mult, y0 + e.a * mult);
-				if (checkPointInRectangleCodir(temp, recod)) {
-					ret.second = temp + circle.center;
-				}
-			}
-			else {
-				temp(x0 - e.b * mult, y0 + e.a * mult);
-				if (checkPointInRectangleCodir(temp, recod)) {
-					ret.first = temp + circle.center;
-				}
-			}
-			return ret;
-		}
-		*/
-		/*
-		
-		(x - xc)^2 + (y - yc)^2 = r^2
-		(x - x1) / (x2 - x1) = (y - y1) / (y2 - y1)
-		
-		//Перенос центра окружности на (0, 0)
-		
-		(x - xc + xc)^2 + (y - yc + yc)^2 = r^2
-		x^2 + y^2 = r^2
-		(x - x1 + xc) / (x2 - x1  + 2*xc) = (y - y1 + yc) / (y2 - y1 + 2*yc)
-		*/
 	}
-	
-	//TODO: CHECK
+		
 	template <size_t DM>
 	std::pair<Ok<VDM>, Ok<VDM>> intersectEquationLineWithCodir(const EquationLine<DM> & el, const Codir<DM> & c) {
 		double mins[DM], maxs[DM];
 		for (size_t i = 0; i < DM; i++) {
-			mins[DM] = (c.left_up[i]    - el.point[i]) / el.vector[i];
-			maxs[DM] = (c.right_down[i] - el.point[i]) / el.vector[i];
+			if (el.vector[i] > 0) {
+				mins[i] = (c.left_up[i]    - el.point[i]) / el.vector[i];
+				maxs[i] = (c.right_down[i] - el.point[i]) / el.vector[i];
+			}
+			else {
+				maxs[i] = (c.left_up[i]    - el.point[i]) / el.vector[i];
+				mins[i] = (c.right_down[i] - el.point[i]) / el.vector[i];
+			}
 		}
 		double min = mins[0], max = maxs[0];
 		for (size_t i = 1; i < DM; i++) {
 			if (mins[i] > min) min = mins[i];
 			if (maxs[i] < max) max = maxs[i];
 		}
-		if (min > max) return std::pair<Ok<VDM>, Ok<VDM>>({}, {});
-		else if (abs(min - max) < EPS) {
-			return std::pair<Ok<VDM>, Ok<VDM>>(el.point + (min + max) * el.vector / 2, {});
-		}
-		else {
-			return std::pair<Ok<VDM>, Ok<VDM>>(
-				el.point + min * el.vector,
-				el.point + max * el.vector
-			);
-		}
+		if (min > max) 
+			return std::pair<Ok<VDM>, Ok<VDM>>({}, {});
+		else if (abs(min - max) < EPS) 
+			return std::pair<Ok<VDM>, Ok<VDM>>(el.pointOnParam( (min + max) / 2), {});
+		else 
+			return std::pair<Ok<VDM>, Ok<VDM>>(el.pointOnParam(min), el.pointOnParam(max));
+		
 	}
-	//
-	//TODO: REMAKE
-	//TODO: CHECK
+	
+	template <size_t DM>
 	std::pair<Ok<VDM>, Ok<VDM>> intersectLineWithCodir(const Line<DM> & l, const Codir<DM> & c) {
-		std::pair<Ok<VDM>, Ok<VDM>> pair = intersectEquationLineWithCodir(EquationLine<DM>(l), c));
-		bool active1 = pair.first.isOk  && checkPointInCodir(pair.first, c);
-		bool active2 = pair.second.isOk && checkPointInCodir(pair.second, c);
+		if ((l.a - l.b).getAbsVec() < EPS) return std::pair<Ok<VDM>, Ok<VDM>>({}, {});
+		std::pair<Ok<VDM>, Ok<VDM>> pair = intersectEquationLineWithCodir(EquationLine<DM>(l), c);
+		bool active1 = pair.first.isOk  && checkPointInCodir<2>(pair.first.value , l, EPS);
+		bool active2 = pair.second.isOk && checkPointInCodir<2>(pair.second.value, l, EPS);
 		if (active2 && !active1) return std::pair<Ok<VDM>, Ok<VDM>>(pair.second, {});
-		return std::pair<Ok<VDM>, Ok<VDM>>(
-			active1 ? pair.first : {}, 
-			active2 ? pair.second : {}
-		);
+		Ok<VDM> ret1 = {}, ret2 = {};
+		if (active1) ret1 = pair.first;
+		if (active2) ret2 = pair.second;
+		return std::pair<Ok<VDM>, Ok<VDM>>(ret1, ret2);
+	}
+	
+	//TODO: CHECK
+	template <size_t DM>
+	bool checkIntersectCodirWithCodir(const Codir<DM> & c1, const Codir<DM> & c2) {
+		return checkPointInCodir(c1.left_up, Codir<DM>(c2.left_up - c1.right_down + c1.left_up, c2.right_down));
 	}
 	//
+	
 	//TODO : RELEASE
 	template <size_t DM>
-	bool intersectSphereWithSphere(const Sphere<DM> & s1, const Sphere<DM> & s2) {
+	bool checkIntersectSphereWithSphere(const Sphere<DM> & s1, const Sphere<DM> & s2) {
 		/*
 		
 		Если сфера 

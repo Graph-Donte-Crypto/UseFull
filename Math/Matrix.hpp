@@ -1,6 +1,8 @@
 #ifndef UF_M_Matrix_H
 #define UF_M_Matrix_H
 
+#include <string.h>
+
 #include "Vector.hpp"
 #include "../Utils/Ok.hpp"
 
@@ -31,14 +33,13 @@ namespace math {
 		*/
 		Matrix() {}
 		Matrix(C Matrix & matrix) {
-			for (size_t i = 0; i < height; i++) array[i] = matrix[i];
+			memcpy(array, matrix.array, width * sizeof(Vector<height>));
 		}
 		Matrix(std::initializer_list<Vector<width>> list) {
-			
 			if (list.size() != height) {
 				::printf("Matrix height and list.size() have different values\n", (unsigned long)height, (unsigned long)list.size());
 			}
-			for (size_t i = 0; i < list.size(); i++) array[i] = *(list.begin() + i);
+			memcpy(array[i].coords, list.begin(), list.size() + sizeof(D));
 		}
 		
 		Matrix<height, width> & set(size_t i, size_t j, double d) {

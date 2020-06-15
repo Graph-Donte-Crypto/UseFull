@@ -1,6 +1,7 @@
 #ifndef UF_T_Array_H
 #define UF_T_Array_H
 
+#include "../Utils/Bytes.hpp"
 #include "Interface.hpp"
 
 //UseFull Template Array module
@@ -84,6 +85,7 @@ namespace uft {
 		void removeFirst() {CollectionFunctions<Type, Array<Type>>::removeFirst(*this);}
 		void removeLast () {CollectionFunctions<Type, Array<Type>>::removeLast(*this);}
 		Ok<size_t> indexByCondition(CoLambda<bool, Type *> auto lambda) {return CollectionFunctions<Type, Array<Type>>::indexByCondition(*this, lambda);}
+		Ok<size_t> indexByEquation(const Type & obj) {return CollectionFunctions<Type, Array<Type>>::indexByEquation(*this, obj);}
 		/* */
 		
 		/*   CollectionFunctions unstandart realisation   */

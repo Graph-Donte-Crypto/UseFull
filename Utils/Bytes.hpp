@@ -1,6 +1,8 @@
 #ifndef UF_U_Bytes_H
 #define UF_U_Bytes_H
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h> 
 
 //UseFull Utils Bytes module

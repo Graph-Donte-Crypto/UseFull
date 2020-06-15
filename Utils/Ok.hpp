@@ -11,42 +11,41 @@
 //Make by Graph Don'te-Crypto
 
 namespace utils {
-	template <typename type>
+	template <typename Type>
 	class Ok {
 	public:
-		type value;
+		Type value;
 		bool isOk = true;
-		Ok(const type & value) {this->value = value;}
+		Ok(const Type & value) {this->value = value;}
 		Ok() {isOk = false;}
-		Ok(const Ok<type> & o) {
+		Ok(const Ok<Type> & o) {
 			value = o.value;
 			isOk = o.isOk;
 		}
-		//Ok(void) {isOk = false;}
-		bool get(type & value) const {
+		bool get(Type & value) const {
 			if (isOk) value = this->value;
 			else return false;
 			return true;
 		}
-		type ok() const {
+		Type ok(const char * error_message = "Ok::ok::Error isOk == false\n") const {
 			if (isOk) return value;
 			else {
-				printf("Ok::ok::Error isOk == false\n"); 
+				printf(error_message); 
 				exit(1);
 			}
 		}
-		type valueOr(type value) const {
+		Type valueOr(Type value) const {
 			if (isOk) return this->value;
 			else      return value;
 		}
 		
-		type actionOr(CoLambda<type, Nothing> auto func) const {
+		Type actionOr(CoLambda<Type, Nothing> auto func) const {
 			if (isOk) return value;
 			else      return func({});
 		}
 		operator bool () const { return isOk;}
-		operator type () const { return ok();}
-		Ok & operator = (const type & value) {
+		operator Type () const { return ok();}
+		Ok & operator = (const Type & value) {
 			this->value = value;
 			isOk = true;
 			return *this;

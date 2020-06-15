@@ -15,13 +15,13 @@ namespace utils {
 		else {return !(rand() % (int)round(1.0 / percent));}
 	}
 	
-	template <typename type>
-	type random(std::initializer_list<type> list) {
+	template <typename Type>
+	Type random(std::initializer_list<Type> list) {
 		return *(list.begin() + rand() % list.size());
 	}
 	
-	template <typename type>
-	type & random(uft::ICollection<type> & col) {
+	template <typename Type>
+	Type & random(CoCollection<Type> auto & col) {
 		return col[rand() % col.length()];
 	}
 }

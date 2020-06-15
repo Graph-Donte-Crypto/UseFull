@@ -37,10 +37,10 @@ namespace math {
 				::printf("Error: dimension = %lu, but list dimension = %lu\n", (unsigned long)dimension, (unsigned long)list.size());
 				exit(1);
 			}
-			for (size_t i = 0; i < list.size(); i++) coords[i] = *(list.begin() + i);
+			memcpy(coords, list.begin(), dimension * sizeof(D));
 		}
 		
-		void printf(C char * format = "%04.1lf ") C {
+		void printf(C char * format = "%07.3lf ") C {
 			for (size_t i = 0; i < dimension; i++) ::printf(format, coords[i]);
 			::printf("\n");
 		}
@@ -133,15 +133,11 @@ namespace math {
 		}
 		
 
-		double distanceTo(C Vector<dimension> * vector) C {
+		double distanceTo(C Vector<dimension> & vector) C {
 			double sum = 0;
 			for (size_t i = 0; i < dimension; i++)
-				sum += (coords[i] - vector->coords[i]) * (coords[i] - vector->coords[i]);
+				sum += (coords[i] - vector.coords[i]) * (coords[i] - vector.coords[i]);
 			return sqrt(sum);
-		}
-		
-		double distanceTo(C Vector<dimension> & vector) C {
-			return distanceTo(&vector);
 		}
 		
 		double norm() C {
@@ -153,6 +149,12 @@ namespace math {
 		
 		Vector<dimension> ort() C {
 			return (*this) / norm();
+		}
+		
+		Vector<dimension> getAbsVec() C {
+			Vector<dimension> out = *this;
+			for (size_t i = 0; i < dimension; i++) out[i] = abs(out[i]);
+			return out;
 		}
 		
 		Vector<dimension> & truncateTo(double norm_max) {
@@ -178,7 +180,7 @@ namespace math {
 				::printf("Error: dimension = %lu, but list dimension = %lu\n", (unsigned long)dimension, (unsigned long)list.size());
 				exit(1);
 			}
-			for (size_t i = 0; i < list.size(); i++) coords[i] = *(list.begin() + i);
+			memcpy(coords, list.begin(), list.size() * sizeof(D));
 			return *this;
 		}
 		
