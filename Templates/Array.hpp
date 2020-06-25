@@ -76,6 +76,10 @@ namespace uft {
 			fromBytes(values + _length, list.begin(), sizeof(Type) * list.size());
 			_length += list.size();
 		}
+		void removeAll(CoLambda<void, Type *> auto lambda) {
+			foreach(lambda);
+			_length = 0;
+		}
 		/* */
 		
 		/*   CollectionFunctions   */

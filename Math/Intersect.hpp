@@ -58,6 +58,8 @@ namespace math {
 		return (point > codir.left_up - VDM(eps)) && (point < codir.right_down + VDM(eps));
 	}
 	
+	
+		
 	//TODO: CHECK
 	template<size_t DM>
 	Ok<VDM> projectionPointOnLine(const VDM & base, const Line<DM> & line) {
@@ -129,6 +131,19 @@ namespace math {
 			) return mb_point;
 		return {};
 	}
+		
+	template <size_t DM>
+	double distanceBeetweenPointAndLineMin(const VDM & v, const Line<DM> & l) {
+		Ok<VDM> proj = projectionPointOnLine(v, l);
+		if (proj.isOk) return v.distanceTo(proj.value);
+		else return min(v.distanceTo(l.a), v.distanceTo(l.b));
+	}
+	
+	template <size_t DM>
+	double distanceBeetweenPointAndLineMax(const VDM & v, const Line<DM> & l) {
+		return max(v.distanceTo(l.a), v.distanceTo(l.b));
+	}
+		
 		
 	template <size_t DM>
 	double distanceBeetweenLines(const Line<DM> & l1, const Line<DM> & l2) {
@@ -206,18 +221,24 @@ namespace math {
 	template <size_t DM>
 	std::pair<Ok<VDM>, Ok<VDM>> intersectEquationLineWithCodir(const EquationLine<DM> & el, const Codir<DM> & c) {
 		double mins[DM], maxs[DM];
+		size_t count = 0;
 		for (size_t i = 0; i < DM; i++) {
 			if (el.vector[i] > 0) {
-				mins[i] = (c.left_up[i]    - el.point[i]) / el.vector[i];
-				maxs[i] = (c.right_down[i] - el.point[i]) / el.vector[i];
+				mins[count] = (c.left_up[i]    - el.point[i]) / el.vector[i];
+				maxs[count] = (c.right_down[i] - el.point[i]) / el.vector[i];
+				count += 1;
+			}
+			else if (el.vector[i] < 0){
+				maxs[count] = (c.left_up[i]    - el.point[i]) / el.vector[i];
+				mins[count] = (c.right_down[i] - el.point[i]) / el.vector[i];
+				count += 1;
 			}
 			else {
-				maxs[i] = (c.left_up[i]    - el.point[i]) / el.vector[i];
-				mins[i] = (c.right_down[i] - el.point[i]) / el.vector[i];
+				/* OOF SYKA */
 			}
 		}
 		double min = mins[0], max = maxs[0];
-		for (size_t i = 1; i < DM; i++) {
+		for (size_t i = 1; i < count; i++) {
 			if (mins[i] > min) min = mins[i];
 			if (maxs[i] < max) max = maxs[i];
 		}
@@ -236,7 +257,6 @@ namespace math {
 		std::pair<Ok<VDM>, Ok<VDM>> pair = intersectEquationLineWithCodir(EquationLine<DM>(l), c);
 		bool active1 = pair.first.isOk  && checkPointInCodir<2>(pair.first.value , l, EPS);
 		bool active2 = pair.second.isOk && checkPointInCodir<2>(pair.second.value, l, EPS);
-		if (active2 && !active1) return std::pair<Ok<VDM>, Ok<VDM>>(pair.second, {});
 		Ok<VDM> ret1 = {}, ret2 = {};
 		if (active1) ret1 = pair.first;
 		if (active2) ret2 = pair.second;

@@ -108,8 +108,8 @@ namespace math {
 		
 		bool operator != (C Vector<dimension> & p1) C {
 			for (size_t i = 0; i < dimension; i++) 
-				if ( abs(coords[i] - p1[i]) < EPS) return false;
-			return true;
+				if ( abs(coords[i] - p1[i]) > EPS) return true;
+			return false;
 		}
 		
 		bool operator >= (C Vector<dimension> & p1) C {
@@ -145,6 +145,10 @@ namespace math {
 			for (size_t i = 0; i < dimension; i++)
 				sum += coords[i] * coords[i];
 			return sqrt(sum);
+		}
+		
+		double cosWith(const Vector<dimension> & vec) {
+			return (*this) * vec / (norm() * vec.norm());
 		}
 		
 		Vector<dimension> ort() C {

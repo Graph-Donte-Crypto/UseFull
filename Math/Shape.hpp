@@ -96,10 +96,19 @@ namespace math {
 			for (size_t i = 0; i < dimension; i++) 
 				minmax(line.a[i], line.b[i], left_up[i], right_down[i]);
 		}
+		Codir(const Codir<dimension> & codir) {
+			left_up = codir.left_up;
+			right_down = codir.right_down;
+		}
 		void printf(const char * format = "%07.3lf ") const {
 			::printf("LU: "); left_up.printf(format);
 			::printf("RD: "); right_down.printf(format);
 		}
+		Codir & operator += (const Vector<dimension> & vec) {left_up += vec; right_down += vec; return *this;}
+		Codir & operator -= (const Vector<dimension> & vec) {left_up -= vec; right_down -= vec; return *this;}
+		
+		Codir   operator -  (const Vector<dimension> & vec) const {return Codir(*this) -= vec;}
+		Codir   operator +  (const Vector<dimension> & vec) const {return Codir(*this) += vec;}
 	};
 	struct Rectangle2D {
 		Vector<2> a, b, c, d;
