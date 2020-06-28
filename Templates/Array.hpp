@@ -47,7 +47,6 @@ namespace uft {
 			addCopyUnsafe(index, obj);
 		}
 		void addCopy (              const Type * obj) {
-			if (global_value == 1) printf("Here\n");
 			CollectionV2.checkSizeWithKeepValues(*this, _length + 1);
 			_length += 1;
 			addCopyUnsafe(_length - 1, obj);
