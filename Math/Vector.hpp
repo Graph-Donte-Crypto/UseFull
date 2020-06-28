@@ -189,6 +189,10 @@ namespace math {
 		}
 		
 		Vector<dimension> & operator = (C Matrix<dimension, 1> & matrix);
+		Vector<dimension> & operator = (C Vector<dimension> & vec) {
+			memcpy(coords, vec.coords, dimension * sizeof(D));
+			return *this;
+		}
 	};
 	
 	template <size_t dimension>

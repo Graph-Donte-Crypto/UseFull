@@ -15,7 +15,7 @@ namespace utils {
 		return out + size;
 	}
 	template <typename T>
-	void * toBytes(void * out, const T & in, size_t size = sizeof(T)) {
+	void * toBytesObject(void * out, const T & in, size_t size = sizeof(T)) {
 		memcpy((void *)out, &in, size);
 		return out + size;
 	}

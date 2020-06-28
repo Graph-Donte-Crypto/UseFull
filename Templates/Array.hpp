@@ -21,13 +21,18 @@ namespace uft {
 		
 		/*   CoSerializible  */
 		size_t getDataSize() {return _length * sizeof(Type);}
-		void * packData  (void * ptr) {return toBytes(ptr, (void *)values, getDataSize());}
-		const void * unpackData(const void * ptr, size_t size) {return fromBytes(values, ptr, size);}
+		void * packData  (void * ptr) {
+			return toBytes(ptr, (void *)values, getDataSize());
+		}
+		const void * unpackData(const void * ptr, size_t size) {
+			_length = size / sizeof(Type);
+			return fromBytes(values, ptr, size);
+		}
 		/* */
 		
 		/*   CoAllocatable   */
-		void allocMemory(size_t size) {_size = size; values = new Type[size];}
-		void freeMemory() {_size = 0; delete[] values;}
+		void allocMemory(size_t size) {_size = size; _length = 0; values = new Type[size];}
+		void freeMemory() {_size = 0; _length = 0; delete[] values;}
 		/* */
 		
 		/*   CoCollection   */
@@ -37,9 +42,12 @@ namespace uft {
 		void addCopy (size_t index, const Type * obj) {
 			CollectionV2.checkSizeWithKeepValues(*this, _length + 1);
 			_length += 1;
+			//Object with [index] shift to position [index + 1], and other objects after
+			shiftObjects(values + index, 1, _length - index);
 			addCopyUnsafe(index, obj);
 		}
 		void addCopy (              const Type * obj) {
+			if (global_value == 1) printf("Here\n");
 			CollectionV2.checkSizeWithKeepValues(*this, _length + 1);
 			_length += 1;
 			addCopyUnsafe(_length - 1, obj);
@@ -92,15 +100,16 @@ namespace uft {
 		Ok<size_t> indexByEquation(const Type & obj) {return CollectionFunctions<Type, Array<Type>>::indexByEquation(*this, obj);}
 		/* */
 		
-		/*   CollectionFunctions unstandart realisation   */
+		/*   CollectionFunctions unstandart realization   */
 		void addAllCopy (CoCollection<Type> auto & inputColl) {
 			CollectionV2.checkSizeWithKeepValues(*this, _length + inputColl.length());
 			for (size_t i = 0; i < inputColl.length(); i++) 
-				addCopyUnsafe(_length++, inputColl[i]);
+				addCopyUnsafe(_length++, &inputColl[i]);
 		}
 		void addAllCopy (size_t index, CoCollection<Type> auto & inputColl) {
 			CollectionV2.checkSizeWithKeepValues(*this, _length + inputColl.length());
-			shiftObjects(values + index, inputColl.length(), _length - index - 1);
+			//Object with [index] shift to position [index + inputColl.length()], and other objects after
+			shiftObjects(values + index, inputColl.length(), _length - index);
 			for (size_t i = 0; i < inputColl.length(); i++) 
 				addCopyUnsafe(index++, inputColl[i]);
 			_length += inputColl.length();

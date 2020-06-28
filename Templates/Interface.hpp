@@ -17,23 +17,23 @@ namespace uft {
 		template <typename Coll>
 			requires CoSerializible<Coll> && CoAllocatable<Coll> && CoSizeable<Coll>
 		void checkSizeWithKeepValues(Coll & coll, size_t length) {
-			if (length >= coll.size()) {
+			if (length > coll.size()) {
 				size_t max_size = coll.size();
 				do {
 					max_size *= 2;
 				} while (length > max_size);
-				size_t length = coll.getDataSize();
-				void * buf = stalloc(length, char);
+				size_t data_length = coll.getDataSize();
+				void * buf = stalloc(data_length, char);
 				coll.packData(buf);
 				coll.freeMemory();
 				coll.allocMemory(max_size);
-				coll.unpackData(buf, length);
+				coll.unpackData(buf, data_length);
 			}
 		}
 		template <typename Coll>
 			requires CoAllocatable<Coll> && CoSizeable<Coll>
 		void checkSizeWithoutKeepValues(Coll & coll, size_t length) {
-			if (length >= coll.size()) {
+			if (length > coll.size()) {
 				size_t max_size = coll.size();
 				do {
 					max_size *= 2;
