@@ -39,7 +39,7 @@ namespace math {
 			if (list.size() != height) {
 				::printf("Matrix height and list.size() have different values\n", (unsigned long)height, (unsigned long)list.size());
 			}
-			memcpy(array[i].coords, list.begin(), list.size() + sizeof(D));
+			memcpy(array, list.begin(), list.size() + sizeof(D));
 		}
 		
 		Matrix<height, width> & set(size_t i, size_t j, double d) {

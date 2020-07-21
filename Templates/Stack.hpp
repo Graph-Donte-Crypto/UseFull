@@ -15,10 +15,10 @@ namespace uft {
 			values.addCopy(type);
 		}
 		Type & get() {
-			return values[values._length - 1];
+			return values[values.length - 1];
 		}
 		void pop() {
-			values._length -= 1;
+			values.length -= 1;
 		}
 	};
 	

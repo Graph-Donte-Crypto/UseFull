@@ -46,15 +46,22 @@ namespace utils {
 	template <typename Type>
 	concept CoSizeable = 
 	requires (Type obj) {
-		{ obj.size()  } -> std::same_as<std::size_t>;
+		{ obj.size } -> std::convertible_to<std::size_t>;
+	};
+	
+	template <typename Coll, typename Type>
+	concept CoEnumeration  = 
+	requires (Coll coll, std::size_t index) {
+		{ coll[index] } -> std::same_as<Type &>;
+		{ coll.length } -> std::convertible_to<std::size_t>;
 	};
 	
 	template <typename Coll, typename Type>
 	concept CoCollection  = 
 	requires (Coll coll, std::size_t index, const Type * obj) {
-		{ coll[index]  } -> std::same_as<Type &>;
-		{ coll.size()  } -> std::same_as<std::size_t>;
-		{ coll.length()} -> std::same_as<std::size_t>;
+		{ coll[index] } -> std::same_as<Type &>;
+		{ coll.size   } -> std::convertible_to<std::size_t>;
+		{ coll.length } -> std::convertible_to<std::size_t>;
 		{ coll.addCopy(index, obj) } -> std::same_as<void>;
 		{ coll.addCopy(       obj) } -> std::same_as<void>;
 		{ coll.remove(index)       } -> std::same_as<void>;

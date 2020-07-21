@@ -12,6 +12,7 @@
 
 #include "../Utils/Ok.hpp"
 #include "../String/BaseLib.hpp"
+#include "../Templates/Span.hpp"
 
 #include "Constants.hpp"
 
@@ -31,14 +32,14 @@ namespace ufsys {
 		char * bytes = nullptr;
 		
 		File & open(); 
-		
+				
 		static constexpr const char LF = '\n';
 		static constexpr const char CR = '\r';
 		static constexpr const char * CRLF = "\r\n";
 		
 		static utils::Ok<File> InDirectory(const char * path, const char * filename);
 		
-	};
+	};	
 	
 	#if defined(WIN32)
 	
@@ -55,12 +56,12 @@ namespace ufsys {
 		bytes = new char[size];
 		fread(bytes, 1, size - 1, f);
 		bytes[size - 1] = 0;
-		if (strstr(bytes, "\r\n") != nullptr) {
+		if (strstr(bytes, CRLF) != nullptr) {
 			win_format = true;
-			rows = str::CountSubstr(bytes, "\r\n");
+			rows = str::CountSubstr(bytes, CRLF);
 		}
 		else {
-			rows = str::CountChar(bytes, '\n');
+			rows = str::CountChar(bytes, LF);
 		}
 		fclose(f);
 		return *this;	
@@ -79,6 +80,7 @@ namespace ufsys {
 		}
 		else return {};
 	}
+	
 	#elif defined(UNIX)
 	utils::Ok<File> File::InDirectory(const char * path, const char * filename) {
 		char fpath[FILENAME_MAX];

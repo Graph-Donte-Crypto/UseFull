@@ -163,8 +163,7 @@ namespace str  {
 		}
 		SemanticBaseLib(const Semantic * s, size_t c) {
 			sh = newSemanticHandler(s, c);
-		}		
-		
+		}
 	};
 }
 

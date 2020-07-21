@@ -17,8 +17,8 @@ namespace uft {
 		template <typename Coll>
 			requires CoSerializible<Coll> && CoAllocatable<Coll> && CoSizeable<Coll>
 		void checkSizeWithKeepValues(Coll & coll, size_t length) {
-			if (length > coll.size()) {
-				size_t max_size = coll.size();
+			if (length > coll.size) {
+				size_t max_size = coll.size;
 				do {
 					max_size *= 2;
 				} while (length > max_size);
@@ -33,8 +33,8 @@ namespace uft {
 		template <typename Coll>
 			requires CoAllocatable<Coll> && CoSizeable<Coll>
 		void checkSizeWithoutKeepValues(Coll & coll, size_t length) {
-			if (length > coll.size()) {
-				size_t max_size = coll.size();
+			if (length > coll.size) {
+				size_t max_size = coll.size;
 				do {
 					max_size *= 2;
 				} while (length > max_size);
@@ -54,7 +54,7 @@ namespace uft {
 			coll.addCopy(&obj);
 		}
 		static void foreach(CoCollection<Type> auto & coll, CoLambda<void, Type *> auto lambda) {
-			for (size_t i = 0; i < coll.length(); i++) lambda(&(coll[i]));
+			for (size_t i = 0; i < coll.length; i++) lambda(&(coll[i]));
 		}
 		static void addAllCopy(CoCollection<Type> auto & coll, CoCollection<Type> auto & inputColl) {
 			foreach(inputColl, [&coll] (Type * obj) {coll.addCopy(obj);});
@@ -66,15 +66,55 @@ namespace uft {
 		static void removeLast (CoCollection<Type> auto & coll) {return coll.remove(coll.length() - 1);}
 		
 		static Ok<size_t> indexByCondition(CoCollection<Type> auto & coll, CoLambda<bool, Type *> auto lambda) {
-			for (size_t i = 0; i < coll.length(); i++) 
+			for (size_t i = 0; i < coll.length; i++) 
 				if (lambda(&(coll[i])) == true) return i;
 			return {};
 		}
 		static Ok<size_t> indexByEquation(CoCollection<Type> auto & coll, const Type & obj) {
-			for (size_t i = 0; i < coll.length(); i++)
+			for (size_t i = 0; i < coll.length; i++)
 				if (obj == coll[i]) return i;
 			return {};
 		}
+	};
+	
+	template <typename Coll, typename Type>
+	struct CollectionFunctions2 {
+		
+		#define coll (*((Coll *)this))
+		
+		void addCopy(size_t index, const Type & obj) {
+			coll.addCopy(index, &obj);
+		}
+		void addCopy(const Type & obj) {
+			coll.addCopy(&obj);
+		}
+		void foreach(CoLambda<void, Type *> auto lambda) {
+			for (size_t i = 0; i < coll.length; i++) lambda(&(coll[i]));
+		}
+		void foreach(CoLambda<void, Type &> auto lambda) {
+			for (size_t i = 0; i < coll.length; i++) lambda(coll[i]);
+		}
+		void addAllCopy(CoCollection<Type> auto & inputColl) {
+			foreach([this] (Type * obj) { coll.addCopy(obj);});
+		}
+		void addAllCopy (size_t index, CoCollection<Type> auto & inputColl) {
+			foreach([this, &index] (Type * obj) { coll.addCopy(index++, obj);});
+		}
+		void removeFirst() {return coll.remove(0);}
+		void removeLast () {return coll.remove(coll.length - 1);}
+		
+		Ok<size_t> indexByCondition(CoLambda<bool, Type *> auto lambda) {
+			for (size_t i = 0; i < coll.length; i++) 
+				if (lambda(&(coll[i])) == true) return i;
+			return {};
+		}
+		Ok<size_t> indexByEquation(const Type & obj) {
+			for (size_t i = 0; i < coll.length; i++)
+				if (obj == coll[i]) return i;
+			return {};
+		}
+		
+		#undef coll
 	};
 		
 	template<typename Type>
