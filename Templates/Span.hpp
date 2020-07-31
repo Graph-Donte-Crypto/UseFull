@@ -8,7 +8,6 @@
 #include "../Utils/Concepts.hpp"
 #include "../Utils/Macro.hpp"
 #include <cstddef>
-#include <stdio.h>
 
 namespace uft {
 	
@@ -70,7 +69,6 @@ namespace uft {
 			ptr = nullptr;
 			length = 0;
 			owner = false;
-			printf("Deleted\n");
 		}
 		
 		~Span() {
