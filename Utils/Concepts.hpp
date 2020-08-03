@@ -13,10 +13,22 @@ namespace utils {
 		Nothing(void){}
 	};
 	
+	template <typename FUNC, typename RET>
+	concept CoLambda0 = 
+	requires (FUNC func) {
+		{ func() } -> std::same_as<RET>;
+	};
+	
 	template <typename FUNC, typename RET, typename INPUT>
 	concept CoLambda = 
 	requires (FUNC func, INPUT input) {
 		{ func(input) } -> std::same_as<RET>;
+	};
+	
+	template <typename FUNC, typename RET, typename INPUT1, typename INPUT2>
+	concept CoLambda2 = 
+	requires (FUNC func, INPUT1 input1, INPUT2 input2) {
+		{ func(input1, input2) } -> std::same_as<RET>;
 	};
 	
 	/*

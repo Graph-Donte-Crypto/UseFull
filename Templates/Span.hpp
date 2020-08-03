@@ -8,6 +8,8 @@
 #include "../Utils/Concepts.hpp"
 #include "../Utils/Macro.hpp"
 #include <cstddef>
+#include <functional>
+#include "stdio.h"
 
 namespace uft {
 	
@@ -20,10 +22,48 @@ namespace uft {
 		size_t length = 0;
 		bool owner = false;
 		
+		std::function<void(Span<Type> *)> dispose;
+		bool inherited_dispose = false;
+		bool is_dispose = false;
+		
+		void setDisposeFunction(CoLambda<void, Span<Type> *> auto lambda) {
+			dispose = lambda;
+			is_dispose = true;
+		}
+		
 		void set(const Type * ptr, size_t length, bool owner = false) {
 			this->ptr = ptr;
 			this->length = length;
 			this->owner = owner;
+		}
+			
+		void constructor(Span<Type> & span) {
+			
+			if (span.inherited_dispose) {
+				//Если объект должен был сам вызывать dispose - это будем делать мы
+				//Иначе оба объекта не сами вызывать будут
+				is_dispose = span.is_dispose;
+				span.is_dispose = false;
+				
+				dispose = std::move(span.dispose);
+				inherited_dispose = true;
+			}
+			else {
+				if (span.is_dispose && span.owner) span.dispose(&span);
+			}
+			
+			set(span.ptr, span.length, span.owner);
+			if (span.owner) span.owner = false;
+			//Если dispose наследуется
+			
+		}
+		
+		void destructor() {
+			//Если Span - оригинальный, то он освобождает память при удалении
+			if (owner) {
+				if (is_dispose) dispose(this);
+				else deleteData();
+			}
 		}
 		
 		/*
@@ -33,24 +73,18 @@ namespace uft {
 		Но я не помню, как сделать функцию, которая принимает rvalue
 		Поэтому пока тут ptr_cast
 		
-		*/
-		
-		/*
-		//Если был передан оригинальный Span - новый Span оригинальный, старый - нет
-		//Иначе оба не оригинальные
-		*/
+		*/	
 		
 		//TODO: REMOVE ptr_cast && add rvalue variants
 		Span(const Span<Type> & span) {
-			
-			set(span.ptr, span.length, span.owner);
-			if (span.owner) ptr_cast(Span<Type>, span).owner = false;
+			Span<Type> & no_const_span = ptr_cast(Span<Type>, span);
+			constructor(no_const_span);
 		}
 		
 		Span<Type> & operator = (const Span<Type> & span) {
-			if (owner) deleteData();
-			set(span.ptr, span.length, span.owner);
-			if (span.owner) ptr_cast(Span<Type>, span).owner = false;
+			destructor();
+			Span<Type> & no_const_span = ptr_cast(Span<Type>, span);
+			constructor(no_const_span);
 			return *this;
 		}
 		//
@@ -72,8 +106,7 @@ namespace uft {
 		}
 		
 		~Span() {
-			//Если Span - оригинальный, то он освобождает память при удалении
-			if (owner) deleteData();
+			destructor();
 		}
 		
 		const Type & operator [] (size_t index) const {return ptr[index];}
@@ -81,6 +114,11 @@ namespace uft {
 		void foreach(CoLambda<void, const Type &> auto lambda) {
 			for (size_t i = 0; i < length; i++)
 				lambda(ptr[i]);
+		}
+		
+		void foreach(CoLambda2<void, const Type &, size_t> auto lambda) {
+			for (size_t i = 0; i < length; i++)
+				lambda(ptr[i], i);
 		}
 		
 		//Unsafe на то и Unsafe, чтобы была дыра в безопасности и возможность изменять данные в Span
