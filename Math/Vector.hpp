@@ -19,6 +19,8 @@ namespace math {
 	template <size_t dimension>
 	struct Vector;
 	
+	typedef Vector<2> XY;
+	
 	template <size_t width, size_t height>
 	struct Matrix;
 	

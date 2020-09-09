@@ -4,6 +4,8 @@
 #include <SFML/Graphics.hpp>
 #include "../Math/Shape.hpp"
 
+#include <sstream>
+
 //UseFull SFML Up Drawer module
 //Version 1.0 alfa
 //Make by Graph Don'te-Crypto
@@ -28,6 +30,10 @@ namespace sfup {
 		}
 		
 		Vector<2> getTextSize() {
+			sf::FloatRect fr = text.getGlobalBounds();
+			return Vector<2>({fr.width, fr.height});
+		}
+		Vector<2> getTextSize(const sf::Text & text) {
 			sf::FloatRect fr = text.getGlobalBounds();
 			return Vector<2>({fr.width, fr.height});
 		}
@@ -63,11 +69,32 @@ namespace sfup {
 			rw.draw(vertexes, 2, sf::Lines);
 		}
 			
-		void drawCodir(sf::RenderWindow & rw, const Codir<2> & c, const sf::Color & color) {
-			drawLine(rw, Line<2>(c.left_up, {c.left_up[0], c.right_down[1]}), color);
-			drawLine(rw, Line<2>({c.left_up[0], c.right_down[1]}, c.right_down), color);
-			drawLine(rw, Line<2>(c.right_down, {c.right_down[0], c.left_up[1]}), color);
-			drawLine(rw, Line<2>({c.right_down[0], c.left_up[1]}, c.left_up), color);
+		void drawCodir(sf::RenderWindow & rw, const Codir<2> & c, const sf::Color & outline) {
+			sf::RectangleShape shape(
+				sf::Vector2f(
+					c.right_down[0] - c.left_up[0],
+					c.right_down[1] - c.left_up[1]
+				)
+			);
+			shape.setPosition(sf::Vector2f(c.left_up[0], c.left_up[1]));
+			shape.setOutlineColor(outline);
+			shape.setFillColor(sf::Color(0, 0, 0, 0));
+			shape.setOutlineThickness(1);
+			rw.draw(shape);
+		}
+		
+		void drawCodirFilled(sf::RenderWindow & rw, const Codir<2> & c, const sf::Color & outline, const sf::Color & background) {
+			sf::RectangleShape shape(
+				sf::Vector2f(
+					c.right_down[0] - c.left_up[0],
+					c.right_down[1] - c.left_up[1]
+				)
+			);
+			shape.setPosition(sf::Vector2f(c.left_up[0], c.left_up[1]));
+			shape.setFillColor(background);
+			shape.setOutlineColor(outline);
+			shape.setOutlineThickness(1);
+			rw.draw(shape);
 		}
 		
 		void drawCircle(const Sphere<2> & circle, const sf::Color & color) {
@@ -80,6 +107,10 @@ namespace sfup {
 			
 		void drawCodir(const Codir<2> & c, const sf::Color & color) {
 			drawCodir(*window, c, color);
+		}
+		
+		void drawCodirFilled(const Codir<2> & c, const sf::Color & outline, const sf::Color & background) {
+			drawCodirFilled(*window, c, outline, background);
 		}
 	} Drawer;
 }

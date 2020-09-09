@@ -38,7 +38,7 @@ namespace ufsys {
 		static constexpr const char * CRLF = "\r\n";
 		
 		static utils::Ok<File> InDirectory(const char * path, const char * filename);
-		
+		//static uft::Span<char *> ReadAllLines(const char * filename);
 	};	
 	
 	#if defined(WIN32)
@@ -98,6 +98,36 @@ namespace ufsys {
 		else return {}
 	}
 	#endif
+	/*
+	uft::Span<char *> File::ReadAllLines(const char * filename) {
+		ifstream inf;
+		inf.open(filename);
+		if (!inf) return uft::Span<char *>();
+
+		char lastReadChar;
+		GrowingBuffer<char>  buf(64);
+		GrowingBuffer<char*> lineBuf(64);
+
+		while (true) {
+			lastReadChar = (char) inf.get();
+			if (inf.eof()) break;
+			if (lastReadChar == '\n' || lastReadChar == '\r') {
+				// terminate line
+				buf.append('\0');
+				// copy that line from buf and append to lineBuf
+				char * line = new char[buf.size];
+				memcpy(line, buf.ptr, buf.size);
+				lineBuf.append(line);
+				// clear buf wthout disposing
+				buf.size = 0;
+			} else {
+				buf.append(lastReadChar);
+			}
+		}
+		buf.dispose();
+		return uft::Span(lineBuf.ptr, lineBuf.size);
+	}
+	*/
 }
 
 #endif

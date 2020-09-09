@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 #include <initializer_list>
-#include "../Templates/Interface.hpp"
+#include "Concepts.hpp"
 
 //UseFull Random module
 //Version 1.0 alfa
@@ -12,7 +12,16 @@
 namespace utils {
 	bool chance(double percent) {
 		if (percent == 0) return false;
-		else {return !(rand() % (int)round(1.0 / percent));}
+		else return !(rand() % (int)round(1.0 / percent));
+	}
+	
+	double randomPercent() {
+		return ((double)rand()) / RAND_MAX;
+	}
+	
+	template <typename Type>
+	Type randomFromInterval(Type from, Type to) {
+		return (Type) (from + randomPercent() * (to - from));
 	}
 	
 	template <typename Type>

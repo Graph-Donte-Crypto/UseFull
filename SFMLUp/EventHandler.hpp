@@ -34,10 +34,9 @@ namespace sfup {
 		evMouseWheelMovedUp,
 		evMouseWheelMovedDown,
 	};
-
+	
 	enum class KeyState {Pressed, Pressing, Released};
 
-	static
 	class EventKeeper {
 	public:
 		static constexpr size_t limit = 128;

@@ -196,6 +196,20 @@ namespace math {
 		return *this;
 	}
 	
+	Matrix<3> Matrix3RotateFromVectorAndAngle(C Vector<3> & v, double a) {
+		const double ca = cos(a);
+		const double ca1 = 1 - ca
+		const double sa = sin(a);
+		const double & x = v[0];
+		const double & y = v[1];
+		const double & z = v[2];
+		return Matrix<3>({
+			{ca + ca1 * x * x, ca1 * x * y - sa * z, ca1 * x * y + sa * y},
+			{ca1 * y * x + sa * z, ca + ca1 * y * y, ca1 * y * z - sa * x},
+			{ca1 * z * x - sa * y, ca1 * z * y + sa * x, ca + ca1 * z * z}
+		});
+	}
+	
 	
 	
 }

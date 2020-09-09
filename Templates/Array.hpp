@@ -10,13 +10,13 @@
 
 namespace uft {
 	using namespace utils;
-	
+
 	template <typename Type>
 	struct Array : public CollectionFunctions2<Array<Type>, Type>{
 		/*   Array all fields   */
 		Type * values = nullptr;
 		/* */
-		
+
 		/*   CoSerializible  */
 		size_t getDataSize() {return length * sizeof(Type);}
 		void * packData  (void * ptr) {
@@ -27,16 +27,26 @@ namespace uft {
 			return fromBytes(values, ptr, size);
 		}
 		/* */
-		
+
 		/*   CoAllocatable   */
-		void allocMemory(size_t size) {this->size = size; length = 0; values = new Type[size];}
+		void allocMemory(size_t size) {
+			this->size = size; 
+			length = 0; 
+			values = (Type *) (new char [sizeof(Type) * size] );
+		}
 		void freeMemory() {size = 0; length = 0; delete[] values;}
 		/* */
-		
+
+		void resizeMemoryWithFlush(size_t size) {
+			freeMemory();
+			allocMemory(size);
+		}
+
 		/*   CoCollection   */
 		size_t length = 0;
 		size_t size = 0;
 		Type & operator[] (size_t index) const {return values[index];}
+		Type & last() {return values[length - 1];}
 		void addCopy (size_t index, const Type * obj) {
 			CollectionV2.checkSizeWithKeepValues(*this, length + 1);
 			length += 1;
@@ -56,16 +66,16 @@ namespace uft {
 		};
 		void removeAll() {length = 0;}
 		/* */
-		
+
 		/*   Array functions   */
-		
+
 		Array(CoEnumeration<Type> auto enumeration) {
 			allocMemory(enumeration.length);
-			for (size_t i = 0; i < enumeration.length; i++) 
+			for (size_t i = 0; i < enumeration.length; i++)
 				addCopyUnsafe(i, &enumeration[i]);
 			length = enumeration.length;
 		}
-		
+
 		Array(size_t size) {allocMemory(size);}
 		Array(const std::initializer_list<Type> & list) {
 			allocMemory(list.size());
@@ -74,15 +84,23 @@ namespace uft {
 		}
 		Array() {allocMemory(256);}
 		~Array() {freeMemory();}
-		
-		Array & operator = (const CoEnumeration<Type> auto & enumeration) {
-			CollectionV2.checkSizeWithoutKeepValues(*this, enumeration.length);
+
+		Array & flushAndCopyFrom(const CoEnumeration<Type> auto & enumeration) {
+		    CollectionV2.checkSizeWithoutKeepValues(*this, enumeration.length);
 			for (size_t i = 0; i < enumeration.length; i++)
 				addCopyUnsafe(i, &enumeration[i]);
 			length = enumeration.length;
 			return *this;
 		}
-		
+
+    private:
+        //защита от случайного прямого копирования
+        Array & operator = (const Array & array) {
+            return *this;
+        }
+
+    public:
+
 		size_t getElementPositionUnsafe(const Type * obj) {
 			return (values - obj) / sizeof(Type);
 		}
@@ -91,7 +109,7 @@ namespace uft {
 			if (obj > values + length * sizeof(Type)) return {};
 			return getElementPositionUnsafe(obj);
 		}
-		void addCopyUnsafe(size_t index, const Type * obj) {*(values + index) = *obj;}	
+		void addCopyUnsafe(size_t index, const Type * obj) {*(values + index) = *obj;}
 		void addAllCopy (const std::initializer_list<Type> & list) {
 			CollectionV2.checkSizeWithKeepValues(*this, length + list.size());
 			fromBytes(values + length, list.begin(), sizeof(Type) * list.size());
@@ -111,7 +129,7 @@ namespace uft {
 			length = 0;
 		}
 		/* */
-		
+
 		/*   CollectionFunctions   */
 		void addCopy(size_t index, const Type & obj) {CollectionFunctions2<Array<Type>, Type>::addCopy(index, obj);}
 		void addCopy(const Type & obj) {CollectionFunctions2<Array<Type>, Type>::addCopy(obj);}
@@ -122,22 +140,22 @@ namespace uft {
 		Ok<size_t> indexByCondition(CoLambda<bool, Type *> auto lambda) {return CollectionFunctions2<Array<Type>, Type>::indexByCondition(lambda);}
 		Ok<size_t> indexByEquation(const Type & obj) {return CollectionFunctions2<Array<Type>, Type>::indexByEquation(obj);}
 		/* */
-		
+
 		/*   CollectionFunctions nonstandard realization   */
 		void addAllCopy (CoCollection<Type> auto & inputColl) {
 			CollectionV2.checkSizeWithKeepValues(*this, length + inputColl.length);
-			for (size_t i = 0; i < inputColl.length; i++) 
+			for (size_t i = 0; i < inputColl.length; i++)
 				addCopyUnsafe(length++, &inputColl[i]);
 		}
 		void addAllCopy (size_t index, CoCollection<Type> auto & inputColl) {
 			CollectionV2.checkSizeWithKeepValues(*this, length + inputColl.length);
 			//Object with [index] shift to position [index + inputColl.length()], and other objects after
 			shiftObjects(values + index, inputColl.length, length - index);
-			for (size_t i = 0; i < inputColl.length; i++) 
+			for (size_t i = 0; i < inputColl.length; i++)
 				addCopyUnsafe(index++, inputColl[i]);
 			length += inputColl.length;
 		}
-		/* */	
+		/* */
 	};
 }
 

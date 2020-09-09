@@ -1,5 +1,6 @@
 //prototype
 
+
 template <typename Type, typename UnsignedX = size_t>
 struct ArrayList : public ICollection {
 	
@@ -11,9 +12,7 @@ struct ArrayList : public ICollection {
 	UnsignedX length;
 	UnsignedX index_start;
 	UnsignedX index_end;
-	
-	struct IndexerSupport;
-	
+		
 	struct IndexerSupportStruct {
 		UnsignedX current;
 		Type get(UnsignedX i) {
