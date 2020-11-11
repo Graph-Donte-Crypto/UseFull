@@ -234,6 +234,8 @@ namespace math {
 				count += 1;
 			}
 			else {
+				if (c.left_up[i] - el.point[i] > 0 || c.right_down[i] - el.point[i] < 0)
+					return std::pair<Ok<VDM>, Ok<VDM>>({}, {});
 				/* OOF SYKA */
 			}
 		}
