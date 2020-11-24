@@ -15,19 +15,20 @@ namespace uft {
 	
 	struct CollectionStructV2 {
 		template <typename Coll>
-			requires CoSerializible<Coll> && CoAllocatable<Coll> && CoSizeable<Coll>
+			requires CoAllocatable<Coll> && CoSizeable<Coll>
 		void checkSizeWithKeepValues(Coll & coll, size_t length) {
 			if (length > coll.size) {
 				size_t max_size = coll.size;
 				do {
 					max_size *= 2;
 				} while (length > max_size);
-				size_t data_length = coll.getDataSize();
-				void * buf = stalloc(data_length, char);
-				coll.packData(buf);
-				coll.freeMemory();
+				size_t length = coll.length;
+				size_t old_data_size = coll.getDataSize();
+				void * old_ptr = coll.getMemory();
 				coll.allocMemory(max_size);
-				coll.unpackData(buf, data_length);
+				coll.length = length;
+				memcpy(coll.getMemory(), old_ptr, old_data_size);
+				coll.freeMemory(old_ptr);
 			}
 		}
 		template <typename Coll>

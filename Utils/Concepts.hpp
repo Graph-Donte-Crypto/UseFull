@@ -38,9 +38,15 @@ namespace utils {
 	
 	template <typename Type>
 	concept CoAllocatable = 
-	requires (Type obj, std::size_t size) {
+	requires (Type obj, std::size_t size, void * ptr) {
 		{ obj.allocMemory(size) } -> std::same_as<void>;
 		{ obj.freeMemory()      } -> std::same_as<void>;
+		{ obj.freeMemory(ptr)   } -> std::same_as<void>;
+		{ obj.setMemory(ptr)    } -> std::same_as<void>;
+		{ obj.getMemory()       } -> std::same_as<void *>;
+		{ obj.takeMemory()      } -> std::same_as<void *>;
+		{ obj.getMemorySize()   } -> std::convertible_to<std::size_t>;
+		{ obj.getDataSize()     } -> std::convertible_to<std::size_t>;
 	};
 	
 	template <typename Type>

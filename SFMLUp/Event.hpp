@@ -1,10 +1,10 @@
-#ifndef UF_SFMLUP_EventHandler_H
-#define UF_SFMLUP_EventHandler_H
+#ifndef UF_SFMLUP_Event_H
+#define UF_SFMLUP_Event_H
 
 #include <SFML/Graphics.hpp>
 
-//UseFull SFML Up Event Handler module
-//Version 1.0 alfa
+//UseFull SFML Up global Event module
+//Version 1.1 alfa
 //Make by Graph Don'te-Crypto
 
 namespace sfup {

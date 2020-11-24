@@ -18,7 +18,6 @@ namespace uft {
 		/* */
 
 		/*   CoSerializible  */
-		size_t getDataSize() {return length * sizeof(Type);}
 		void * packData  (void * ptr) {
 			return toBytes(ptr, (void *)values, getDataSize());
 		}
@@ -30,12 +29,60 @@ namespace uft {
 
 		/*   CoAllocatable   */
 		void allocMemory(size_t size) {
-			this->size = size; 
-			length = 0; 
+			this->size = size;
+			length = 0;
 			values = (Type *) (new char [sizeof(Type) * size] );
 		}
-		void freeMemory() {size = 0; length = 0; delete[] values;}
+		void freeMemory() {
+		    size = 0;
+		    length = 0;
+		    if (values) delete[] values;
+		    values = nullptr;
+        }
+		void freeMemory(void * ptr) {
+		    delete[] ptr;
+        }
+		void setMemory(void * ptr) {
+		    values = ptr;
+        }
+		void * getMemory() {
+		    return values;
+        }
+		void * takeMemory() {
+			length = 0;
+			size = 0;
+			void * ptr = values;
+			values = nullptr;
+			return ptr;
+		}
+		size_t getMemorySize() {
+		    return size   * sizeof(Type);
+        }
+		size_t getDataSize()   {
+		    return length * sizeof(Type);
+        }
 		/* */
+
+		void optimizeMemory() {
+			size_t length = this->length;
+			size_t old_data_size = getDataSize();
+			void * old_ptr = values;
+			allocMemory(length);
+			this->length = length;
+			memcpy(values, old_ptr, old_data_size);
+			freeMemory(old_ptr);
+		}
+
+		/*
+			void * buf1 = sizex1;
+
+			void * buf2 = sizex2;
+			buf1.writeto(buf2)
+			delete[] buf1
+			buf1 = buf2
+
+
+		*/
 
 		void resizeMemoryWithFlush(size_t size) {
 			freeMemory();
@@ -45,7 +92,8 @@ namespace uft {
 		/*   CoCollection   */
 		size_t length = 0;
 		size_t size = 0;
-		Type & operator[] (size_t index) const {return values[index];}
+		const Type & operator[] (size_t index) const {return values[index];}
+		      Type & operator[] (size_t index)       {return values[index];}
 		Type & last() {return values[length - 1];}
 		void addCopy (size_t index, const Type * obj) {
 			CollectionV2.checkSizeWithKeepValues(*this, length + 1);

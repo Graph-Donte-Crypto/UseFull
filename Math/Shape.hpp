@@ -104,6 +104,12 @@ namespace math {
 			::printf("LU: "); left_up.printf(format);
 			::printf("RD: "); right_down.printf(format);
 		}
+		Vector<dimension> center() const {
+			return (left_up + right_down) / 2;
+		}
+		Vector<dimension> size() const {
+			return right_down - left_up;
+		}
 		Codir & operator += (const Vector<dimension> & vec) {left_up += vec; right_down += vec; return *this;}
 		Codir & operator -= (const Vector<dimension> & vec) {left_up -= vec; right_down -= vec; return *this;}
 		

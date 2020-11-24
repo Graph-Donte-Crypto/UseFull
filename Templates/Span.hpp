@@ -116,7 +116,7 @@ namespace uft {
 				lambda(ptr[i]);
 		}
 		
-		void foreach(CoLambda2<void, const Type &, size_t> auto lambda) {
+		void foreach(CoLambda<void, const Type &, size_t> auto lambda) {
 			for (size_t i = 0; i < length; i++)
 				lambda(ptr[i], i);
 		}
