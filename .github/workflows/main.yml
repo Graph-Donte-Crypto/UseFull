@@ -28,6 +28,9 @@ jobs:
       - name: Check GCC version
         run: gcc --version
 
+      - name: Check Clang version
+        run: clang --version
+
       # Runs a single command using the runners shell
       - name: Run a one-line script
-        run: find . -name '*.hpp' | xargs gcc -Wall -Wpedantic -Wextra -Weffc++ -Werror -std=c++20
+        run: find . -name '*.hpp' | xargs gcc -Wall -Wpedantic -Wextra -Weffc++ -Werror -std=c++2a
