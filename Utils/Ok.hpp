@@ -7,7 +7,7 @@
 #include "Concepts.hpp"
 
 //UseFull Utils Ok module
-//Version 1.0 release
+//Version 1.1 release
 //Make by Graph Don'te-Crypto
 
 namespace utils {
@@ -16,12 +16,14 @@ namespace utils {
 	public:
 		Type value;
 		bool isOk = true;
-		Ok(const Type & value) {this->value = value;}
-		Ok() {isOk = false;}
-		Ok(const Ok<Type> & o) {
-			value = o.value;
-			isOk = o.isOk;
-		}
+		Ok(const Type & value) : value(value) {}
+		Ok() : value() {isOk = false;}
+		~Ok() = default;
+		
+		Ok(const Ok<Type> & o) : 
+			value(o.value), 
+			isOk(o.isOk) {};
+		
 		bool get(Type & value) const {
 			if (isOk) value = this->value;
 			else return false;

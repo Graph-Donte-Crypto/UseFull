@@ -99,6 +99,69 @@ namespace str  {
 		return source;
 	}
 	
+	struct SemanticDataHolder {
+		const char * string;
+		SemanticHandler sh;
+		unsigned * stack;
+		size_t stack_index;
+	};
+	
+	const char * getSemanticChar(SemanticDataHolder * data) {
+		
+		const char ** string = & data->string;
+		SemanticHandler * sh = & data->sh;
+		unsigned * stack     =   data->stack; //stack is array
+		size_t * stack_index = & data->stack_index;
+		
+		if (**string == 0) return *string;
+		
+		if (*stack_index == 0) {
+			//Если текущий индекс == 0, то handle_internal по умлочанию true, не надо делать проверки на end
+			for (size_t i = 0; i < sh->count; i++)
+				if (strncmp(*string, sh->sems[i].begin, sh->sems[i].l_begin) == 0) {
+					*stack_index += 1;
+					stack[*stack_index] = i;
+					*string += sh->sems[i].l_begin;
+					return nullptr;
+				}
+			*string += 1;
+			return *string - 1;
+		}
+		else {
+			//Иначе, делаем проверку на конец
+			if (strncmp(*string, sh->sems[stack[*stack_index]].end, sh->sems[stack[*stack_index]].l_end) == 0) {
+				*string += sh->sems[stack[*stack_index]].l_end;
+				*stack_index -= 1;
+				return nullptr;
+			}
+			else {
+				//Если не прошло, то уже чекаем на handle_internal
+				if (sh->sems[stack[*stack_index]].handle_internal) {
+					//Если можно - ищем начало всех семантик
+					for (size_t i = 0; i < sh->count; i++) {
+						if (strncmp(*string, sh->sems[i].begin, sh->sems[i].l_begin) == 0) {
+							*string += sh->sems[i].l_begin;
+							*stack_index += 1;
+							stack[*stack_index] = i;
+							return nullptr;
+						}
+					}
+				}
+				else {
+					//Иначе - только текущей
+					if (strncmp(*string, sh->sems[stack[*stack_index]].begin, sh->sems[stack[*stack_index]].l_begin) == 0) {
+						*string += sh->sems[stack[*stack_index]].l_begin;
+						*stack_index += 1;
+						stack[*stack_index] = stack[*stack_index - 1];
+						return nullptr;
+					}
+				}
+			}
+		}
+		*string += 1;
+		return nullptr;
+	}
+	
 	const char * getSemanticChar
 		/*
 		s  - source

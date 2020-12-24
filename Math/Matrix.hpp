@@ -17,6 +17,8 @@
 
 namespace math {
 	
+	using namespace utils;
+	
 	template <size_t height, size_t width = height>
 	struct Matrix {
 		Vector<width> array[height];
@@ -37,9 +39,9 @@ namespace math {
 		}
 		Matrix(std::initializer_list<Vector<width>> list) {
 			if (list.size() != height) {
-				::printf("Matrix height and list.size() have different values\n", (unsigned long)height, (unsigned long)list.size());
+				::printf("Matrix height = (%llu) and list.size() = (%llu) have different values\n", height, list.size());
 			}
-			memcpy(array, list.begin(), list.size() + sizeof(D));
+			memcpy(array, list.begin(), list.size() * sizeof(D));
 		}
 		
 		Matrix<height, width> & set(size_t i, size_t j, double d) {
@@ -198,7 +200,7 @@ namespace math {
 	
 	Matrix<3> Matrix3RotateFromVectorAndAngle(C Vector<3> & v, double a) {
 		const double ca = cos(a);
-		const double ca1 = 1 - ca
+		const double ca1 = 1 - ca;
 		const double sa = sin(a);
 		const double & x = v[0];
 		const double & y = v[1];

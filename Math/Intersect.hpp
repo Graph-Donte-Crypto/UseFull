@@ -40,11 +40,47 @@ namespace math {
 		//t = (-eh.c - eh.a * el.point) / (el.vector * eh.a)
 		//point = el.point + ( (-eh.c - eh.a * el.point) / (el->vector * eh.a) ) * el.vector;
 		EquationHyperplane<DM> eh(base, el.vector);
-		double elv_eha = el.vector * eh.a;
+		double elv_eha = el.vector * eh.ort;
 		if (abs(elv_eha) <= EPS) return {};
 		//if _ret == {} -> something goes wrong;
-		//return el.point + el.vector * ( (-eh.c - (eh.a * el.point)) / elv_eha );
-		return el.pointOnParam((-eh.c - (eh.a * el.point)) / elv_eha);
+		//return el.point + el.vector * ( (-eh.c - (eh.ort * el.point)) / elv_eha );
+		return el.pointOnParam((-eh.c - (eh.ort * el.point)) / elv_eha);
+	}
+	//
+	
+	//TODO: CHECK
+	template <size_t DM>
+	Ok<VDM> projectionPointOnEquationHyperplane(const VDM & base, const EquationHyperplane<DM> & eh) {
+		/* 
+			B - result point
+		
+			x = eh.ort[0] * base[0] + ... + eh.ort[n-1] * base[n-1] + eh.c 
+			0 = eh.ort[0] * B[0]    + ... + eh.ort[n-1] * B[n-1]    + eh.c 
+			
+			x - 0 = eh.ort[0] * (base[0] - B[0]) + ... eh.ort[n-1] * (base[n-1] - B[n-1])
+			
+			(base + k * eh.ort = B) - line by base and ort. k - double
+			
+			base = B - k * eh.ort
+			base[i] = B[i] - k * eh.ort[i]
+			=>
+			
+			x = eh.ort[0] * (B[0] - k * eh.ort[0] - B[0]) + ... eh.ort[n-1] * (B[n-1] - k * eh.ort[n-1] - B[n-1])
+			x = eh.ort[0] * (- k * eh.ort[0]) + ... eh.ort[n-1] * (- k * eh.ort[n-1])
+			x = (-k) * eh.ort[0]^2 + ... + (-k) * eh.ort[n-1]^2
+			x = -k * (eh.ort[0]^2 + ... + eh.ort[n-1]^2)
+			k = -x / (eh.ort[0]^2 + ... + eh.ort[n-1]^2)
+			
+			B = base + k * eh.ort = base + eh.ort * (-x / (eh.ort[0]^2 + ... + eh.ort[n-1]^2))
+			
+		*/
+		
+		double x = eh.valueInPoint(base);
+		double ort2_sum = 0;
+		for (size_t i = 0; i < DM; i++)
+			ort2_sum += eh.ort[i] * eh.ort[i];
+		
+		return base - eh.ort * (x / ort2_sum);
 	}
 	//
 	

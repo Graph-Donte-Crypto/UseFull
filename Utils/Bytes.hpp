@@ -10,31 +10,34 @@
 //Make by Graph Don'te-Crypto
 
 namespace utils {
+
+	#define ptr_sum(a, b) ((void *)(((char *)(a)) + ((size_t)(b))))
+	
 	void * toBytes(void * out, const void * in, size_t size) {
 		memcpy((void *)out, in, size);
-		return out + size;
+		return ptr_sum(out, size);
 	}
 	template <typename T>
 	void * toBytesObject(void * out, const T & in, size_t size = sizeof(T)) {
 		memcpy((void *)out, &in, size);
-		return out + size;
+		return ptr_sum(out, size);
 	}
 
 	const void * fromBytes(void * out, const void * in, size_t size) {
 		memcpy(out, in, size);
-		return in + size;
+		return ptr_sum(in, size);
 	}
 	
 	
 	void * shiftBytes(void * where, long long shift, size_t length_in_bytes) {
-		memmove(where + shift, where, length_in_bytes);
-		return where + shift;
+		memmove(ptr_sum(where, shift), where, length_in_bytes);
+		return ptr_sum(where, shift);
 	}
 	
 	template <typename T>
 	T * shiftObjects(T * where, long long shift, size_t length_in_objects) {
-		memmove(where + shift, where, length_in_objects * sizeof(T));
-		return where + shift;
+		memmove(ptr_sum(where, shift), where, length_in_objects * sizeof(T));
+		return ptr_sum(where, shift);
 		/*
 			//aaaaBaaaC___
 			//B 3 5

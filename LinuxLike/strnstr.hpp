@@ -1,6 +1,9 @@
 #ifndef UF_LL_strnstr_H
 #define UF_LL_strnstr_H
 
+#include <stddef.h>
+#include <string.h>
+
 //UseFull Linux Like strnstr module
 //Version 1.0 alfa
 //Make by Graph Don'te-Crypto

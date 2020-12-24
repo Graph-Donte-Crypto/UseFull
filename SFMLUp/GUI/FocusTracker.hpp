@@ -43,9 +43,10 @@ struct FocusTracker {
 	bool & focused = state_before.focused;
 
 	Codir<2> codir_focus;
+	XY       focus_offset;
 	
 	virtual void moveRelative(const XY & delta) {
-		codir_focus += delta;
+		//codir_focus += delta;
 	}
 
 	FocusTracker(const Codir<2> & c) : codir_focus(c) {
@@ -70,7 +71,7 @@ struct FocusTracker {
 	void checkFocus(const XY & mouse) {
 		if (focus == nullptr || focus == this) {
 
-			focused = checkPointInCodir(mouse, codir_focus);
+			focused = checkPointInCodir(mouse, codir_focus + focus_offset);
 
 			if (!focused) {
 				EXEC(

@@ -27,6 +27,7 @@ struct BaseGui : public FocusTracker, public sf::RenderTexture {
 		}
 		return {};
 	}
+	
 	void putInRas(uft::Ras<BaseGui> & set) {ras_record = set.add(this);}
 	void putInBaseGui(BaseGui * gui) {putInRas(gui->elements);}
 	void pullOutOfRas() {if (ras_record != nullptr) ras_record = ras_record->remove();}
@@ -65,9 +66,9 @@ struct BaseGui : public FocusTracker, public sf::RenderTexture {
 		BaseGui * current_owner = (BaseGui *)ras_record->storage->owner;
 		while (current_owner) {
 			offset += current_owner->codir.left_up;
-			current_owner = (BaseGui *)ras_record->storage->owner;
+			current_owner = (BaseGui *)current_owner->ras_record->storage->owner;
 		}
-		return offset;
+		return offset += codir.left_up;
 	}
 	
 	Codir<2> getAbsoluteCodir() {

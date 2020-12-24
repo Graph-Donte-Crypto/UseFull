@@ -35,10 +35,10 @@ namespace math {
 			point = line->a;
 			vector = (line->b - line->a).ort();
 		}
-		EquationLine(const Line<dimension> & line) {
-			point = line.a;
-			vector = (line.b - line.a).ort();
-		}
+		EquationLine(const Line<dimension> & line) : 
+			point(line.a),
+			vector((line.b - line.a).ort())
+		{}
 		
 		void printf(const char * format = "%07.3lf ") const {
 			::printf("point  = "); point.printf(format);
@@ -56,28 +56,35 @@ namespace math {
 		/*
 		a1 * x1 + ... an * xn + c = 0	
 		*/
-		Vector<dimension> a;
+		Vector<dimension> ort;
 		double c;
 		EquationHyperplane() {
 			
 		}
 		EquationHyperplane(const Vector<dimension> & vector, double xc) {
-			a = vector;
+			ort = vector;
 			c = xc;
 		}
 		EquationHyperplane(const EquationHyperplane<dimension> & e) {
-			a = e.a;
+			ort = e.ort;
 			c = e.c;
 		}
 		
 		EquationHyperplane(const Vector<dimension> & point, const Vector<dimension> & ort) {
-			a = ort;
+			this->ort = ort;
 			c = - (point * ort);
 		}
 		
 		void printf(const char * format = "%07.3lf ") const {
-			::printf("a = "); a.printf(printf);
+			::printf("a = "); ort.printf(printf);
 			::printf("c = "); ::printf(format, c); 
+		}
+		
+		double valueInPoint(const Vector<dimension> & point) {
+			double result = c;
+			for (size_t i = 0; i < dimension; i++)
+				c += point[i] * ort[i];
+			return result;
 		}
 	};	
 }

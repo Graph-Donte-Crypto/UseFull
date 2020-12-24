@@ -3,6 +3,7 @@
 
 #include "Vector.hpp"
 #include "../Utils/Minmax.hpp"
+#include <tuple>
 
 //UseFull Math Shape module
 //Version 1.0 alfa
@@ -86,15 +87,15 @@ namespace math {
 	*/
 	template <size_t dimension>	
 	struct Codir {
-		Vector<dimension> left_up, right_down;
+		Vector<dimension> left_up = Vector<dimension>(), right_down = Vector<dimension>();
 		Codir() {}
 		Codir(const Vector<dimension> & a, const Vector<dimension> & b) {
 			for (size_t i = 0; i < dimension; i++) 
-				minmax(a[i], b[i], left_up[i], right_down[i]);
+				std::tie(left_up[i], right_down[i]) = minmax(a[i], b[i]);
 		}
 		Codir(const Line<dimension> & line) {
 			for (size_t i = 0; i < dimension; i++) 
-				minmax(line.a[i], line.b[i], left_up[i], right_down[i]);
+				std::tie(left_up[i], right_down[i]) = minmax(line.a[i], line.b[i]);
 		}
 		Codir(const Codir<dimension> & codir) {
 			left_up = codir.left_up;
