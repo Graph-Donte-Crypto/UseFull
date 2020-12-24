@@ -30,4 +30,4 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Run a one-line script
-        run: find . -name '*.hpp' | grep -vFf .buildignore | xargs gcc -S -Wall -Wpedantic -Wextra -Weffc++ -Werror -std=c++2a -Wfatal-errors -fsyntax-only
+        run: find . -name '*.hpp' | grep -vFf .buildignore | xargs clang -S -Wall -Wpedantic -Wextra -Weffc++ -Werror -std=c++20 -Wfatal-errors -fsyntax-only
