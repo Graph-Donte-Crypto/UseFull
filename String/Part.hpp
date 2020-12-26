@@ -72,7 +72,7 @@ namespace str {
 				}
 				else ret.addValue(true);
 				char find[] = {splitter, 0};
-				char * pos = PosMin(in, find);
+				const char * pos = PosMin(in, find);
 				size_t nlen = 0;
 				if (pos == nullptr){nlen = strlen(in); ret.getRef<bool>(0) = false;}
 				else                nlen = pos - in;
