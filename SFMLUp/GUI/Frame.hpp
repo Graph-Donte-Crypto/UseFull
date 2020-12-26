@@ -1,7 +1,7 @@
 #ifndef UF_SFMLUp_GUI_Frame_H
 #define UF_SFMLUp_GUI_Frame_H
 
-#include "../../UseFull/Templates/Array.hpp"
+#include "../../Templates/Array.hpp"
 #include "../../Math/Vector.hpp"
 #include "../Drawer.hpp"
 

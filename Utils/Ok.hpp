@@ -32,7 +32,7 @@ namespace utils {
 		Type ok(const char * error_message = "Ok::ok::Error isOk == false\n") const {
 			if (isOk) return value;
 			else {
-				printf(error_message); 
+				printf("%s", error_message); 
 				exit(1);
 			}
 		}

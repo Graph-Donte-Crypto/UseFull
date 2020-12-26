@@ -46,7 +46,7 @@ namespace sfup {
 			Ok<sf::Font *> font = getByName(name);
 			if (font.isOk) text.setFont(*(font.value));
 			else {
-				printf("Error find font [%name]\n", name);
+				printf("Error find font [%s]\n", name);
 				font = getDefault();
 				if (font.isOk) text.setFont(*(font.value));
 				else printf("Error find default font\n");

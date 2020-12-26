@@ -39,7 +39,7 @@ namespace math {
 		}
 		Matrix(std::initializer_list<Vector<width>> list) {
 			if (list.size() != height) {
-				::printf("Matrix height = (%llu) and list.size() = (%llu) have different values\n", height, list.size());
+				::printf("Matrix height = (%llu) and list.size() = (%llu) have different values\n", (unsigned long long)height, (unsigned long long)list.size());
 			}
 			memcpy(array, list.begin(), list.size() * sizeof(D));
 		}

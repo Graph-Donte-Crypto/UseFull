@@ -93,9 +93,9 @@ namespace str {
 	long long PosLast(const char * where, const char what, size_t index) {
         return PosLast(where, what, where + index);
     }
-    char * PosMin(const char * where, const char * what) {
+    const char * PosMin(const char * where, const char * what) {
         char * ptrsuse[256];
-        char ** ptrs = ptrsuse;
+        const char ** ptrs = ptrsuse;
         size_t what_len = strlen(what) + 1;
         bool stack = true;
         if (what_len > 256) {
@@ -106,7 +106,7 @@ namespace str {
         for (size_t i = 0; i < what_len; i++) {
             ptrs[i] = strchr(where, what[i]);
         }
-        char * ans = ptrs[what_len - 1];
+        const char * ans = ptrs[what_len - 1];
         for (size_t i = 0; i < what_len - 1; i++) {
             ans = utils::min(ans, ptrs[i]);
         }
