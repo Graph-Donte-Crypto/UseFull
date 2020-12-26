@@ -95,11 +95,11 @@ namespace str {
     }
     const char * PosMin(const char * where, const char * what) {
         char * ptrsuse[256];
-        const char ** ptrs = ptrsuse;
+        const char ** ptrs = (const char **)ptrsuse;
         size_t what_len = strlen(what) + 1;
         bool stack = true;
         if (what_len > 256) {
-            ptrs = new char * [what_len];
+            ptrs = new const char * [what_len];
             stack = false;
         }
 
