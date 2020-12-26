@@ -1,12 +1,15 @@
 #ifndef UF_M_Intersect_H
 #define UF_M_Intersect_H
 
+#include <vector>
 #include "Vector.hpp"
 #include "Shape.hpp"
 #include "../Utils/Ok.hpp"
 #include "Equation.hpp"
 
 #define EPS 0.001
+#define is_zero(d) (abs(d) < EPS)
+
 
 //UseFull Math Intersect module
 //Version 2.0 alfa
@@ -18,9 +21,10 @@
 
 
 namespace math {
-	
 	using namespace utils;
 	
+	/*   projection   */
+		
 	template <size_t DM>
 	VDM projectionPointOnSphere(const VDM * base, const Sphere<DM> * sphere) {
 		return (*base - sphere->center).ort() * sphere->r + sphere->center;
@@ -202,28 +206,102 @@ namespace math {
 	}
 	
 	
-	//TODO: RELEASE
+	//TODO: CHECK
+	template <size_t DM>
+	Ok<VDM> intersectEquationLineWithEquationLine(const EquationLine<DM> & el1, const EquationLine<DM> & el2) {
+		if (DM == 1) printf("intersectEquationLineWithEquationLine with DM = 1 has no sense\n"); exit(0);
+		
+		const VDM & b1 = el1.vector;
+		const VDM & b2 = el2.vector;
+		const VDM    c = el1.point - el2.point;
+		std::vector<size_t> indexes;
+		
+		for (size_t i = 0; i < DM; i++) { //find all indexes, where exists b1 != 0 or b2 != 0
+			if (!is_zero(b1[i]) || !is_zero(b2[i])) indexes.push_back(i);
+			else if (!is_zero(c[i])) return {}; //when b1 = 0, b2 = 0 => must c = 0
+		}
+		
+		if (indexes.size() == 0) return el1.point;
+		
+		const size_t & i = indexes[0];
+		
+		if (indexes.size() == 1) {
+			if (!is_zero(b1[i]) && !is_zero(b2[i])) {
+				printf("Infinity Many solutions?\n");
+				return {};
+			}
+		}
+		
+		const size_t & i_next = indexes[1];
+		
+		double k1 = 0, k2 = 0;
+		
+		/*
+		Main_Equation:
+			k2 * b2 - k1 * b1 = c
+		*/
+		
+		size_t j = 1;
+		
+		if (is_zero(b2[i])) {
+			k1 = c[i] / (- b1[i]); //from Main_Equation
+			
+			for (; j < indexes.size(); j++) {
+				const size_t & i_cur = indexes[j];
+				if (is_zero(b2[i_cur])) { //when b2 = 0, check k1 for equality
+					if (!is_zero( k1 + c[i_cur] / b1[i_cur] )) return {};
+				}
+				else { //else, find k2
+					k2 = (b1[i_cur] * k1 + c[i_cur]) / b2[i_cur];
+					break;
+				}
+			}
+		}
+		else if (is_zero(b1[i])) {
+			k2 = c[i] / b2[i]; //from Main_Equation
+			
+			for (; j < indexes.size(); j++) {
+				const size_t & i_cur = indexes[j];
+				if (is_zero(b1[i_cur])) { //when b1 = 0, check k2 for equality
+					if (!is_zero( k2 - c[i_cur] / b2[i_cur] )) return {};
+				}
+				else { //else, find k1
+					k1 = (b2[i_cur] * k2 - c[i_cur]) / b1[i_cur];
+					break;
+				}
+			}
+			
+		}
+		else {
+			//solve equations system size 2
+			double del = b2[i_next] * b1[i] - b1[i_next] * b2[i];
+			if (abs(del) < EPS) return {};
+				
+			k1 = (c[i_next] * b2[i] - c[i] * b2[i_next]) / del;
+			k2 = (c[i] + b1[i] * k1) / b2[i];
+			
+			j = 2;
+		}
+		
+		for (; j < indexes.size(); j++) {
+			const size_t & i_cur = indexes[j];
+			if (!is_zero(c[i_cur] - k2 * b2[i_cur] + k1 * b1[i_cur])) return {};
+		}
+		
+		return el1.pointOnParam(k1);
+		
+	}
+	
+	//TODO: CHECK
 	template <size_t DM>
 	Ok<VDM> intersectLineWithLine(const Line<DM> & line1, const Line<DM> & line2) {
-		//X = line1_e.point + t1 * line1_e.vector;
-		//X = line2_e.point + t2 * line2_e.vector;
-		/*
-		{line1_e.vector, 0, line1_e.point - X},
-		{0, line1_e.vector, line2_e.point - X}
-		
-		->
-		0 = (line1_e.point - line2_e.point) + t1 * line1_e.vector - t2 * line2_e.vector;
-		
-		*/
-		return {};
-		/*
-		EquationLine e1(line1);
-		EquationLine e2(line2);
-		
-		double del = e1.a * e2.b - e2.a * e1.b;
-		if (del == 0) return {};
-		else return VDM((e1.b * e2.c - e2.b * e1.c) / del, (e1.c * e2.a - e2.c * e1.a) / del);
-		*/
+		Ok<VDM> res = intersectEquationLineWithEquationLine(EquationLine<DM>(line1), EquationLine<DM>(line2));
+		if (res.isOk) {
+			if (!checkPointInCodir(res.value, Codir<DM>(line1))) return {};
+			if (!checkPointInCodir(res.value, Codir<DM>(line2))) return {};
+			return res.value;
+		}
+		else return {};
 	}
 	//
 	
@@ -308,15 +386,10 @@ namespace math {
 	}
 	//
 	
-	//TODO : RELEASE
+	//TODO : CHECK
 	template <size_t DM>
 	bool checkIntersectSphereWithSphere(const Sphere<DM> & s1, const Sphere<DM> & s2) {
-		/*
-		
-		Если сфера 
-		
-		*/
-		return {};
+		return (s2.center - s1.center).norm() >= s1.r + s2.r;
 	}
 	//
 }

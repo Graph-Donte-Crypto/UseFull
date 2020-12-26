@@ -3,7 +3,9 @@
 
 #include "../../Math/Shape.hpp"
 #include "../Event.hpp"
+#include "../Drawer.hpp"
 #include "../../Templates/Ras.hpp"
+#include "FocusTracker.hpp"
 
 //UseFull SFML Up Gui Base module
 //Version 1.0 alfa

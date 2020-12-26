@@ -10,7 +10,7 @@
 
 namespace uft {
 	template <typename type>
-	class Asr;
+	struct Asr;
 
 	template <typename type>
 	struct AsrRecord {

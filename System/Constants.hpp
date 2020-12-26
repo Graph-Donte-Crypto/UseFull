@@ -7,9 +7,9 @@
 
 namespace ufsys {
 	#ifdef WIN32
-	constexpr char * PathSplitter = "\\";
+	constexpr const char * PathSplitter = "\\";
 	#else 
-	constexpr char * PathSplitter = "/";
+	constexpr const char * PathSplitter = "/";
 	#endif
 }
 

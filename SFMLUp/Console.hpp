@@ -2,12 +2,20 @@
 #define UF_SFMLUP_Console_H
 
 #include <SFML/Graphics.hpp>
+#include "../Math/Shape.hpp"
+#include "../Templates/Array.hpp"
+#include "Event.hpp"
+#include "Drawer.hpp"
 
 //UseFull SFML Up Console module
 //Version 1.0 alfa
 //Make by Graph Don'te-Crypto
 
 namespace sfmlup {
+	
+	using namespace math;
+	using namespace sfup;
+	
 	struct OneCommandConsole {
 		Codir<2> codir;
 		uft::Array<char> string;
@@ -42,7 +50,7 @@ namespace sfmlup {
 		}
 		
 		void draw() {
-			Global.drawCodir(codir, sf::Color::White);
+			Drawer.drawCodir(codir, sf::Color::White);
 		}
 	};
 }

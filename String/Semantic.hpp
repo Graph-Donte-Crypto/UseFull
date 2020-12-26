@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include "BaseLib.hpp"
 
+#include <memory>
+
 //UseFull String Semantic module
 //Version 1.1 alfa
 //Make by Graph Don'te-Crypto
@@ -44,7 +46,7 @@ namespace str  {
 		(const char * source, const char * spliter, SemanticHandler sh) {
 		size_t l_spl = strlen(spliter);
 		const Semantic * sems = sh.sems;
-		size_t q[strlen(source)];
+		size_t * q = new size_t[strlen(source)];
 		size_t q_i = 0;
 		
 		cycl_start:
@@ -60,6 +62,7 @@ namespace str  {
 						goto cycl_start;
 					}	
 				if (strncmp(source, spliter, l_spl) == 0) {
+					delete[] q;
 					return source + l_spl;
 				}
 			}
@@ -96,6 +99,7 @@ namespace str  {
 			source += 1;
 			goto cycl_start;
 		cycl_end:
+		delete[] q;
 		return source;
 	}
 	

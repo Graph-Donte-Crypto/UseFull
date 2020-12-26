@@ -3,6 +3,8 @@
 
 #include <stdlib.h>
 #include <initializer_list>
+#include <math.h>
+
 #include "Concepts.hpp"
 
 //UseFull Random module

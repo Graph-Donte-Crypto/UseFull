@@ -31,12 +31,12 @@ namespace sfup {
 		
 		XY getDesktopPosition() {
 			auto pos = sf::Mouse::getPosition();
-			return {pos.x, pos.y}; 
+			return {(double)pos.x, (double)pos.y}; 
 		}
 		
 		XY getWindowPosition(sf::RenderWindow & window) {
 			sf::Vector2i pos = sf::Mouse::getPosition(window);
-			return {pos.x, pos.y};
+			return {(double)pos.x, (double)pos.y};
 		}
 		
 		XY getWindowPosition() {

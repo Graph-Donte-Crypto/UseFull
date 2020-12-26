@@ -117,10 +117,7 @@ namespace str {
     }
 
     char * CopyN(char * out, const char * in, size_t n) {
-        #pragma GCC diagnostic push
-        #pragma GCC diagnostic ignored "-Wstringop-truncation"
         return strncpy(out, in, n);
-        #pragma GCC diagnostic pop
     }
     char * Move(char * out, const char * in, size_t n) {
         return (char *)memmove((void * )out, (const void *)in, n);

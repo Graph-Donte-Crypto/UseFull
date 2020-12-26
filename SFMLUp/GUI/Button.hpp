@@ -36,7 +36,7 @@ struct Button : public BaseGui {
 		text.setCharacterSize(14);
 		text.setString("");
 		text_position = codir.center();
-		text.setColor(sf::Color::Black);
+		text.setFillColor(sf::Color::Black);
 		text.setOutlineThickness(0.1);
 		setColor(color_focus_not);
 	}
@@ -61,15 +61,17 @@ struct Button : public BaseGui {
 		frame.color = color_current;
 		frame.drawTo(this);
 		
+		/*
 		text.setPosition(text_position[0], text_position[1]);
 		{
 			sf::Font temp_font;
 			sf::Text text("", *Fonts.getByName("UbuntuMono-R").valueOr(&temp_font), 14);
 			text.setPosition(0, 0);
-			text.setString("Sosi");
+			text.setString("Test");
 			text.setColor(sf::Color::Black);
 			this->draw(text);
 		}
+		*/
 		
 		this->draw(text);
 	}

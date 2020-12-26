@@ -76,7 +76,7 @@ namespace math {
 		}
 		
 		void printf(const char * format = "%07.3lf ") const {
-			::printf("a = "); ort.printf(printf);
+			::printf("a = "); ort.printf(format);
 			::printf("c = "); ::printf(format, c); 
 		}
 		

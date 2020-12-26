@@ -11,6 +11,8 @@ String/Sc.hpp
 String/Sc10.hpp
 String/Sc20.hpp
 String/ScBs.hpp
+String/Parser.hpp
+String/Slice.hpp
 Templates/ArrayList.hpp
 Templates/Asr.hpp
 Templates/Cas.hpp

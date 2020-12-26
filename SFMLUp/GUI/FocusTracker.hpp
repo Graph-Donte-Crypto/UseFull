@@ -2,6 +2,7 @@
 #define UF_SFMLUp_GUI_FocusTracker_H
 
 #include "../../Math/Shape.hpp"
+#include "../../Math/Intersect.hpp"
 #include "../Event.hpp"
 
 //UseFull SFML Up Gui Focus Tracker module
@@ -45,11 +46,14 @@ struct FocusTracker {
 	Codir<2> codir_focus;
 	XY       focus_offset;
 	
-	virtual void moveRelative(const XY & delta) {
+	virtual void moveRelative(const XY &) {
 		//codir_focus += delta;
 	}
 
 	FocusTracker(const Codir<2> & c) : codir_focus(c) {
+		
+	}
+	virtual ~FocusTracker() {
 		
 	}
 

@@ -40,7 +40,7 @@ namespace uft {
 		    values = nullptr;
         }
 		void freeMemory(void * ptr) {
-		    delete[] ptr;
+		    delete[] (Type *)ptr;
         }
 		void setMemory(void * ptr) {
 		    values = ptr;
@@ -141,13 +141,7 @@ namespace uft {
 			return *this;
 		}
 
-    private:
-        //защита от случайного прямого копирования
-        Array & operator = (const Array & array) {
-            return *this;
-        }
-
-    public:
+        Array & operator = (const Array & array) = delete;
 
 		size_t getElementPositionUnsafe(const Type * obj) {
 			return (values - obj) / sizeof(Type);

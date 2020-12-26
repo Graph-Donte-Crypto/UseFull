@@ -9,8 +9,6 @@
 
 namespace str {
 	namespace Replace {
-		#pragma GCC diagnostic ignored "-Wstringop-truncation"
-		#pragma GCC diagnostic ignored "-Wstringop-overflow="
 		char * Standart(char * where, const char * what, const char * with_what) {
 			char * pos = where;
 			size_t with_what_len = strlen(with_what);
@@ -68,8 +66,6 @@ namespace str {
 			strncpy(where + pos, with_what, strlen(with_what));
 			return where;
 		}
-		#pragma GCC diagnostic pop
-		#pragma GCC diagnostic pop
 	}
 
 }

@@ -97,10 +97,16 @@ namespace math {
 			for (size_t i = 0; i < dimension; i++) 
 				std::tie(left_up[i], right_down[i]) = minmax(line.a[i], line.b[i]);
 		}
-		Codir(const Codir<dimension> & codir) {
-			left_up = codir.left_up;
+		Codir(const Codir<dimension> & codir) :
+			left_up(codir.left_up),
+			right_down(codir.right_down) {}
+		
+		Codir & operator = (const Codir & codir) {
+			left_up    = codir.left_up;
 			right_down = codir.right_down;
+			return *this;
 		}
+		
 		void printf(const char * format = "%07.3lf ") const {
 			::printf("LU: "); left_up.printf(format);
 			::printf("RD: "); right_down.printf(format);

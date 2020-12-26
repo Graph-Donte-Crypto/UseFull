@@ -96,10 +96,10 @@ namespace uft {
 			for (size_t i = 0; i < coll.length; i++) lambda(coll[i]);
 		}
 		void addAllCopy(CoCollection<Type> auto & inputColl) {
-			foreach([this] (Type * obj) { coll.addCopy(obj);});
+			inputColl.foreach([this] (Type * obj) { coll.addCopy(obj);});
 		}
 		void addAllCopy (size_t index, CoCollection<Type> auto & inputColl) {
-			foreach([this, &index] (Type * obj) { coll.addCopy(index++, obj);});
+			inputColl.foreach([this, &index] (Type * obj) { coll.addCopy(index++, obj);});
 		}
 		void removeFirst() {return coll.remove(0);}
 		void removeLast () {return coll.remove(coll.length - 1);}

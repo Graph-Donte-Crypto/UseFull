@@ -43,10 +43,10 @@ namespace sfup {
 		}
 		
 		void setFontToText(const char * name, sf::Text & text) {
-			Ok<sf::Font *> font = getByName("UbuntuMono-R");
+			Ok<sf::Font *> font = getByName(name);
 			if (font.isOk) text.setFont(*(font.value));
 			else {
-				printf("Error find font [%name]\n");
+				printf("Error find font [%name]\n", name);
 				font = getDefault();
 				if (font.isOk) text.setFont(*(font.value));
 				else printf("Error find default font\n");
