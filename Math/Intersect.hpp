@@ -209,7 +209,10 @@ namespace math {
 	//TODO: CHECK
 	template <size_t DM>
 	Ok<VDM> intersectEquationLineWithEquationLine(const EquationLine<DM> & el1, const EquationLine<DM> & el2) {
-		if (DM == 1) printf("intersectEquationLineWithEquationLine with DM = 1 has no sense\n"); exit(0);
+		if (DM == 1) {
+            printf("intersectEquationLineWithEquationLine with DM = 1 has no sense\n"); 
+            exit(0);
+        }
 		
 		const VDM & b1 = el1.vector;
 		const VDM & b2 = el2.vector;
