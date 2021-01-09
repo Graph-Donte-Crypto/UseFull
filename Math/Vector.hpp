@@ -1,6 +1,7 @@
 #ifndef UF_M_Vector_H
 #define UF_M_Vector_H
 
+#include <cstddef>
 #include <math.h>
 #include <string.h>
 #include <stdio.h>
@@ -134,12 +135,15 @@ namespace math {
 			return true;
 		}
 		
+        double distanceSquaredTo(C Vector<dimension> & vector) C {
+            double sum;
+            for (size_t i = 0; i < dimension; i++)
+                sum += (coords[i] - vector.coords[i]) * (coords[i] - vector.coords[i]);
+            return sum;
+        }
 
 		double distanceTo(C Vector<dimension> & vector) C {
-			double sum = 0;
-			for (size_t i = 0; i < dimension; i++)
-				sum += (coords[i] - vector.coords[i]) * (coords[i] - vector.coords[i]);
-			return sqrt(sum);
+            return sqrt(distanceSquaredTo(vector));
 		}
 		
 		double norm() C {
