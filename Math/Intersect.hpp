@@ -39,13 +39,20 @@ namespace math {
 	template <size_t DM>
 	Ok<VDM> projectionPointOnEquationLine(const VDM & base, const EquationLine<DM> & el) {
 		//point = el.point + t * el.vector;
-		//eh.a * point + eh.c = 0
-		//eh.a * el.point + t * el.vector * eh.a + eh.c = 0
-		//t = (-eh.c - eh.a * el.point) / (el.vector * eh.a)
-		//point = el.point + ( (-eh.c - eh.a * el.point) / (el->vector * eh.a) ) * el.vector;
+		//eh.ort * point + eh.c = 0
+		//eh.ort * el.point + t * el.vector * eh.ort + eh.c = 0
+		//t = (-eh.c - eh.ort * el.point) / (el.vector * eh.ort)
+		//point = el.point + ( (-eh.c - eh.ort * el.point) / (el->vector * eh.ort) ) * el.vector;
 		EquationHyperplane<DM> eh(base, el.vector);
 		double elv_eha = el.vector * eh.ort;
-		if (abs(elv_eha) <= EPS) return {};
+		if (abs(elv_eha) <= EPS) {
+			printf("Equation Line special error\nbase:\n");
+			base.printf();
+			printf("el:\n");
+			el.ort.printf();
+			printf("c: %lf\n", el.c);
+			return {};
+		}
 		//if _ret == {} -> something goes wrong;
 		//return el.point + el.vector * ( (-eh.c - (eh.ort * el.point)) / elv_eha );
 		return el.pointOnParam((-eh.c - (eh.ort * el.point)) / elv_eha);
