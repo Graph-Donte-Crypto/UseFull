@@ -80,7 +80,7 @@ namespace math {
 			::printf("c = "); ::printf(format, c); 
 		}
 		
-		double valueInPoint(const Vector<dimension> & point) {
+		double valueInPoint(const Vector<dimension> & point) const {
 			double result = c;
 			for (size_t i = 0; i < dimension; i++)
 				c += point[i] * ort[i];
