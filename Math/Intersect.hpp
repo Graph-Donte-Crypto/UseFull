@@ -43,6 +43,9 @@ namespace math {
 		//eh.ort * el.point + t * el.vector * eh.ort + eh.c = 0
 		//t = (-eh.c - eh.ort * el.point) / (el.vector * eh.ort)
 		//point = el.point + ( (-eh.c - eh.ort * el.point) / (el->vector * eh.ort) ) * el.vector;
+		
+		/*
+		
 		EquationHyperplane<DM> eh(base, el.vector);
 		double elv_eha = el.vector * eh.ort;
 		if (abs(elv_eha) <= EPS) {
@@ -56,6 +59,13 @@ namespace math {
 		//if _ret == {} -> something goes wrong;
 		//return el.point + el.vector * ( (-eh.c - (eh.ort * el.point)) / elv_eha );
 		return el.pointOnParam((-eh.c - (eh.ort * el.point)) / elv_eha);
+		
+		*/
+		
+		//Testing new version of projection algorithm
+		//base - el.point - vector from el.point to base
+		//el.vector * (base - el.point) - length of projection
+		return el.pointOnParam(el.vector * (base - el.point));
 	}
 	//
 	
