@@ -61,7 +61,7 @@ namespace math {
 	
 	//TODO: CHECK
 	template <size_t DM>
-	Ok<VDM> projectionPointOnEquationHyperplane(const VDM & base, const EquationHyperplane<DM> & eh) {
+	VDM projectionPointOnEquationHyperplane(const VDM & base, const EquationHyperplane<DM> & eh) {
 		/* 
 			B - result point
 		
