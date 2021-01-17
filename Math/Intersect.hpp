@@ -49,8 +49,8 @@ namespace math {
 			printf("Equation Line special error\nbase:\n");
 			base.printf();
 			printf("el:\n");
-			el.ort.printf();
-			printf("c: %lf\n", el.c);
+			eh.ort.printf();
+			printf("c: %lf\n", eh.c);
 			return {};
 		}
 		//if _ret == {} -> something goes wrong;
