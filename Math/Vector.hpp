@@ -135,15 +135,15 @@ namespace math {
 			return true;
 		}
 		
-        double distanceSquaredTo(C Vector<dimension> & vector) C {
-            double sum;
-            for (size_t i = 0; i < dimension; i++)
-                sum += (coords[i] - vector.coords[i]) * (coords[i] - vector.coords[i]);
-            return sum;
-        }
+		double distanceSquaredTo(C Vector<dimension> & vector) C {
+			double sum;
+			for (size_t i = 0; i < dimension; i++)
+				sum += (coords[i] - vector.coords[i]) * (coords[i] - vector.coords[i]);
+			return sum;
+		}
 
 		double distanceTo(C Vector<dimension> & vector) C {
-            return sqrt(distanceSquaredTo(vector));
+			return sqrt(distanceSquaredTo(vector));
 		}
 		
 		double norm() C {
