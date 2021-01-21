@@ -12,7 +12,7 @@
 
 
 //UseFull Math Intersect module
-//Version 2.0 alfa
+//Version 2.1 alfa
 //Make by Graph Don'te-Crypto
 
 //DM ~ DiMention
@@ -69,6 +69,12 @@ namespace math {
 	}
 	//
 	
+    template <size_t DM>
+    VDM oppositePointFromLine(const VDM & base, const EquationLine<DM> & el){
+        VDM projection = projectionPointOnEquationLine(base, el);
+        return projection * 2 - base;
+    }
+
 	//TODO: CHECK
 	template <size_t DM>
 	VDM projectionPointOnEquationHyperplane(const VDM & base, const EquationHyperplane<DM> & eh) {
