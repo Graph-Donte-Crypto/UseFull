@@ -1,6 +1,8 @@
 #ifndef UF_M_Matrix_H
 #define UF_M_Matrix_H
 
+#include <cmath>
+#include <cstddef>
 #include <string.h>
 
 #include "Vector.hpp"
@@ -168,6 +170,58 @@ namespace math {
 			for (size_t i = 0; i < height; i++) ans *= triangle[i][i];
 			return ans;
 		}
+
+        // Convert matrix to reduced row echelon form
+        Matrix & toReducedEchelonForm() {
+            for (size_t row = 0, lead = 0; row < width && lead < height; ++row, ++lead) {
+                size_t i = row;
+                while (abs((*this)[i][lead]) < EPS) {
+                    if (++i == width) {
+                        i = row;
+                        if (++lead == height)
+                            return;
+                    }
+                }
+
+                this->swapRows(i, row);
+
+                if (abs((*this)[row][lead]) > EPS) {
+                    D f = (*this)[row][lead];
+                    for (size_t column = 0; column < width; ++column)
+                        (*this)[row][column] /= f;
+                }
+
+                for (size_t j = 0; j < height; ++j) {
+                    if (j == row)
+                        continue;
+
+                    D f = (*this)[j][lead];
+                    for (size_t column = 0; column < width; ++column)
+                        (*this)[j][column] -= f * (*this)[row][column];
+                }
+            }
+            return (*this);
+        }
+     
+        Ok<Matrix &> toInverse() {
+            if (width != height) return {};
+
+            Matrix<width, 2 * height> tmp;
+
+            for (size_t row = 0; row < height; ++row) {
+                for (size_t column = 0; column < width; ++column)
+                    tmp[row][column] = (*this)[row][column];
+                tmp(row, row + height) = 1;
+            }
+
+            tmp.toReducedEchelonForm();
+
+            for (size_t row = 0; row < height; ++row) {
+                for (size_t column = 0; column < width; ++column)
+                    (*this)[row][column] = tmp[row][column + height];
+            }
+            return (*this);
+        }
 		
 		Matrix<height> & toE() {
 			for (size_t i = 0; i < height; i++) array[i] = 0;
