@@ -27,5 +27,12 @@ foreach ($i in 0..($buildignore_targets.Count - 1)) {
 				break
 			}
 		}
+		elseif ($info.Name.EndsWith('.h')) {
+			echo "Compiling: $($info.Name)"
+			clang "$($info.FullName)" -S -Wall -Wpedantic -Wextra -Werror -Wfatal-errors -fsyntax-only -Og -std=c17
+			if ($LASTEXITCODE -ne 0) {
+				break
+			}
+		}
 	}
 }
