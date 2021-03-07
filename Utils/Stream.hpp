@@ -1,8 +1,7 @@
 #ifndef UF_U_Stream_H
 #define UF_U_Stream_H
 
-#include <UseFull/Utils/Concepts.hpp>
-#include <UseFull/Utils/Ok.hpp>
+#include "Concepts.hpp"
 #include <stdio.h>
 
 //UseFull Utils Stream api module
