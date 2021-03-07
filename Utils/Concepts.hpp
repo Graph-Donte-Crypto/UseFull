@@ -19,6 +19,12 @@ namespace utils {
 		{ func(input...) } -> std::same_as<RET>;
 	};
 	
+	template <typename FUNC, typename ... INPUT>
+	concept CoVoidLambda = 
+	requires (FUNC func, INPUT ... input) {
+		{ func(input...) } -> std::same_as<void>;
+	};
+	
 	/*
 	Example: 
 		int function(CoLambda<int, Nothing> auto lambda) {
@@ -49,6 +55,21 @@ namespace utils {
 		{ obj.getDataSize()     } -> std::convertible_to<std::size_t>;
 	};
 	
+	template <typename Coll, typename Type>
+	concept CoIterable = 
+	requires (Coll coll, std::size_t size) {
+		{ coll.hasNext() } -> std::same_as<bool>;
+		{ coll.getNext() } -> std::convertible_to<Type>;
+		{ coll.getCurr() } -> std::convertible_to<Type>;
+		{ coll.restore() } -> std::same_as<void>;
+	};
+	
+	template <typename TypeFrom, typename TypeTo>
+	concept CoConvertible = 
+	requires (TypeFrom object) {
+		{ object } -> std::convertible_to<TypeTo>;
+	};
+	
 	template <typename Type>
 	concept CoSizeable = 
 	requires (Type obj) {
@@ -62,6 +83,13 @@ namespace utils {
 		{ coll.length } -> std::convertible_to<std::size_t>;
 	};
 	
+	template <typename Coll, typename Type>
+	concept CoStdEnumeration  = 
+	requires (Coll coll, std::size_t index) {
+		{ coll[index] } -> std::same_as<Type &>;
+		{ coll.size() } -> std::convertible_to<std::size_t>;
+	};
+		
 	template <typename Coll, typename Type>
 	concept CoCollection  = 
 	requires (Coll coll, std::size_t index, const Type * obj) {
