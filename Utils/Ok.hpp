@@ -16,7 +16,7 @@ namespace utils {
 	public:
 		Type value;
 		bool isOk = true;
-		Ok(const Type & value) : value(value) {}
+		Ok(const Type & _value) : value(_value) {}
 		Ok() : value() {isOk = false;}
 		~Ok() = default;
 		
@@ -24,8 +24,8 @@ namespace utils {
 			value(o.value), 
 			isOk(o.isOk) {};
 		
-		bool get(Type & value) const {
-			if (isOk) value = this->value;
+		bool get(Type & _value) const {
+			if (isOk) _value = this->value;
 			else return false;
 			return true;
 		}
@@ -36,9 +36,9 @@ namespace utils {
 				exit(1);
 			}
 		}
-		Type valueOr(Type value) const {
+		Type valueOr(Type _value) const {
 			if (isOk) return this->value;
-			else      return value;
+			else      return _value;
 		}
 		
 		Type actionOr(CoLambda<Type, Nothing> auto func) const {
@@ -47,8 +47,8 @@ namespace utils {
 		}
 		operator bool () const { return isOk;}
 		operator Type () const { return ok();}
-		Ok & operator = (const Type & value) {
-			this->value = value;
+		Ok & operator = (const Type & _value) {
+			this->value = _value;
 			isOk = true;
 			return *this;
 		}
