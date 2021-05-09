@@ -1,6 +1,7 @@
 #ifndef UF_M_Intersect_H
 #define UF_M_Intersect_H
 
+#include <cstddef>
 #include <vector>
 #include "Vector.hpp"
 #include "Shape.hpp"
@@ -69,11 +70,34 @@ namespace math {
 	}
 	//
 	
+    template<size_t DM>
+    VDM intersectEquationLineWithHyperplane(const EquationLine<DM> & el, const EquationHyperplane<DM> & eh) {
+        /*
+            point * eh.ort + eh.c = 0
+            el.point + k * el.vector = point
+            (el.point + k * el.vector) * eh.ort = point * eh.ort
+            el.point * eh.ort + (k * el.vector) * eh.ort + eh.c = 0
+            el.point * eh.ort + k * (el.vector * eh.ort) + eh.c = 0
+
+            k = - (eh.c + el.point * eh.ort) / (el.vector * eh.ort)
+
+            el.point - ( (eh.c + el.point * eh.ort) / (el.vector * eh.ort) ) * el.vector = point
+
+        */
+        
+        return el.point - ( (eh.c + el.point * eh.ort) / (el.vector * eh.ort) ) * el.vector;
+    }
+
     template <size_t DM>
-    VDM oppositePointFromLine(const VDM & base, const EquationLine<DM> & el){
+    VDM reflectPointOverLine(const VDM & base, const EquationLine<DM> & el){
         VDM projection = projectionPointOnEquationLine(base, el);
         return projection * 2 - base;
     }
+
+    template <size_t DM>
+    VDM reflectVectorOverHyperplane(const VDM & vector, const EquationHyperplane<DM> & eh) {
+        
+    } 
 
 	//TODO: CHECK
 	template <size_t DM>
@@ -111,6 +135,37 @@ namespace math {
 	}
 	//
 	
+    template <size_t DM>
+    Ok<VDM> & getFirstIntersect(const Line<DM> & line, const std::vector<Line<DM>> & lines) {
+        
+        Ok<VDM> result;
+		double distance = 0;
+
+        size_t i = 0;
+        for (; i < lines.size(); i++) {
+            result = intersectLineWithLine(line, lines[i]);
+            if (result.isOk) {
+				distance = line.a.distanceTo(result.value);
+				break;
+			}
+        }
+
+		Ok<VDM> new_result;
+
+		for (; i < lines.size(); i++) {
+			new_result = intersectLineWithCodir(line, lines[i]);
+			if (new_result.isOk) {
+				double new_distance = line.a.distanceTo(new_result.value);
+				if (new_distance < distance) {
+					result = new_result;
+					distance = new_distance;
+				}
+			}
+        }
+
+		return result;
+    }
+
 	template <size_t DM>
 	const VDM & nearestPointToPoint(const VDM & base, const VDM & one, const VDM & two) {
 		return (one - base).norm() < (two - base).norm() ? one : two;
@@ -121,13 +176,11 @@ namespace math {
 		return (point > codir.left_up - VDM(eps)) && (point < codir.right_down + VDM(eps));
 	}
 	
-	
-		
 	//TODO: CHECK
 	template<size_t DM>
 	Ok<VDM> projectionPointOnLine(const VDM & base, const Line<DM> & line) {
-		Ok<VDM> projection = projectionPointOnEquationLine(base, line);
-		if (projection.isOk && checkPointInCodir(projection.value, line, EPS)) 
+		Ok<VDM> projection = projectionPointOnEquationLine(base, EquationLine(line));
+		if (projection.isOk && checkPointInCodir(projection.value, Codir(line), EPS)) 
 			return projection;
 		else return {};
 	}
