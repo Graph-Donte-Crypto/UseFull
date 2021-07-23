@@ -1,6 +1,4 @@
 CrossPlatfrom/Socket.hpp
-CrossPlatfrom/sthread_remake.hpp
-CrossPlatfrom/sthread_remake.cpp
 String/File.hpp
 String/Json.hpp
 String/Parser.hpp

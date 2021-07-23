@@ -1,3 +1,11 @@
+
+namespace utils {
+	struct CastStruct {
+		
+	}
+	Cas;
+}
+
 /*
 
 Класс Cas

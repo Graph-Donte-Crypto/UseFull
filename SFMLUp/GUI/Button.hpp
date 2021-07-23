@@ -22,9 +22,9 @@ struct Button : public BaseGui {
 
 	sf::Text text;
 	XY text_position = XY{0, 0};
-	
+
 	std::function<void (void)> lambda = nullptr;
-	
+
 	Button(const Codir<2> & codir) : BaseGui(codir) {
 		frame = Frame(1, codir.center());
 		color_focus_not = sf::Color(159, 159, 159, 255);
@@ -32,7 +32,7 @@ struct Button : public BaseGui {
 		color_press 	= sf::Color(191, 191, 191, 255);
 
 		Fonts.setFontToText("UbuntuMono-R", text);
-		
+
 		text.setCharacterSize(14);
 		text.setString("");
 		text_position = codir.center();
@@ -40,27 +40,27 @@ struct Button : public BaseGui {
 		text.setOutlineThickness(0.1);
 		setColor(color_focus_not);
 	}
-	
+
 	void centerTheText() {
 		text_position[0] -= text.getGlobalBounds().width / 2;
 		text_position[1] -= codir.size()[1] / 2;
 	}
-	
+
 	void action() {
 		if (active) {
 			FocusTracker::focus_offset = getAbsoluteOffset();
-			checkFocus(Mouse.getWorldPosition());
+			checkFocus(Mouse.inWorld);
 		}
 	}
 	~Button() {
-		
+
 	}
 	void drawSelf() {
 		BaseGui::drawSelf();
-		
+
 		frame.color = color_current;
 		frame.drawTo(this);
-		
+
 		/*
 		text.setPosition(text_position[0], text_position[1]);
 		{
@@ -72,7 +72,7 @@ struct Button : public BaseGui {
 			this->draw(text);
 		}
 		*/
-		
+
 		this->draw(text);
 	}
 	void setColor(const sf::Color & color) {
@@ -98,7 +98,7 @@ struct Button : public BaseGui {
 		text_position += delta;
 	}
 };
-	
+
 }}
 
 #endif

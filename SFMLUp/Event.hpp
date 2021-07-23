@@ -8,31 +8,31 @@
 //Make by Graph Don'te-Crypto
 
 namespace sfup {
-	enum ev {
-		evMouseMoved,
+	enum class EventType {
+		MouseMoved,
 
-		evMouseButtonPressed,
-		evMouseButtonPressedLeft,
-		evMouseButtonPressedRight,
-		evMouseButtonPressedMiddle,
+		MouseButtonPressed,
+		MouseButtonPressedLeft,
+		MouseButtonPressedRight,
+		MouseButtonPressedMiddle,
 
-		evMouseButtonPressingStart,
+		MouseButtonPressingStart,
 
-		evMouseButtonPressing,
-		evMouseButtonPressingLeft,
-		evMouseButtonPressingRight,
-		evMouseButtonPressingMiddle,
+		MouseButtonPressing,
+		MouseButtonPressingLeft,
+		MouseButtonPressingRight,
+		MouseButtonPressingMiddle,
 
-		evMouseButtonPressingEnd,
+		MouseButtonPressingEnd,
 
-		evMouseButtonReleased,
-		evMouseButtonReleasedLeft,
-		evMouseButtonReleasedRight,
-		evMouseButtonReleasedMiddle,
+		MouseButtonReleased,
+		MouseButtonReleasedLeft,
+		MouseButtonReleasedRight,
+		MouseButtonReleasedMiddle,
 
-		evMouseWheelMoved,
-		evMouseWheelMovedUp,
-		evMouseWheelMovedDown,
+		MouseWheelMoved,
+		MouseWheelMovedUp,
+		MouseWheelMovedDown,
 	};
 	
 	enum class KeyState {Pressed, Pressing, Released};
@@ -41,48 +41,47 @@ namespace sfup {
 	public:
 		static constexpr size_t limit = 128;
 
-		class KeyPressedClass {
-		public:
+		struct KeyPressedClass {
 			bool e[limit];
 			bool & operator [](sf::Keyboard::Key key) { return e[key];}
 			bool & operator [](size_t key) { return e[key];}
 		} KeyPressed;
 
-		class KeyPressingClass {
-		public:
+		struct KeyPressingClass {
 			bool e[limit];
 			bool & operator [](sf::Keyboard::Key key) { return e[key];}
 			bool & operator [](size_t key) { return e[key];}
 		} KeyPressing;
 
-		class KeyReleasedClass {
-		public:
+		struct KeyReleasedClass {
 			bool e[limit];
 			bool & operator [](sf::Keyboard::Key key) { return e[key];}
 			bool & operator [](size_t key) { return e[key];}
 		} KeyReleased;
 
-		class KeyClass {
-		public:
-			KeyPressedClass  * KeyPressedPtr  = nullptr;
-			KeyPressingClass * KeyPressingPtr = nullptr;
-			KeyReleasedClass * KeyReleasedPtr = nullptr;
-			KeyClass() {
-			}
+		struct KeyClass {
+			KeyPressedClass  & KeyPressedRef;
+			KeyPressingClass & KeyPressingRef;
+			KeyReleasedClass & KeyReleasedRef;
+			KeyClass(KeyPressedClass & p1, KeyPressingClass & p2, KeyReleasedClass & p3)
+			: KeyPressedRef(p1)
+			, KeyPressingRef(p2)
+			, KeyReleasedRef(p3)
+			{}
 			bool & operator ()(sf::Keyboard::Key key, KeyState state) {
 				switch (state) {
-					case KeyState::Pressed:  return (*KeyPressedPtr) [key];
-					case KeyState::Pressing: return (*KeyPressingPtr)[key];
-					case KeyState::Released: return (*KeyReleasedPtr)[key];
+					case KeyState::Pressed : return KeyPressedRef [key];
+					case KeyState::Pressing: return KeyPressingRef[key];
+					case KeyState::Released: return KeyReleasedRef[key];
 				}
 				printf("Event.KeyClass.operator().FatalSwitchError\n");
 				exit(1);
 			}
 			bool & operator ()(size_t key, KeyState state) {
 				switch (state) {
-					case KeyState::Pressed:  return (*KeyPressedPtr) [key];
-					case KeyState::Pressing: return (*KeyPressingPtr)[key];
-					case KeyState::Released: return (*KeyReleasedPtr)[key];
+					case KeyState::Pressed : return KeyPressedRef [key];
+					case KeyState::Pressing: return KeyPressingRef[key];
+					case KeyState::Released: return KeyReleasedRef[key];
 				}
 				printf("Event.KeyClass.operator().FatalSwitchError\n");
 				exit(1);
@@ -91,11 +90,8 @@ namespace sfup {
 
 		bool e[limit];
 
-		EventKeeper() {
+		EventKeeper() : Key(KeyPressed, KeyPressing, KeyReleased) {
 			flushStrong();
-			Key.KeyPressedPtr  = &KeyPressed;
-			Key.KeyPressingPtr = &KeyPressing;
-			Key.KeyReleasedPtr = &KeyReleased;
 		}
 		
 		bool & operator [](sf::Keyboard::Key key)       { return e[key];}
@@ -103,6 +99,9 @@ namespace sfup {
 		
 		bool & operator [](size_t key)       { return e[key];}
 		bool   operator [](size_t key) const { return e[key];}
+
+		bool & operator [](EventType event)       { return e[(size_t)event];}
+		bool   operator [](EventType event) const { return e[(size_t)event];}
 
 		void flushStrong() {
 			for (size_t i = 0; i < limit; i++) {
@@ -114,55 +113,62 @@ namespace sfup {
 		}
 		void flush() {
 			for (size_t i = 0; i < limit; i++) {
-				if (i <= evMouseButtonPressingStart || evMouseButtonPressingEnd <= i) e[i] = false;
+				if (i <= (size_t)EventType::MouseButtonPressingStart || (size_t)EventType::MouseButtonPressingEnd <= i)
+					e[i] = false;
 				KeyReleased[i] = false;
 				KeyPressed[i] = false;
 			}
 		}
+
+		bool & getEvent(EventType event) {
+			return e[(size_t)event];
+		}
+
 		void add(const sf::Event & event) {
 			switch (event.type) {
 			case sf::Event::MouseMoved:
-				e[evMouseMoved] = true;
+				getEvent(EventType::MouseMoved) = true;
+				getEvent(EventType::MouseMoved) = true;
 				break;
 			case sf::Event::MouseButtonPressed:
-				e[evMouseButtonPressed]  = true;
-				e[evMouseButtonPressing] = true;
+				getEvent(EventType::MouseButtonPressed)  = true;
+				getEvent(EventType::MouseButtonPressing) = true;
 				if (event.mouseButton.button == sf::Mouse::Left) {
-					e[evMouseButtonPressedLeft]  = true;
-					e[evMouseButtonPressingLeft] = true;
+					getEvent(EventType::MouseButtonPressedLeft)  = true;
+					getEvent(EventType::MouseButtonPressingLeft) = true;
 				}
 				else if (event.mouseButton.button == sf::Mouse::Right) {
-					e[evMouseButtonPressedRight]  = true;
-					e[evMouseButtonPressingRight] = true;
+					getEvent(EventType::MouseButtonPressedRight)  = true;
+					getEvent(EventType::MouseButtonPressingRight) = true;
 				}
 				else if (event.mouseButton.button == sf::Mouse::Middle) {
-					e[evMouseButtonPressedMiddle]  = true;
-					e[evMouseButtonPressingMiddle] = true;
+					getEvent(EventType::MouseButtonPressedMiddle)  = true;
+					getEvent(EventType::MouseButtonPressingMiddle) = true;
 				}
 				break;
 
 			case sf::Event::MouseButtonReleased:
-				e[evMouseButtonReleased] = true;
-				e[evMouseButtonPressing] = false;
+				getEvent(EventType::MouseButtonReleased) = true;
+				getEvent(EventType::MouseButtonPressing) = false;
 				if (event.mouseButton.button == sf::Mouse::Left) {
-					e[evMouseButtonReleasedLeft] = true;
-					e[evMouseButtonPressingLeft] = false;
+					getEvent(EventType::MouseButtonReleasedLeft) = true;
+					getEvent(EventType::MouseButtonPressingLeft) = false;
 				}
 				else if (event.mouseButton.button == sf::Mouse::Right) {
-					e[evMouseButtonReleasedRight] = true;
-					e[evMouseButtonPressingRight] = false;
+					getEvent(EventType::MouseButtonReleasedRight) = true;
+					getEvent(EventType::MouseButtonPressingRight) = false;
 				}
 				else if (event.mouseButton.button == sf::Mouse::Middle) {
-					e[evMouseButtonReleasedMiddle] = true;
-					e[evMouseButtonPressingMiddle] = false;
+					getEvent(EventType::MouseButtonReleasedMiddle) = true;
+					getEvent(EventType::MouseButtonPressingMiddle) = false;
 				}
 				break;
 			case sf::Event::MouseWheelMoved:
-				e[evMouseWheelMoved] = true;
+				getEvent(EventType::MouseWheelMoved) = true;
 				if (event.mouseWheel.delta == 1) 
-					e[evMouseWheelMovedUp] = true;
+					getEvent(EventType::MouseWheelMovedUp) = true;
 				else if (event.mouseWheel.delta == -1) 
-					e[evMouseWheelMovedDown] = true;
+					getEvent(EventType::MouseWheelMovedDown) = true;
 				break;
 			case sf::Event::KeyPressed:
 				KeyPressed[event.key.code]  = true;

@@ -35,60 +35,62 @@ long long strPosChar(const char * where, const char what) {
 	long long d = strchr(where, what) - where;
 	return d < 0 ? -1 : d;
 }
-long long strPosstrLastString(const char * where, const char * what, const char * before) {
+long long strPosLastStringBeforePtr(const char * where, const char * what, const char * before) {
 	const char * start = where;
 	long long d = -1;
 	size_t len = strlen(what);
-	if (before) {
-		where = strstr(where, what);
-		if (!where || where > before) return -1;
+	where = strstr(where, what);
+	if (!where || where > before) return -1;
+	d = (long long)where;
+	where += len;
+	while ( (where = strstr(where, what)) != NULL) {
+		if (where > before) break;
 		d = (long long)where;
 		where += len;
-		while ( (where = strstr(where, what)) != NULL) {
-			if (where > before) break;
-			d = (long long)where;
-			where += len;
-		}
-	}
-	else {
-		where = strstr(where, what);
-		if (!where) return -1;
-		d = (long long)where;
-		where += len;
-		while ( (where = strstr(where, what)) != NULL) {
-			d = (long long)where;
-			where += len;
-		}
 	}
 	return d - (long long)start;
 
 }
-long long strPosstrLastStringBeforeIndex(const char * where, const char * what, size_t index) {
-   return strPosstrLastString(where, what, where + index);
-}
-long long strPosstrLastChar(const char * where, const char what, const char * before) {
+long long strPosLastString(const char * where, const char * what) {
 	const char * start = where;
 	long long d = -1;
-	if (before) {
-		//TODO: на месте before ставить конец строки. После вычислений - поставить оригинальный символ
-		where = strchr(where, what);
-		if (!where || where > before) return -1;
+	size_t len = strlen(what);
+	where = strstr(where, what);
+	if (!where) return -1;
+	d = (long long)where;
+	where += len;
+	while ( (where = strstr(where, what)) != NULL) {
+		d = (long long)where;
+		where += len;
+	}
+	return d - (long long)start;
+
+}
+long long strPosLastStringBeforeIndex(const char * where, const char * what, size_t index) {
+   return strPosLastStringBeforePtr(where, what, where + index);
+}
+long long strPosLastChar(const char * where, const char what) {
+	long long d = -1;
+	d = strrchr(where, what) - where;
+	return d < 0 ? -1 : d;
+}
+long long strPosLastCharBeforePtr(const char * where, const char what, const char * before) {
+	const char * start = where;
+	long long d = -1;
+	//TODO: на месте before ставить конец строки. После вычислений - поставить оригинальный символ
+	where = strchr(where, what);
+	if (!where || where > before) return -1;
+	d = (long long)where;
+	where += 1;
+	while ( (where = strchr(where, what)) != NULL) {
+		if (where > before) break;
 		d = (long long)where;
 		where += 1;
-		while ( (where = strchr(where, what)) != NULL) {
-			if (where > before) break;
-			d = (long long)where;
-			where += 1;
-		}
-	}
-	else {
-		d = strrchr(where, what) - where;
-		return d < 0 ? -1 : d;
 	}
 	return d - (long long)start;
 }
-long long strPosstrLastCharBeforeIndex(const char * where, const char what, size_t index) {
-	return strPosstrLastChar(where, what, where + index);
+long long strPosLastCharBeforeIndex(const char * where, const char what, size_t index) {
+	return strPosLastCharBeforePtr(where, what, where + index);
 }
 const char * strPosMin(const char * where, const char * what) {
 	char * ptrsuse[256];
