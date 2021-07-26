@@ -8,7 +8,7 @@
 //Version 1.0 alfa
 //Make by Graph Don'te-Crypto
 
-#include <UseFull/Utils/RuntimeDebug.hpp>
+#include "../Utils/RuntimeDebug.hpp"
 
 namespace str {
 
@@ -56,13 +56,13 @@ namespace str {
 	};
 
 	template <typename Type>
-	std::string toStringFormat(const Type & obj) {
-		return StringFormatBuilder().append(obj).toString();
+	static std::string toStringFormat(const Type & obj) {
+		return StringFormatBuilder<>().append(obj).toString();
 	}
 
 	template <typename Type>
-	std::string toStringFormat(const Type & obj, const char * format) {
-		return StringFormatBuilder().append(obj, format).toString();
+    static std::string toStringFormat(const Type & obj, const char * format) {
+		return StringFormatBuilder<>().append(obj, format).toString();
 	}
 
 }

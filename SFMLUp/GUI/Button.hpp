@@ -59,7 +59,7 @@ struct Button : public BaseGui {
 		BaseGui::drawSelf();
 
 		frame.color = color_current;
-		frame.drawTo(this);
+		frame.drawTo(*this);
 
 		/*
 		text.setPosition(text_position[0], text_position[1]);

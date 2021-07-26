@@ -101,7 +101,7 @@ struct BaseGui : public FocusTracker, public sf::RenderTexture {
 		}
 	}
 	virtual void drawSelf() {
-		Drawer.drawCodirFilled(this, Codir<2>({0, 0}, codir.size()), color_outline, color_background);
+		Drawer.drawCodirFilled(*this, Codir<2>({0, 0}, codir.size()), color_outline, color_background);
 	}
 	void drawTo(sf::RenderTarget & target) {
 		sf::RenderTexture::display();
