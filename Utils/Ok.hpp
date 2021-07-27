@@ -19,11 +19,13 @@ namespace utils {
 		Ok(const Type & _value) : value(_value) {}
 		Ok() : value() {isOk = false;}
 		~Ok() = default;
-		
+
+		/*
 		Ok(const Ok<Type> & o) : 
 			value(o.value), 
 			isOk(o.isOk) {};
-		
+		*/
+
 		bool get(Type & _value) const {
 			if (isOk) _value = this->value;
 			else return false;
