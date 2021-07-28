@@ -4,6 +4,7 @@
 #include "../../Math/Shape.hpp"
 #include "../../Math/Intersect.hpp"
 #include "../Event.hpp"
+#include "UseFull/SFMLUp/Event.hpp"
 
 //UseFull SFML Up Gui Focus Tracker module
 //Version 1.0 alfa
@@ -88,13 +89,13 @@ struct FocusTracker {
 			else {
 				focus = this;
 				focus_next_turn = this;
-				if (!pressed) if ((pressed = Event.e[ev::evMouseButtonPressedLeft]) == true) EXEC(actionPressed();)
+				if (!pressed) if ((pressed = Event.getEvent(EventType::MouseButtonPressedLeft)) == true) EXEC(actionPressed();)
 				if (!pressed) {
 					if (!prev_focused) EXEC(actionFocused();)
 					EXEC(actionFocusing();)
 				}
 				else {
-					if (Event.e[evMouseButtonReleasedLeft]) {
+					if (Event.getEvent(EventType::MouseButtonReleasedLeft)) {
 						EXEC(state_after.pressed = false; actionRealized();)
 					}
 					else EXEC(actionPressing();)

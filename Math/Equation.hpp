@@ -16,12 +16,12 @@ namespace math {
 		/*
 		coords = point + t * vector;
 		*/
-		
+
 		Vector<dimension> point;
 		Vector<dimension> vector;
-		
+
 		//
-		
+
 		EquationLine(const Vector<dimension> * a, const Vector<dimension> * b) {
 			point = *a;
 			vector = (*b - *a).ort();
@@ -30,63 +30,67 @@ namespace math {
 			point = a;
 			vector = (b - a).ort();
 		}
-		
+
 		EquationLine(const Line<dimension> * line) {
 			point = line->a;
 			vector = (line->b - line->a).ort();
 		}
-		EquationLine(const Line<dimension> & line) : 
+		EquationLine(const Line<dimension> & line) :
 			point(line.a),
 			vector((line.b - line.a).ort())
 		{}
-		
+
 		void printf(const char * format = "%07.3lf ") const {
 			::printf("point  = "); point.printf(format);
 			::printf("vector = "); vector.printf(format);
 		}
-		
+
 		Vector<dimension> pointOnParam(double t) const {
 			return point + t * vector;
 		}
-		
+
 	};
-	
+
 	template <size_t dimension>
 	struct EquationHyperplane {
 		/*
-		a1 * x1 + ... an * xn + c = 0	
+		a1 * x1 + ... an * xn + c = 0
 		*/
 		Vector<dimension> ort;
 		double c;
 		EquationHyperplane() {
-			
+
 		}
-		EquationHyperplane(const Vector<dimension> & vector, double xc) {
-			ort = vector;
-			c = xc;
-		}
-		EquationHyperplane(const EquationHyperplane<dimension> & e) {
-			ort = e.ort;
-			c = e.c;
-		}
-		
-		EquationHyperplane(const Vector<dimension> & point, const Vector<dimension> & ort) {
-			this->ort = ort;
-			c = - (point * ort);
-		}
-		
+		EquationHyperplane(const Vector<dimension> & vector, double xc)
+            : ort(vector)
+            , c(xc)
+        {}
+		EquationHyperplane(const EquationHyperplane<dimension> & e)
+            : ort(e.ort)
+            , c(e.c)
+        {}
+
+		EquationHyperplane(const Vector<dimension> & point, const Vector<dimension> & ort)
+            : ort(ort)
+            , c(- (point * ort))
+		{}
+
 		void printf(const char * format = "%07.3lf ") const {
 			::printf("a = "); ort.printf(format);
-			::printf("c = "); ::printf(format, c); 
+			::printf("c = "); ::printf(format, c);
 		}
-		
+
+		std::string toString(const char * format = "%07.3lf ") const {
+            return "a = " + ort.toString(format) + " c = " + std::to_string(c);
+		}
+
 		double valueInPoint(const Vector<dimension> & point) const {
 			double result = c;
 			for (size_t i = 0; i < dimension; i++)
 				result += point[i] * ort[i];
 			return result;
 		}
-	};	
+	};
 }
 
 #endif

@@ -70,7 +70,8 @@ namespace math {
 			center = 0;
 			r = 0;
 		}
-		Sphere(const Vector<dimension> & xcenter, double xr) {center = xcenter; r = xr;}
+		Sphere(const Vector<dimension> & xcenter, double xr) : center(xcenter), r(xr){}
+		
 		bool operator == (const Sphere<dimension> & circle) {
 			return center == circle.center && abs(r - circle.r) < EPS;
 		}
@@ -79,7 +80,14 @@ namespace math {
 			::printf("Radius: "); ::printf(format, r);
 			::printf("\n");
 		}
-		
+		Sphere & operator += (const Vector<dimension> & vec) 
+			{center += vec; return *this;}
+		Sphere & operator -= (const Vector<dimension> & vec) 
+			{center -= vec; return *this;}
+		Sphere   operator +  (const Vector<dimension> & vec) const 
+			{return Sphere(center + vec, r);}
+		Sphere   operator -  (const Vector<dimension> & vec) const 
+			{return Sphere(center - vec, r);}
 	};
 	/*
 	Прямоугольное тело, рёбра которого соответственно параллельны осям координат
@@ -122,6 +130,16 @@ namespace math {
 		
 		Codir   operator -  (const Vector<dimension> & vec) const {return Codir(*this) -= vec;}
 		Codir   operator +  (const Vector<dimension> & vec) const {return Codir(*this) += vec;}
+
+		Codir & operator *= (double d) {left_up *= d; right_down *= d; return *this;}
+		Codir & operator /= (double d) {left_up /= d; right_down /= d; return *this;}
+
+		Codir   operator *  (double d) const {return Codir(*this) *= d;}
+		Codir   operator /  (double d) const {return Codir(*this) /= d;}
+
+		std::string toString(const char * format = "%07.3lf ") {
+			return "left_up " + left_up.toString(format) + "\nright_down " + right_down.toString(format);
+		}
 	};
 	struct Rectangle2D {
 		Vector<2> a, b, c, d;

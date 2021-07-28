@@ -89,7 +89,7 @@ namespace utils {
 
 	template <typename ObjectType, typename FunctionType>
 	struct Holder : public AutoHolder<FunctionType> {
-		Type object;
+		ObjectType object;
 		
 		auto invoke() {
 			return object();
@@ -99,7 +99,7 @@ namespace utils {
 			
 		}
 		
-		Holder(Type obj) {
+		Holder(ObjectType obj) {
 			object = obj;
 		}
 	}; 

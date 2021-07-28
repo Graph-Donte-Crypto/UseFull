@@ -5,8 +5,8 @@
 
 #include "../Utils/Context.hpp"
 
-#include "Replace.hpp"
-#include "Part.hpp"
+#include "C/Replace.h"
+#include "C/Part.h"
 #include "S.hpp"
 
 
@@ -68,14 +68,14 @@ namespace str {
 
 			if (delimiter == 10) {//if delimiter == LF -> For CrossPlatform support replace CR -> LF
 				char d3[] = {13, 0};
-				Replace::Standart(file, d3, d1);
+				strReplaceStandart(file, d3, d1);
 			}
 
-			Replace::Repeat(file, d2, d1);
+			strReplaceRepeat(file, d2, d1);
 			
-			if (file[0] == delimiter) Shift(file, -1);
-			char & last = Last(file);
-			if (last == delimiter) last = 0;
+			if (file[0] == delimiter) strShift(file, -1);
+			char * last = strLast(file);
+			if (*last == delimiter) *last = 0;
 			return file;
 		}
 
@@ -83,24 +83,25 @@ namespace str {
 		//0    argmunet - size_t  - string array length
 		ContextCopy<char **> ReadStringsContext(const char * filename, const char delimiter = (char)10) {
 			char * file = ReadDelimitedFile(filename, delimiter);
-			size_t str_count = CountChar(file, delimiter) + 1;
+			size_t str_count = strCountChar(file, delimiter) + 1;
 
 			char ** arr = new char * [str_count];
 			ContextCopy<char **> ret(arr);
 			ret.addRef(str_count);
 			char * ptrin = file;
 			size_t count = 0;
-			while ((ptrin = Part::Next::GetNew(ptrin, arr[count], delimiter)) != nullptr) {
+			while ((ptrin = strPartNextGetNew(ptrin, arr + count, delimiter)) != nullptr) {
 				count++;
 			}
 			delete[] file;
 			return ret;
 		}
+		/*
 		//main argmunet - S *     - S array begin
 		//0    argmunet - size_t  - S array length
 		ContextCopy<S *> ReadStringsContextS(const char * filename, const char delimiter = (char)10) {
 			char * file = ReadDelimitedFile(filename, delimiter);
-			size_t str_count = CountChar(file, delimiter) + 1;
+			size_t str_count = strCountChar(file, delimiter) + 1;
 
 			S * arr = new S[str_count];
 
@@ -120,15 +121,16 @@ namespace str {
 			delete[] file;
 			return ret;
 		}
+		*/
 
         char ** ReadStrings(const char * filename, const char delimiter = (char)10) {
 			char * file = ReadDelimitedFile(filename, delimiter);
-			size_t str_count = CountChar(file, delimiter) + 1;
+			size_t str_count = strCountChar(file, delimiter) + 1;
 
             char ** arr = new char * [str_count];
             char * ptrin = file;
             size_t count = 0;
-            while ((ptrin = str::Part::Next::GetNew(ptrin, arr[count], delimiter)) != nullptr) {
+            while ((ptrin = strPartNextGetNew(ptrin, arr + count, delimiter)) != nullptr) {
                 if (arr[count][0]) count++;
                 else {delete[] arr[count];}
             }
@@ -178,8 +180,8 @@ namespace str {
 		printf("s2 readed\n");
 		ContextCopy<char **> s3 = str::File::ReadStringsContext(filename);
 		printf("s3 readed\n");
-		ContextCopy<str::S *> s4 = str::File::ReadStringsContextS(filename);
-		printf("s4 readed\n");
+		//ContextCopy<str::S *> s4 = str::File::ReadStringsContextS(filename);
+		//printf("s4 readed\n");
 		char ** s5 = str::File::ReadStrings(filename);
 		printf("s5 readed\n");
 
@@ -192,9 +194,9 @@ namespace str {
 		printf("s3 print\n");
 		for (size_t i = 0; i < s3.getValue<size_t>(0); i++) printf("%s\n", ((char **)s3)[i]);
 		printf("------------------\n");
-		printf("s4 print\n");
-		for (size_t i = 0; i < s4.getValue<size_t>(0); i++) printf("%s\n", ((str::S *)s4)[i].ptr);
-		printf("------------------\n");
+		//printf("s4 print\n");
+		//for (size_t i = 0; i < s4.getValue<size_t>(0); i++) printf("%s\n", ((str::S *)s4)[i].ptr);
+		//printf("------------------\n");
 		printf("s5 print\n");
 		for (size_t i = 0; s5[i][0] != 0; i++) printf("%s\n", s5[i]);
 	}

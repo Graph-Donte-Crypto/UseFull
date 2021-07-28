@@ -309,6 +309,7 @@ namespace math {
 				printf("Infinity Many solutions?\n");
 				return {};
 			}
+			//TODO: if indexes.size() == 1 and not if, indexes[1] cause error
 		}
 		
 		const size_t & i_next = indexes[1];

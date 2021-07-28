@@ -56,7 +56,7 @@ namespace sfup { namespace gui {
 			breaks.addCopy(vecs.length - 1);
 			return *this;
 		}
-		void drawTo(sf::RenderTarget * target) {
+		void drawTo(sf::RenderTarget & target) {
 			if (vecs.length > 0) {
 				if (breaks.length > 0) {
 					for (size_t j = 0; j < breaks[0]; j++) 
