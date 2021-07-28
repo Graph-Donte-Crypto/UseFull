@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <initializer_list>
 
-#include "BaseLib.hpp"
+#include "C/BaseLib.h"
 
 //UseFull String Variable length module
 //Version 1.0 alfa
@@ -38,9 +38,9 @@ namespace str {
 						maxsize*=2;
 					} while (newlen > maxsize);
 
-					char * buf = Init(maxsize);
+					char * buf = strInit(maxsize);
 					memcpy(buf, ptr, _countBytes());
-					Destroy(ptr);
+					strDestroy(&ptr);
 					ptr = buf;
 				}
 				else {
@@ -57,8 +57,8 @@ namespace str {
 					do {
 						maxsize*=2;
 					} while (newlen > maxsize);
-					Destroy(ptr);
-					Init(ptr, maxsize);
+					strDestroy(&ptr);
+					ptr = strInit(maxsize);
 				}
 				else {
 					printf("str::S ExpandError\nautoExpand == false\nCall from str::S::_checkSizeNoCopy\n");
@@ -70,55 +70,55 @@ namespace str {
 
 		S & set(const char * s, size_t len) {
 			_checkSizeNoCopy(len);
-            CopyN(ptr, s, len);
+            strCopyN(ptr, s, len);
             ptr[len] = 0;
 			length = len;
             return *this;
         }
 
 		S() {
-			Init(ptr, maxsize);
+			ptr = strInit(maxsize);
 		}
 		S(size_t size) {
 			length = size;
 			while (length > maxsize) maxsize *= 2;
-			Init(ptr, maxsize);
+			ptr = strInit(maxsize);
 		}
 		S(const char * s) {
 			length = strlen(s);
 			while (length > maxsize) maxsize *= 2;
-			Init(ptr, maxsize);
-			CopyN(ptr, s, length + 1);
+			ptr = strInit(maxsize);
+			strCopyN(ptr, s, length + 1);
 		}
 		S(char * s) {
 			length = strlen(s);
 			while (length > maxsize) maxsize *= 2;
-			Init(ptr, maxsize);
-			CopyN(ptr, s, length + 1);
+			ptr = strInit(maxsize);
+			strCopyN(ptr, s, length + 1);
 		}
 		S(const S & s) {
 			length  = s.length;
 			maxsize = s.maxsize;
-			Init(ptr, maxsize);
-			CopyN(ptr, s.ptr, length + 1);
+			ptr = strInit(maxsize);
+			strCopyN(ptr, s.ptr, length + 1);
 			autoExpand = s.autoExpand;
 		}
 		S(const S * s) {
 			length  = s->length;
 			maxsize = s->maxsize;
-			Init(ptr, maxsize);
-			CopyN(ptr, s->ptr, length + 1);
+			ptr = strInit(maxsize);
+			strCopyN(ptr, s->ptr, length + 1);
 			autoExpand = s->autoExpand;
 		}
 		S(std::initializer_list<char> list) {
 			length = list.size();
 			while (length > maxsize) maxsize *= 2;
-			Init(ptr, maxsize);
-			CopyN(ptr, list.begin(), length);
+			ptr = strInit(maxsize);
+			strCopyN(ptr, list.begin(), length);
 		}
 
 		~S() {
-			Destroy(ptr);
+			strDestroy(&ptr);
 		}
 		S   copy() {
 			return S(this);
@@ -133,7 +133,7 @@ namespace str {
 
 		S & append(const char * s, size_t len) {
 			_checkSize(length + len + 1);
-			CopyN(ptr + length, s, len + 1);
+			strCopyN(ptr + length, s, len + 1);
 			length += len;
 			return *this;
 		}
@@ -169,7 +169,7 @@ namespace str {
 				length = from;
 			}
 			else {
-				Move(ptr + from, ptr + to + 1, (size_t)count);
+				strMove(ptr + from, ptr + to + 1, (size_t)count);
 				length -= to + 1 - from;
 			}
 			return *this;
@@ -205,21 +205,21 @@ namespace str {
 		S & operator = (const char * s) {
 			length = strlen(s);
 			_checkSizeNoCopy(length);
-			CopyN(ptr, s, length + 1);
+			strCopyN(ptr, s, length + 1);
 			return *this;
 		}
 		S & operator = (char * s) {
 			length = strlen(s);
 			_checkSizeNoCopy(length);
-			CopyN(ptr, s, length + 1);
+			strCopyN(ptr, s, length + 1);
 			return *this;
 		}
 		S & operator = (S & s) {
 			length  = s.length;
 			maxsize = s.maxsize;
-			str::Destroy(ptr);
-			str::Init(ptr, maxsize);
-			CopyN(ptr, s.ptr, s._countBytes());
+			strDestroy(&ptr);
+			ptr = strInit(maxsize);
+			strCopyN(ptr, s.ptr, s._countBytes());
 			autoExpand = s.autoExpand;
 			return *this;
 		}
@@ -227,7 +227,7 @@ namespace str {
 			length = list.size();
 			while (length > maxsize) maxsize *= 2;
 			_checkSizeNoCopy(length);
-			CopyN(ptr, list.begin(), length);
+			strCopyN(ptr, list.begin(), length);
 			return *this;
 		}
 
@@ -272,15 +272,15 @@ namespace str {
 	S & S::insert(SorCPtr socp, size_t pos) {
 		S & s = socp;
 		_checkSize(length + s.length);
-		Move(ptr + pos + s.length, ptr + pos, length - pos + 1);
-		CopyN(ptr + pos, s, s.length);
+		strMove(ptr + pos + s.length, ptr + pos, length - pos + 1);
+		strCopyN(ptr + pos, s, s.length);
 		length += s.length;
 		return *this;
 	}
 	S & S::operator << (SorCPtr socp) {
 		S & s = socp;
 		_checkSize(length + s.length + 1);
-		CopyN(ptr + length, s.ptr, s.length + 1);
+		strCopyN(ptr + length, s.ptr, s.length + 1);
 		length += s.length;
 		return *this;
 	}
@@ -295,7 +295,7 @@ namespace str {
 			while (( pos = strstr(pos, what) ) != nullptr) {
 				_checkSize(length + shift);
 				bufptr = pos + what.length;
-				str::Move(bufptr + shift, bufptr, length + ptr - bufptr + 1); // length + ptr - bufptr == strlen(bufptr)
+				strMove(bufptr + shift, bufptr, length + ptr - bufptr + 1); // length + ptr - bufptr == strlen(bufptr)
 				strncpy(pos, with_what, with_what.length);
 				pos += with_what.length;
 				length += shift;
@@ -308,7 +308,7 @@ namespace str {
 				_checkSize(length + shift);
 				pos      = ptr    + d_pos;
 				bufptr = pos + what.length;
-				str::Move(bufptr + shift, bufptr, length + ptr - bufptr + 1); // length + ptr - bufptr == strlen(bufptr)
+				strMove(bufptr + shift, bufptr, length + ptr - bufptr + 1); // length + ptr - bufptr == strlen(bufptr)
 				strncpy(pos, with_what, with_what.length);
 				pos += with_what.length;
 				length += shift;
@@ -381,7 +381,7 @@ namespace str {
 			sout = sin.ptr + from;
 		}
 		else {
-			CopyN(sout.ptr, sin.ptr + from, to - from);
+			strCopyN(sout.ptr, sin.ptr + from, to - from);
 			sout[to - from] = 0;
 			sout.length = to - from;
 		};
