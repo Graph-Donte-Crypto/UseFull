@@ -88,16 +88,21 @@ namespace math {
         return el.point - ( (eh.c + el.point * eh.ort) / (el.vector * eh.ort) ) * el.vector;
     }
 
-    template <size_t DM>
-    VDM reflectPointOverLine(const VDM & base, const EquationLine<DM> & el){
-        VDM projection = projectionPointOnEquationLine(base, el);
-        return projection * 2 - base;
-    }
+	template <size_t DM>
+	VDM reflectPointOverLine(const VDM & base, const EquationLine<DM> & el){
+		VDM projection = projectionPointOnEquationLine(base, el);
+		return projection * 2 - base;
+	}
 
-    template <size_t DM>
-    VDM reflectVectorOverHyperplane(const VDM & vector, const EquationHyperplane<DM> & eh) {
-        
-    } 
+	template <size_t DM>
+	VDM reflectPointOverHyperplane(const VDM & base, const EquationHyperplane<DM> & eh) {
+		return projectionPointOnEquationHyperplane(base, eh) * 2 - base;
+	}
+
+	template <size_t DM>
+	VDM reflectPointOverHyperplaneOrt(const VDM & base, const EquationHyperplane<DM> & eh) {
+		
+	} 
 
 	//TODO: CHECK
 	template <size_t DM>
@@ -168,7 +173,25 @@ namespace math {
 
 	template <size_t DM>
 	const VDM & nearestPointToPoint(const VDM & base, const VDM & one, const VDM & two) {
-		return (one - base).norm() < (two - base).norm() ? one : two;
+		/*
+		(one - base).norm() < (two - base).norm()
+		x = one - base
+		y = two - base
+		sqrt(x[1]^2 + ... + x[n]^2) < sqrt(y[1]^2 + ... + y[n]^2)
+		x[1]^2 + ... + x[n]^2 < y[1]^2 + ... + y[n]^2
+		x[1]^2 - y[1]^2 + ... + x[n]^2 - y[n]^2 < 0
+		(x[1] + y[1])(x[1] - y[1]) + ... + (x[n] + y[n])(x[n] - y[n]) < 0
+
+		(one[1] - base[1] + two[1] - base[1])(one[1] - base[1] - two[1] + base[1]) + ... < 0
+
+		sum ((one[i] + two[i] - 2 * base[i]) * (one[i] - two[i])) < 0
+
+		*/
+
+		double sum = 0;
+		for (size_t i = 0; i < DM; i++)
+			sum += (one[i] + two[i] - 2 * base[i]) * (one[i] - two[i]);
+		return sum < 0 ? one : two;
 	}
 	
 	template <size_t DM>
@@ -461,8 +484,8 @@ namespace math {
 	
 	//TODO: CHECK
 	template <size_t DM>
-	bool checkIntersectCodirWithCodir(const Codir<DM> & c1, const Codir<DM> & c2) {
-		return checkPointInCodir(c1.left_up, Codir<DM>(c2.left_up - c1.right_down + c1.left_up, c2.right_down));
+	bool checkIntersectCodirWithCodir(const Codir<DM> & c1, const Codir<DM> & c2, double eps = 0) {
+		return checkPointInCodir(c1.left_up, Codir<DM>(c2.left_up - c1.right_down + c1.left_up, c2.right_down), eps);
 	}
 	//
 	

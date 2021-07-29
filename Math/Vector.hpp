@@ -161,6 +161,13 @@ namespace math {
 			return sqrt(sum);
 		}
 
+		double normSquared() C {
+			double sum = 0;
+			for (size_t i = 0; i < dimension; i++)
+				sum += coords[i] * coords[i];
+			return sum;
+		}
+
 		double cosWith(const Vector<dimension> & vec) {
 			return (*this) * vec / (norm() * vec.norm());
 		}

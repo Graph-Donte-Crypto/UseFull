@@ -11,11 +11,17 @@
 //Make by Graph Don'te-Crypto
 
 namespace math {
+
+	/*
+		coords = point + t * vector, where
+
+		point - base point of equation line,
+		vector - equation line vector,
+		t - any double number,
+		coords(t) - any point from this equation line
+	*/
 	template <size_t dimension>
 	struct EquationLine {
-		/*
-		coords = point + t * vector;
-		*/
 
 		Vector<dimension> point;
 		Vector<dimension> vector;
@@ -51,11 +57,17 @@ namespace math {
 
 	};
 
+	/*
+		a[1] * x[1] + ... a[n] * x[n] + c = 0, where
+
+		n - dimension count,
+		a - ort vector,
+		x - point,
+		c - constant
+	*/
 	template <size_t dimension>
 	struct EquationHyperplane {
-		/*
-		a1 * x1 + ... an * xn + c = 0
-		*/
+		
 		Vector<dimension> ort;
 		double c;
 		EquationHyperplane() {
