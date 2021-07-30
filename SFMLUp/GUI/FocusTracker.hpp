@@ -16,8 +16,8 @@ using namespace math;
 
 struct FocusTracker {
 	
-	static void * focus;
-	static void * focus_next_turn;
+	inline static void * focus = nullptr;
+	inline static void * focus_next_turn = nullptr;
 	
 	static void nextTurn() {
 		focus = focus_next_turn;
@@ -33,21 +33,33 @@ struct FocusTracker {
 	/*
 	При вызове action функции, 
 		state_before - состояние автомата до вызова функции
-		state_after - то, которое будет после вызова функции
+
 		
-		записывать в state_before не имеет практического смысла
+		
+		
 	*/
 
+	/*
+	При вызове action функции:
+	state_before - состояние автомата до вызова функции;
+	записывать в state_before не имеет практического смысла, имеет смысл только считывать
+	*/
 	State state_before;
+	/*
+	При вызове action функции:
+	state_after - состояние автомата которое будет после вызова функции;
+	Можно как записывать (новое состояние будет применено после конца вызова функциии), так и считывать
+	*/
 	State state_after;
 
 	bool & pressed = state_before.pressed;
 	bool & focused = state_before.focused;
 
 	Codir<2> codir_focus;
-	XY       focus_offset;
+	XY       focus_offset = XY({0, 0});
 	
-	virtual void moveRelative(const XY &) {
+	virtual void moveRelative(const XY & delta) {
+		focus_offset += delta;
 		//codir_focus += delta;
 	}
 
@@ -71,7 +83,7 @@ struct FocusTracker {
 	Магический код, который реализует алгоритм смены фокуса мышки на объекте, 
 	с возможностью редактирования и чтения текущих состояний в вызываемых action функциях
 	*/
-	#define EXEC(some) {state_after = state_before; some; state_before = state_after;}
+	#define EXEC(some) {state_after = state_before; { some }; state_before = state_after;}
 
 	void checkFocus(const XY & mouse) {
 		if (focus == nullptr || focus == this) {
@@ -84,7 +96,6 @@ struct FocusTracker {
 					if (prev_focused) actionNotFocused();
 					actionNotFocusing();
 				)
-
 			}
 			else {
 				focus = this;
@@ -110,9 +121,6 @@ struct FocusTracker {
 	#undef EXEC
 };
 
-void * FocusTracker::focus           = nullptr;
-void * FocusTracker::focus_next_turn = nullptr;
-	
 }}
 
 #endif
