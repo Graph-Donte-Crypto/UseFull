@@ -1,21 +1,24 @@
 #ifndef UF_SFMLUP_Drawer_H
 #define UF_SFMLUP_Drawer_H
 
-#include <SFML/Graphics.hpp>
-#include "../Math/Shape.hpp"
-#include "Fonts.hpp"
+#include "UseFull/Utils/StdDiagnosticIgnore.hpp"
 
+#include <SFML/Graphics.hpp>
 #include <sstream>
+
+#include "UseFull/Utils/StdDiagnosticIgnoreEnd.hpp"
 
 //UseFull SFML Up Drawer module
 //Version 1.0 alfa
 //Make by Graph Don'te-Crypto
 
+#include "../Math/Shape.hpp"
+#include "Fonts.hpp"
 #include "View.hpp"
 
 namespace sfup {
-    using namespace math;
-    using namespace utils;
+	using namespace math;
+	using namespace utils;
 	struct DrawerStruct {
 
 		sf::RenderTarget * target = nullptr;
@@ -24,7 +27,7 @@ namespace sfup {
 		std::ostringstream text_stream;
 		std::ostringstream & Text = text_stream;
 
-        DrawerStruct() {
+		DrawerStruct() {
 			text.setString("");
 			text.setCharacterSize(14);
 		}
@@ -76,10 +79,10 @@ namespace sfup {
 				)
 			);
 			shape.setPosition(sf::Vector2f(c.left_up[0], c.left_up[1]));
-			shape.setOutlineColor(outline);
 			shape.setFillColor(sf::Color(0, 0, 0, 0));
-			shape.setOutlineThickness(1);
-			rt.draw(shape);
+			shape.setOutlineColor(outline);
+			shape.setOutlineThickness(-1);
+			rt.draw(shape, sf::BlendNone);
 		}
 
 		void drawCodirFilled(sf::RenderTarget & rt, const Codir<2> & c, const sf::Color & outline, const sf::Color & background) {
@@ -92,8 +95,8 @@ namespace sfup {
 			shape.setPosition(sf::Vector2f(c.left_up[0], c.left_up[1]));
 			shape.setFillColor(background);
 			shape.setOutlineColor(outline);
-			shape.setOutlineThickness(1);
-			rt.draw(shape);
+			shape.setOutlineThickness(-1);
+			rt.draw(shape, sf::BlendNone);
 		}
 
 		void drawCircle(const Sphere<2> & circle, const sf::Color & color) {
@@ -108,7 +111,7 @@ namespace sfup {
 			drawCodir(*target, c, color);
 		}
 
-        void drawCodirFilled(const Codir<2> & c, const sf::Color & outline, const sf::Color & background) {
+		void drawCodirFilled(const Codir<2> & c, const sf::Color & outline, const sf::Color & background) {
 			drawCodirFilled(*target, c, outline, background);
 		}
 
@@ -151,7 +154,7 @@ namespace sfup {
 			drawCodir(*target, c, color);
 		}
 
-        void drawCodirFilled(CoCustomView auto & cview, const Codir<2> & c, const sf::Color & outline, const sf::Color & background) {
+		void drawCodirFilled(CoCustomView auto & cview, const Codir<2> & c, const sf::Color & outline, const sf::Color & background) {
 			useCustomView(cview);
 			drawCodirFilled(*target, c, outline, background);
 		}
