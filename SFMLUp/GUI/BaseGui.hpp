@@ -66,13 +66,13 @@ struct BaseGui : public FocusTracker, public sf::RenderTexture {
 
 	XY getAbsoluteOffset() {
 		XY offset = {0, 0};
-        if (ras_record) {
-            BaseGui * current_owner = (BaseGui *)ras_record->storage->owner;
-            while (current_owner) {
-                offset += current_owner->codir.left_up;
-                current_owner = (BaseGui *)current_owner->ras_record->storage->owner;
-            }
-        }
+		if (ras_record) {
+			BaseGui * current_owner = (BaseGui *)ras_record->storage->owner;
+			while (current_owner) {
+				offset += current_owner->codir.left_up;
+				current_owner = (BaseGui *)current_owner->ras_record->storage->owner;
+			}
+		}
 		return offset + codir.left_up;
 	}
 
