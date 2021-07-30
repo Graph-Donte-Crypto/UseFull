@@ -4,6 +4,7 @@
 #include "BaseGui.hpp"
 #include "Frame.hpp"
 #include "../Mouse.hpp"
+#include <SFML/Graphics/Color.hpp>
 
 //UseFull SFML Up Gui Button module
 //Version 1.0 alfa
@@ -26,24 +27,34 @@ struct Button : public BaseGui {
 	std::function<void (void)> lambda = nullptr;
 
 	Button(const Codir<2> & codir) : BaseGui(codir) {
+		color_background = sf::Color::Black;
 		frame = Frame(1, codir.center());
+		
+		/*
 		color_focus_not = sf::Color(159, 159, 159, 255);
 		color_focus 	= sf::Color(223, 223, 223, 255);
 		color_press 	= sf::Color(191, 191, 191, 255);
+		*/
+
+		color_focus_not = sf::Color(127, 127, 127, 255);
+		color_focus 	= sf::Color(255, 255, 255, 255);
+		color_press 	= sf::Color(063, 063, 063, 255);
 
 		Fonts.setFontToText("UbuntuMono-R", text);
 
 		text.setCharacterSize(14);
 		text.setString("");
-		text_position = codir.center();
-		text.setFillColor(sf::Color::Black);
 		text.setOutlineThickness(0.1);
+		
+		centerTheText();
 		setColor(color_focus_not);
 	}
 
 	void centerTheText() {
+		text_position = codir.center();
 		text_position[0] -= text.getGlobalBounds().width / 2;
 		text_position[1] -= codir.size()[1] / 2;
+		text.setPosition(text_position[0], text_position[1]);
 	}
 
 	void action() {
@@ -77,7 +88,8 @@ struct Button : public BaseGui {
 	}
 	void setColor(const sf::Color & color) {
 		color_current = color;
-		color_background = color_current;
+		text.setFillColor(color_current);
+		color_outline = color_current;
 	}
 	void actionNotFocused() {
 		setColor(color_focus_not);
