@@ -1,14 +1,15 @@
 #ifndef UF_SFMLUp_GUI_Button_H
 #define UF_SFMLUp_GUI_Button_H
 
-#include "BaseGui.hpp"
-#include "Frame.hpp"
-#include "../Mouse.hpp"
 #include <SFML/Graphics/Color.hpp>
 
 //UseFull SFML Up Gui Button module
 //Version 1.0 alfa
 //Make by Graph Don'te-Crypto
+
+#include "BaseGui.hpp"
+#include "Frame.hpp"
+#include "../Mouse.hpp"
 
 namespace sfup { namespace gui {
 

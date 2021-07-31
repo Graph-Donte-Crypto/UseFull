@@ -1,16 +1,16 @@
 #ifndef UF_SFMLUP_View_H
 #define UF_SFMLUP_View_H
 
-//UseFull SFML Up Current View module
+#include <concepts>
+#include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
+
+//UseFull SFML Up View module
 //Version 1.0 alfa
 //Make by Graph Don'te-Crypto
 
-#include <SFML/Graphics.hpp>
-#include <SFML/Window.hpp>
 #include "../Math/Vector.hpp"
 #include "../Math/Shape.hpp"
-
-#include <concepts>
 
 /*
  How to use:
@@ -38,7 +38,7 @@
  */
 
 namespace sfup {
-    using namespace math;
+	using namespace math;
 
 	template <typename Type>
 	concept CoCustomView =
@@ -71,7 +71,7 @@ namespace sfup {
 		WorldViewStruct()
 			: current_view({0, 0}, {0, 0})
 			, default_view({0, 0}, {0, 0})
-        {}
+		{}
 
 		void reset(sf::RenderWindow * _window, size_t width, size_t height) {
 			window = _window;
@@ -99,7 +99,7 @@ namespace sfup {
 
 		void update() {
 			if (window == nullptr) {
-				printf("window == nullptr for SpecialView\n");
+				printf("window == nullptr for WorldView\n");
 				exit(0);
 			}
 			if (target != TargetType::None) {

@@ -1,15 +1,15 @@
 #ifndef UF_SFMLUp_GUI_Frame_H
 #define UF_SFMLUp_GUI_Frame_H
 
-#include "../../Templates/Array.hpp"
-#include "../../Math/Vector.hpp"
-#include "../Drawer.hpp"
-
 #include <SFML/Graphics.hpp>
 
 //UseFull SFML Up Gui Frame module
 //Version 1.0 alfa
 //Make by Graph Don'te-Crypto
+
+#include "../../Templates/Array.hpp"
+#include "../../Math/Vector.hpp"
+#include "../Drawer.hpp"
 
 namespace sfup { namespace gui {		
 	using namespace uft;

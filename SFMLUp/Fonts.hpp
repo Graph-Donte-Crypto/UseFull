@@ -2,14 +2,14 @@
 #define UF_SFMLUp_Fonts_H
 
 #include <SFML/Graphics.hpp>
-#include "../Templates/Array.hpp"
-#include "../Utils/Ok.hpp"
-
 #include <vector>
 
 //UseFull SFML Up Fonts storage module
 //Version 1.0 alfa
 //Make by Graph Don'te-Crypto
+
+#include "../Templates/Array.hpp"
+#include "../Utils/Ok.hpp"
 
 namespace sfup {
 

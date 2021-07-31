@@ -1,15 +1,15 @@
 #ifndef UF_SFMLUp_GUI_BaseGui_H
 #define UF_SFMLUp_GUI_BaseGui_H
 
+//UseFull SFML Up Gui Base module
+//Version 1.0 alfa
+//Make by Graph Don'te-Crypto
+
 #include "../../Math/Shape.hpp"
 #include "../Event.hpp"
 #include "../Drawer.hpp"
 #include "../../Templates/Ras.hpp"
 #include "FocusTracker.hpp"
-
-//UseFull SFML Up Gui Base module
-//Version 1.0 alfa
-//Make by Graph Don'te-Crypto
 
 namespace sfup { namespace gui {
 

@@ -1,14 +1,13 @@
 #ifndef UF_SFMLUp_GUI_FocusTracker_H
 #define UF_SFMLUp_GUI_FocusTracker_H
 
-#include "../../Math/Shape.hpp"
-#include "../../Math/Intersect.hpp"
-#include "../Event.hpp"
-#include "UseFull/SFMLUp/Event.hpp"
-
 //UseFull SFML Up Gui Focus Tracker module
 //Version 1.0 alfa
 //Make by Graph Don'te-Crypto
+
+#include "../../Math/Shape.hpp"
+#include "../../Math/Intersect.hpp"
+#include "../Event.hpp"
 
 namespace sfup { namespace gui {
 

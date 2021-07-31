@@ -1,14 +1,18 @@
 #ifndef UF_M_Equation_H
 #define UF_M_Equation_H
 
-#include "Vector.hpp"
-#include "Shape.hpp"
+#include "../Utils/StdDiagnosticIgnore.hpp"
 
 #include <initializer_list>
+
+#include "../Utils/StdDiagnosticIgnoreEnd.hpp"
 
 //UseFull Math Equation module
 //Version 1.0 alfa
 //Make by Graph Don'te-Crypto
+
+#include "Vector.hpp"
+#include "Shape.hpp"
 
 namespace math {
 

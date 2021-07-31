@@ -1,11 +1,11 @@
 #ifndef UF_SFMLUp_GUI_Checkbox_H
 #define UF_SFMLUp_GUI_Checkbox_H
 
-#include "Button.hpp"
-
 //UseFull SFML Up Gui Checkbox module
 //Version 1.0 alfa
 //Make by Graph Don'te-Crypto
+
+#include "Button.hpp"
 
 namespace sfup { namespace gui {
 

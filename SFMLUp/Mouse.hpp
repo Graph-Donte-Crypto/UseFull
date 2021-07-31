@@ -2,11 +2,12 @@
 #define UF_SFMLUP_Mouse_H
 
 #include <SFML/Graphics.hpp>
-#include "../Math/Vector.hpp"
 
 //UseFull SFML Up Mouse module
 //Version 1.0 alfa
 //Make by Graph Don'te-Crypto
+
+#include "../Math/Vector.hpp"
 
 namespace sfup {
 	using namespace math;

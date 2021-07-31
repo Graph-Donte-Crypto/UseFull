@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <initializer_list>
 #include <string>
+
 //UseFull Math Vector template dimension module
 //Version 1.0 alfa
 //Make by Graph Don'te-Crypto

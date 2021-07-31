@@ -1,11 +1,18 @@
 #ifndef UF_SFMLUP_Animation_H
 #define UF_SFMLUP_Animation_H
 
+#include <functional>
+#include <SFML/System.hpp>
+
 //UseFull SFML Up Animation module
 //Version 1.0 alfa
 //Make by Graph Don'te-Crypto
 
+#include "../Utils/Concepts.hpp"
+
 namespace sfmlup {
+	using namespace utils;
+
 	template <typename Type>
 	struct Animation {
 		
@@ -22,7 +29,7 @@ namespace sfmlup {
 			current_x(0),
 			delta_x(1),
 			milliseconds(_milliseconds),
-			animation_function(lambda),		
+			animation_function(lambda)	
 		{}
 		
 		void startNormal() {
@@ -57,7 +64,7 @@ namespace sfmlup {
 				stepCurrent();
 			}	
 		}
-	}
+	};
 }
 
 #endif

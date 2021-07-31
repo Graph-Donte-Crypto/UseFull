@@ -1,14 +1,14 @@
 #ifndef UF_M_Intersect_H
 #define UF_M_Intersect_H
 
-#include "UseFull/Utils/Macro.hpp"
-#include "UseFull/Utils/StdDiagnosticIgnore.hpp"
+#include "../Utils/Macro.hpp"
+#include "../Utils/StdDiagnosticIgnore.hpp"
 
 #include <cstddef>
 #include <cstdlib>
 #include <vector>
 
-#include "UseFull/Utils/StdDiagnosticIgnoreEnd.hpp"
+#include "../Utils/StdDiagnosticIgnoreEnd.hpp"
 
 #include "Vector.hpp"
 #include "Shape.hpp"
