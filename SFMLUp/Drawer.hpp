@@ -71,21 +71,7 @@ namespace sfup {
 			rt.draw(vertexes, 2, sf::Lines);
 		}
 
-		void drawCodir(sf::RenderTarget & rt, const Codir<2> & c, const sf::Color & outline) {
-			sf::RectangleShape shape(
-				sf::Vector2f(
-					c.right_down[0] - c.left_up[0],
-					c.right_down[1] - c.left_up[1]
-				)
-			);
-			shape.setPosition(sf::Vector2f(c.left_up[0], c.left_up[1]));
-			shape.setFillColor(sf::Color(0, 0, 0, 0));
-			shape.setOutlineColor(outline);
-			shape.setOutlineThickness(-1);
-			rt.draw(shape, sf::BlendNone);
-		}
-
-		void drawCodirFilled(sf::RenderTarget & rt, const Codir<2> & c, const sf::Color & outline, const sf::Color & background) {
+		void drawCodir(sf::RenderTarget & rt, const Codir<2> & c, const sf::Color & outline, const sf::Color & background) {
 			sf::RectangleShape shape(
 				sf::Vector2f(
 					c.right_down[0] - c.left_up[0],
@@ -107,12 +93,8 @@ namespace sfup {
 			drawLine(*target, line, color);
 		}
 
-		void drawCodir(const Codir<2> & c, const sf::Color & color) {
-			drawCodir(*target, c, color);
-		}
-
-		void drawCodirFilled(const Codir<2> & c, const sf::Color & outline, const sf::Color & background) {
-			drawCodirFilled(*target, c, outline, background);
+		void drawCodir(const Codir<2> & c, const sf::Color & outline, const sf::Color & background) {
+			drawCodir(*target, c, outline, background);
 		}
 
 		template <typename T>
@@ -149,14 +131,9 @@ namespace sfup {
 			drawLine(*target, line, color);
 		}
 
-		void drawCodir(CoCustomView auto & cview, const Codir<2> & c, const sf::Color & color) {
+		void drawCodir(CoCustomView auto & cview, const Codir<2> & c, const sf::Color & outline, const sf::Color & background) {
 			useCustomView(cview);
-			drawCodir(*target, c, color);
-		}
-
-		void drawCodirFilled(CoCustomView auto & cview, const Codir<2> & c, const sf::Color & outline, const sf::Color & background) {
-			useCustomView(cview);
-			drawCodirFilled(*target, c, outline, background);
+			drawCodir(*target, c, outline, background);
 		}
 
 	} Drawer;
