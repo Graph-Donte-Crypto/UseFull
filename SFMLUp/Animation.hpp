@@ -33,14 +33,14 @@ namespace sfmlup {
 		{}
 		
 		void startNormal() {
-			delta_x = abs(delta_x);
+			delta_x = std::abs(delta_x);
 			current_x = 0;
 			stepCurrent();
 			clock.restart();
 		}
 		
 		void startReverse() {
-			delta_x = - abs(delta_x);
+			delta_x = - std::abs(delta_x);
 			current_x = 1;
 			stepCurrent();
 			clock.restart();
