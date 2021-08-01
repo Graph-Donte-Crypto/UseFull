@@ -42,9 +42,10 @@ namespace sfup {
 
 	template <typename Type>
 	concept CoCustomView =
-	requires (Type obj) {
+	requires (Type obj, sf::RenderWindow * window, size_t width, size_t height) {
 		{ obj.use() } -> std::same_as<void>;
 		{ obj.view } -> std::convertible_to<sf::View>;
+		{ obj.reset(window, width, height) } -> std::same_as<void>;
 	};
 
 	struct WorldViewStruct {
