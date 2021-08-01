@@ -10,6 +10,7 @@
 #include "BaseGui.hpp"
 #include "Frame.hpp"
 #include "../Mouse.hpp"
+#include "Label.hpp"
 
 namespace sfup { namespace gui {
 
@@ -22,13 +23,13 @@ struct Button : public BaseGui {
 	sf::Color color_focus;    //(255, 255, 255, 255)
 	sf::Color color_press;    //(063, 063, 063, 255)
 
-	sf::Text text;
-	XY text_position = XY{0, 0};
+	Label label;
 
 	std::function<void (void)> lambda = nullptr;
 
-	Button(const Codir<2> & codir) : BaseGui(codir) {
+	Button(const Codir<2> & codir) : BaseGui(codir), label(codir) {
 		color_background = sf::Color::Black;
+		label.color_outline = sf::Color::Transparent;
 		frame = Frame(1, codir.center());
 		
 		/*
@@ -40,22 +41,8 @@ struct Button : public BaseGui {
 		color_focus_not = sf::Color(127, 127, 127, 255);
 		color_focus 	= sf::Color(255, 255, 255, 255);
 		color_press 	= sf::Color(063, 063, 063, 255);
-
-		Fonts.setFontToText("UbuntuMono-R", text);
-
-		text.setCharacterSize(14);
-		text.setString("");
-		text.setOutlineThickness(0.1);
 		
-		centerTheText();
 		setColor(color_focus_not);
-	}
-
-	void centerTheText() {
-		text_position = codir.center();
-		text_position[0] -= text.getGlobalBounds().width / 2;
-		text_position[1] -= codir.size()[1] / 2;
-		text.setPosition(text_position[0], text_position[1]);
 	}
 
 	void action() {
@@ -84,12 +71,12 @@ struct Button : public BaseGui {
 			this->draw(text);
 		}
 		*/
-
-		this->draw(text);
+		label.drawSelf();
+		label.drawTo(*this);
 	}
 	void setColor(const sf::Color & color) {
 		color_current = color;
-		text.setFillColor(color_current);
+		label.setTextColor(color_current);
 		color_outline = color_current;
 	}
 	void actionNotFocused() {
@@ -107,8 +94,8 @@ struct Button : public BaseGui {
 	}
 	void moveRelative(const XY & delta) {
 		BaseGui::moveRelative(delta);
+		//label.moveRelative(delta);
 		frame.center  += delta;
-		text_position += delta;
 	}
 };
 
