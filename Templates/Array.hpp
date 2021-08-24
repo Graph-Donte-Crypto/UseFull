@@ -34,20 +34,20 @@ namespace uft {
 			values = (Type *) (new char [sizeof(Type) * size] );
 		}
 		void freeMemory() {
-		    size = 0;
-		    length = 0;
-		    if (values) delete[] values;
-		    values = nullptr;
-        }
+			size = 0;
+			length = 0;
+			if (values) delete[] values;
+			values = nullptr;
+		}
 		void freeMemory(void * ptr) {
-		    delete[] (Type *)ptr;
-        }
+			delete[] (Type *)ptr;
+		}
 		void setMemory(void * ptr) {
-		    values = ptr;
-        }
+			values = ptr;
+		}
 		void * getMemory() {
-		    return values;
-        }
+			return values;
+		}
 		void * takeMemory() {
 			length = 0;
 			size = 0;
@@ -56,11 +56,11 @@ namespace uft {
 			return ptr;
 		}
 		size_t getMemorySize() {
-		    return size   * sizeof(Type);
-        }
+			return size   * sizeof(Type);
+		}
 		size_t getDataSize()   {
-		    return length * sizeof(Type);
-        }
+			return length * sizeof(Type);
+		}
 		/* */
 
 		void optimizeMemory() {
@@ -141,7 +141,7 @@ namespace uft {
 			return *this;
 		}
 
-        Array & operator = (const Array & array) = delete;
+		Array & operator = (const Array & array) = delete;
 
 		size_t getElementPositionUnsafe(const Type * obj) {
 			return (values - obj) / sizeof(Type);
