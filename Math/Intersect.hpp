@@ -10,6 +10,7 @@
 
 #include "../Utils/StdDiagnosticIgnoreEnd.hpp"
 
+#include "UseFull/Math/Equation.hpp"
 #include "Vector.hpp"
 #include "Shape.hpp"
 #include "../Utils/Ok.hpp"
@@ -46,7 +47,7 @@ namespace math {
 	
 	//TODO: CHECK
 	template <size_t DM>
-	Ok<VDM> projectionPointOnEquationLine(const VDM & base, const EquationLine<DM> & el) {
+	VDM projectionPointOnEquationLine(const VDM & base, const EquationLine<DM> & el) {
 		//point = el.point + t * el.vector;
 		//eh.ort * point + eh.c = 0
 		//eh.ort * el.point + t * el.vector * eh.ort + eh.c = 0
@@ -98,21 +99,22 @@ namespace math {
 
 	template <size_t DM>
 	VDM reflectPointOverLine(const VDM & base, const EquationLine<DM> & el){
-		return projectionPointOnEquationLine(base, el) * 2 - base;
+		return projectionPointOnEquationLine(base, el).mul(2).sub(base);
 	}
 
 	template <size_t DM>
 	VDM reflectPointOverHyperplane(const VDM & base, const EquationHyperplane<DM> & eh) {
-		return projectionPointOnEquationHyperplane(base, eh) * 2 - base;
+		return projectionPointOnEquationHyperplane(base, eh).mul(2).sub(base);
 	}
 
-	//Unimplimented
+	/*
+	*	base - point for reflect,
+	*	eh - original EquationHyperplane,
+	*	intersect_point - point on eh
+	*/
 	template <size_t DM>
-	VDM reflectPointOverHyperplaneOrt(const VDM & base, const EquationHyperplane<DM> & eh) {
-		prefix_unused(base);
-		prefix_unused(eh);
-		printf("reflectPointOverHyperplaneOrt Unimplimented\n");
-		exit(1);
+	VDM reflectPointOverHyperplaneOrt(const VDM & base, const EquationHyperplane<DM> & eh, const VDM & intersect_point) {
+		return reflectPointOverLine(base, EquationLine<DM>::fromPointAndOrt(intersect_point, eh.ort));
 	} 
 
 	//TODO: CHECK
