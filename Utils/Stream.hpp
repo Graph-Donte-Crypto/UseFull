@@ -3,6 +3,7 @@
 
 #include "StdDiagnosticIgnore.hpp"
 
+#include <cstddef>
 #include <utility>
 #include <stdio.h>
 
@@ -88,14 +89,14 @@ namespace utils {
 		requires CoIterable<SourceType, TypeFrom>
 	struct Stream {
 
-	    #define self (*((RealType *)this))
+		#define self (*((RealType *)this))
 
-        DEBUG(
-            const char * full_type;
-            const char * type;
-            const char * type_to;
-            const char * source_type;
-        )
+		DEBUG(
+			const char * full_type;
+			const char * type;
+			const char * type_to;
+			const char * source_type;
+		)
 		SourceType source;
 		const Lambda lambda;
 		TypeTo object;
@@ -122,14 +123,14 @@ namespace utils {
 			lambda(_lambda),
 			object()
 		{
-		    DEBUG(
-                int status;
-                source_type = abi::__cxa_demangle(typeid(_source).name(),0,0,&status);
-                full_type = abi::__cxa_demangle(typeid(*this).name(),0,0,&status);
-                type = "Stream";
+			DEBUG(
+				int status;
+				source_type = abi::__cxa_demangle(typeid(_source).name(),0,0,&status);
+				full_type = abi::__cxa_demangle(typeid(*this).name(),0,0,&status);
+				type = "Stream";
 				TypeTo * f = nullptr;
-                type_to = typeid(f).name();
-            )
+				type_to = typeid(f).name();
+			)
 		}
 
 		~Stream() {
@@ -146,7 +147,7 @@ namespace utils {
 		}
 
 		auto ForOne(CoVoidLambda<TypeTo> auto new_lambda) {
-            return StreamForOne(*((RealType *)this), new_lambda, (TypeTo *)0, (TypeTo *)0);
+			return StreamForOne(*((RealType *)this), new_lambda, (TypeTo *)0, (TypeTo *)0);
 		}
 
 		auto Filter(CoLambda<bool, TypeTo> auto new_lambda) {
@@ -191,10 +192,20 @@ namespace utils {
 			return object;
 		}
 		Ok<TypeTo> Find(CoLambda<bool, TypeTo> auto new_lambda) {
-		    while (self.hasNext())
-                if (new_lambda(self.getNext()))
-                    return self.getCurr();
-            return {};
+			while (self.hasNext())
+				if (new_lambda(self.getNext()))
+					return self.getCurr();
+			return {};
+		}
+
+		Ok<size_t> FindIndex(CoLambda<bool, TypeTo> auto new_lambda) {
+			size_t index = 0;
+			while(self.hasNext())
+				if (new_lambda(self.getNext()))
+					return index;
+				else 
+					index++;
+			return {};
 		}
 	};
 
@@ -207,14 +218,14 @@ namespace utils {
 			: parent(StreamSelect)(_source, _lambda, (TypeFrom *)0, (TypeTo *)0)
 		{
 
-		    DEBUG(
-                int status;
-                parent(StreamSelect)::source_type = abi::__cxa_demangle(typeid(_source).name(),0,0,&status);
-                parent(StreamSelect)::full_type = abi::__cxa_demangle(typeid(*this).name(),0,0,&status);
-                parent(StreamSelect)::type = "StreamSelect";
+			DEBUG(
+				int status;
+				parent(StreamSelect)::source_type = abi::__cxa_demangle(typeid(_source).name(),0,0,&status);
+				parent(StreamSelect)::full_type = abi::__cxa_demangle(typeid(*this).name(),0,0,&status);
+				parent(StreamSelect)::type = "StreamSelect";
 				TypeTo * f = nullptr;
-                parent(StreamSelect)::type_to = typeid(f).name();
-            )
+				parent(StreamSelect)::type_to = typeid(f).name();
+			)
 		}
 
 		bool hasNext() {
@@ -237,14 +248,14 @@ namespace utils {
 			: parent(StreamForAll)(_source, _lambda, (TypeFrom *)0, (TypeTo *)0)
 		{
 
-		    DEBUG(
-                int status;
-                parent(StreamForAll)::source_type = abi::__cxa_demangle(typeid(_source).name(),0,0,&status);
-                parent(StreamForAll)::full_type = abi::__cxa_demangle(typeid(*this).name(),0,0,&status);
-                parent(StreamForAll)::type = "StreamForAll";
+			DEBUG(
+				int status;
+				parent(StreamForAll)::source_type = abi::__cxa_demangle(typeid(_source).name(),0,0,&status);
+				parent(StreamForAll)::full_type = abi::__cxa_demangle(typeid(*this).name(),0,0,&status);
+				parent(StreamForAll)::type = "StreamForAll";
 				TypeTo * f = nullptr;
-                parent(StreamForAll)::type_to = typeid(f).name();
-            )
+				parent(StreamForAll)::type_to = typeid(f).name();
+			)
 			execute();
 		}
 
@@ -260,14 +271,14 @@ namespace utils {
 			: parent(StreamForOne)(_source, _lambda, (TypeFrom *)0, (TypeTo *)0)
 		{
 
-		    DEBUG(
-                int status;
-                parent(StreamForOne)::source_type = abi::__cxa_demangle(typeid(_source).name(),0,0,&status);
-                parent(StreamForOne)::full_type = abi::__cxa_demangle(typeid(*this).name(),0,0,&status);
-                parent(StreamForOne)::type = "StreamForOne";
+			DEBUG(
+				int status;
+				parent(StreamForOne)::source_type = abi::__cxa_demangle(typeid(_source).name(),0,0,&status);
+				parent(StreamForOne)::full_type = abi::__cxa_demangle(typeid(*this).name(),0,0,&status);
+				parent(StreamForOne)::type = "StreamForOne";
 				TypeTo * f = nullptr;
-                parent(StreamForOne)::type_to = typeid(f).name();
-            )
+				parent(StreamForOne)::type_to = typeid(f).name();
+			)
 		}
 
 		bool hasNext() {
@@ -296,14 +307,14 @@ namespace utils {
 			  nextGetted(true)
 		{
 
-		    DEBUG(
-                int status;
-                parent(StreamFilter)::source_type = abi::__cxa_demangle(typeid(_source).name(),0,0,&status);
-                parent(StreamFilter)::full_type = abi::__cxa_demangle(typeid(*this).name(),0,0,&status);
-                parent(StreamFilter)::type = "StreamFilter";
+			DEBUG(
+				int status;
+				parent(StreamFilter)::source_type = abi::__cxa_demangle(typeid(_source).name(),0,0,&status);
+				parent(StreamFilter)::full_type = abi::__cxa_demangle(typeid(*this).name(),0,0,&status);
+				parent(StreamFilter)::type = "StreamFilter";
 				TypeTo * f = nullptr;
-                parent(StreamFilter)::type_to = typeid(f).name();
-            )
+				parent(StreamFilter)::type_to = typeid(f).name();
+			)
 		}
 
 		bool findNext() {
@@ -344,14 +355,14 @@ namespace utils {
 			  nextGetted(true),
 			  active(true)
 		{
-		    DEBUG(
-                int status;
-                parent(StreamWhile)::source_type = abi::__cxa_demangle(typeid(_source).name(),0,0,&status);
-                parent(StreamWhile)::full_type = abi::__cxa_demangle(typeid(*this).name(),0,0,&status);
-                parent(StreamWhile)::type = "StreamWhile";
+			DEBUG(
+				int status;
+				parent(StreamWhile)::source_type = abi::__cxa_demangle(typeid(_source).name(),0,0,&status);
+				parent(StreamWhile)::full_type = abi::__cxa_demangle(typeid(*this).name(),0,0,&status);
+				parent(StreamWhile)::type = "StreamWhile";
 				TypeTo * f = nullptr;
-                parent(StreamWhile)::type_to = typeid(f).name();
-            )
+				parent(StreamWhile)::type_to = typeid(f).name();
+			)
 		}
 
 		bool findNext() {
@@ -392,14 +403,14 @@ namespace utils {
 			  nextGetted(true)
 		{
 
-		    DEBUG(
-                int status;
-                parent(StreamSince)::source_type = abi::__cxa_demangle(typeid(_source).name(),0,0,&status);
-                parent(StreamSince)::full_type = abi::__cxa_demangle(typeid(*this).name(),0,0,&status);
-                parent(StreamSince)::type = "StreamSince";
+			DEBUG(
+				int status;
+				parent(StreamSince)::source_type = abi::__cxa_demangle(typeid(_source).name(),0,0,&status);
+				parent(StreamSince)::full_type = abi::__cxa_demangle(typeid(*this).name(),0,0,&status);
+				parent(StreamSince)::type = "StreamSince";
 				TypeTo * f = nullptr;
-                parent(StreamSince)::type_to = typeid(f).name();
-            )
+				parent(StreamSince)::type_to = typeid(f).name();
+			)
 		}
 
 		bool findNext() {
@@ -438,16 +449,16 @@ namespace utils {
 			: Stream<StreamReduce<SourceType, Lambda, TypeFrom, TypeTo>, SourceType, Lambda, TypeFrom, TypeFrom>(_source, _lambda, (TypeFrom *)0, (TypeFrom *)0),
 			  result(base)
 		{
-            #define temp_parent Stream<StreamReduce<SourceType, Lambda, TypeFrom, TypeTo>, SourceType, Lambda, TypeFrom, TypeFrom>
-		    DEBUG(
-                int status;
-                temp_parent::source_type = abi::__cxa_demangle(typeid(_source).name(),0,0,&status);
-                temp_parent::full_type = abi::__cxa_demangle(typeid(*this).name(),0,0,&status);
-                temp_parent::type = "StreamReduce";
+			#define temp_parent Stream<StreamReduce<SourceType, Lambda, TypeFrom, TypeTo>, SourceType, Lambda, TypeFrom, TypeFrom>
+			DEBUG(
+				int status;
+				temp_parent::source_type = abi::__cxa_demangle(typeid(_source).name(),0,0,&status);
+				temp_parent::full_type = abi::__cxa_demangle(typeid(*this).name(),0,0,&status);
+				temp_parent::type = "StreamReduce";
 				TypeTo * f = nullptr;
-                temp_parent::type_to = typeid(f).name();
-            )
-            #undef temp_parent
+				temp_parent::type_to = typeid(f).name();
+			)
+			#undef temp_parent
 		}
 
 		TypeTo & reduce() {
@@ -467,14 +478,14 @@ namespace utils {
 			: parent(StreamSimpleReduce)(_source, _lambda, (TypeFrom *)0, (TypeTo *)0),
 			  result()
 		{
-            DEBUG(
-                int status;
-                parent(StreamSimpleReduce)::source_type = abi::__cxa_demangle(typeid(_source).name(),0,0,&status);
-                parent(StreamSimpleReduce)::full_type = abi::__cxa_demangle(typeid(*this).name(),0,0,&status);
-                parent(StreamSimpleReduce)::type = "StreamSimpleReduce";
+			DEBUG(
+				int status;
+				parent(StreamSimpleReduce)::source_type = abi::__cxa_demangle(typeid(_source).name(),0,0,&status);
+				parent(StreamSimpleReduce)::full_type = abi::__cxa_demangle(typeid(*this).name(),0,0,&status);
+				parent(StreamSimpleReduce)::type = "StreamSimpleReduce";
 				TypeTo * f = nullptr;
-                parent(StreamSimpleReduce)::type_to = typeid(f).name();
-            )
+				parent(StreamSimpleReduce)::type_to = typeid(f).name();
+			)
 		}
 
 		TypeTo & reduce() {
@@ -495,14 +506,14 @@ namespace utils {
 			  ignore(num)
 		{
 
-		    DEBUG(
-                int status;
-                parent(StreamIgnore)::source_type = abi::__cxa_demangle(typeid(_source).name(),0,0,&status);
-                parent(StreamIgnore)::full_type = abi::__cxa_demangle(typeid(*this).name(),0,0,&status);
-                parent(StreamIgnore)::type = "StreamIgnore";
+			DEBUG(
+				int status;
+				parent(StreamIgnore)::source_type = abi::__cxa_demangle(typeid(_source).name(),0,0,&status);
+				parent(StreamIgnore)::full_type = abi::__cxa_demangle(typeid(*this).name(),0,0,&status);
+				parent(StreamIgnore)::type = "StreamIgnore";
 				TypeTo * f = nullptr;
-                parent(StreamIgnore)::type_to = typeid(f).name();
-            )
+				parent(StreamIgnore)::type_to = typeid(f).name();
+			)
 		}
 
 		bool findNext() {
@@ -539,14 +550,14 @@ namespace utils {
 			  accept(num)
 		{
 
-		    DEBUG(
-                int status;
-                parent(StreamAccept)::source_type = abi::__cxa_demangle(typeid(_source).name(),0,0,&status);
-                parent(StreamAccept)::full_type = abi::__cxa_demangle(typeid(*this).name(),0,0,&status);
-                parent(StreamAccept)::type = "StreamAccept";
+			DEBUG(
+				int status;
+				parent(StreamAccept)::source_type = abi::__cxa_demangle(typeid(_source).name(),0,0,&status);
+				parent(StreamAccept)::full_type = abi::__cxa_demangle(typeid(*this).name(),0,0,&status);
+				parent(StreamAccept)::type = "StreamAccept";
 				TypeTo * f = nullptr;
-                parent(StreamAccept)::type_to = typeid(f).name();
-            )
+				parent(StreamAccept)::type_to = typeid(f).name();
+			)
 		}
 
 		bool hasNext() {
@@ -621,24 +632,24 @@ namespace utils {
 	template <typename SourceType, typename Lambda, typename TypeTo>
 	struct StreamIterator : public Stream<StreamIterator<SourceType, Lambda, TypeTo>, Iterator<SourceType, TypeTo>, Lambda, TypeTo, TypeTo> {
 
-        StreamIterator(SourceType & coll, const Lambda & _lambda, TypeTo *, TypeTo *) :
-            //iterator(coll),
-            Stream<StreamIterator<SourceType, Lambda, TypeTo>, Iterator<SourceType, TypeTo>, Lambda, TypeTo, TypeTo>(
-                Iterator<SourceType, TypeTo>(coll),
-                _lambda, (TypeTo *)0, (TypeTo *)0)
-        {
-            #define temp_parent Stream<StreamIterator<SourceType, Lambda, TypeTo>, Iterator<SourceType, TypeTo>, Lambda, TypeTo, TypeTo>
+		StreamIterator(SourceType & coll, const Lambda & _lambda, TypeTo *, TypeTo *) :
+			//iterator(coll),
+			Stream<StreamIterator<SourceType, Lambda, TypeTo>, Iterator<SourceType, TypeTo>, Lambda, TypeTo, TypeTo>(
+				Iterator<SourceType, TypeTo>(coll),
+				_lambda, (TypeTo *)0, (TypeTo *)0)
+		{
+			#define temp_parent Stream<StreamIterator<SourceType, Lambda, TypeTo>, Iterator<SourceType, TypeTo>, Lambda, TypeTo, TypeTo>
 
-            DEBUG(
-                int status;
-                TypeTo a;
-                temp_parent::source_type = abi::__cxa_demangle(typeid(coll).name(),0,0,&status);
-                temp_parent::full_type = abi::__cxa_demangle(typeid(*this).name(),0,0,&status);
-                temp_parent::type = "StreamIterator";
-                temp_parent::type_to = typeid(a).name();
-            )
-            #undef temp_parent
-        }
+			DEBUG(
+				int status;
+				TypeTo a;
+				temp_parent::source_type = abi::__cxa_demangle(typeid(coll).name(),0,0,&status);
+				temp_parent::full_type = abi::__cxa_demangle(typeid(*this).name(),0,0,&status);
+				temp_parent::type = "StreamIterator";
+				temp_parent::type_to = typeid(a).name();
+			)
+			#undef temp_parent
+		}
 	};
 
 	template <typename Type>
