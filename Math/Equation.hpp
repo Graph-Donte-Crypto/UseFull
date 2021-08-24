@@ -41,6 +41,26 @@ namespace math {
 			vector = (b - a).ort();
 		}
 
+	private:
+		EquationLine() {}
+	public:
+
+		static EquationLine Empty() {return EquationLine();}
+
+		static EquationLine<dimension> fromPointAndVector(const Vector<dimension> & point, const Vector<dimension> & vector) {
+			EquationLine<dimension> el = Empty();
+			el.point = point;
+			el.vector = vector.ort();
+			return el;
+		}
+
+		static EquationLine<dimension> fromPointAndOrt(const Vector<dimension> & point, const Vector<dimension> & ort) {
+			EquationLine<dimension> el = Empty();
+			el.point = point;
+			el.vector = ort;
+			return el;
+		}
+
 		EquationLine(const Line<dimension> * line) {
 			point = line->a;
 			vector = (line->b - line->a).ort();
@@ -62,7 +82,7 @@ namespace math {
 	};
 
 	/*
-		a[1] * x[1] + ... a[n] * x[n] + c = 0, where
+		a[1] * x[1] + ... + a[n] * x[n] + c = 0, where
 
 		n - dimension count,
 		a - ort vector,
@@ -78,17 +98,17 @@ namespace math {
 
 		}
 		EquationHyperplane(const Vector<dimension> & vector, double xc)
-            : ort(vector)
-            , c(xc)
-        {}
+			: ort(vector)
+			, c(xc)
+		{}
 		EquationHyperplane(const EquationHyperplane<dimension> & e)
-            : ort(e.ort)
-            , c(e.c)
-        {}
+			: ort(e.ort)
+			, c(e.c)
+		{}
 
 		EquationHyperplane(const Vector<dimension> & point, const Vector<dimension> & ort)
-            : ort(ort)
-            , c(- (point * ort))
+			: ort(ort)
+			, c(- (point * ort))
 		{}
 
 		void printf(const char * format = "%07.3lf ") const {
@@ -97,7 +117,7 @@ namespace math {
 		}
 
 		std::string toString(const char * format = "%07.3lf ") const {
-            return "a = " + ort.toString(format) + " c = " + std::to_string(c);
+			return "a = " + ort.toString(format) + " c = " + std::to_string(c);
 		}
 
 		double valueInPoint(const Vector<dimension> & point) const {
