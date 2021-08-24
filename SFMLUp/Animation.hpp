@@ -1,8 +1,12 @@
 #ifndef UF_SFMLUP_Animation_H
 #define UF_SFMLUP_Animation_H
 
+#include "../Utils/StdDiagnosticIgnore.hpp"
+
 #include <functional>
 #include <SFML/System.hpp>
+
+#include "../Utils/StdDiagnosticIgnoreEnd.hpp"
 
 //UseFull SFML Up Animation module
 //Version 1.0 alfa
@@ -53,7 +57,7 @@ namespace sfmlup {
 		bool step(double x) {
 			if (current_x != 1 || current_x != 0) {
 				
-				double time_delta = ( (double)( clock.getElapsedTime().asMicroseconds() ) ) / milliseconds;
+				double time_delta = ( (double)( clock.getElapsedTime().asMilliseconds() ) ) / milliseconds;
 				clock.restart();
 				current_x += time_delta * delta_x;
 				if (current_x > 1)
