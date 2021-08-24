@@ -1,18 +1,21 @@
 #ifndef UF_SFMLUP_Drawer_H
 #define UF_SFMLUP_Drawer_H
 
-#include "UseFull/Utils/StdDiagnosticIgnore.hpp"
+#include "../Utils/StdDiagnosticIgnore.hpp"
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Color.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
+#include <cstdlib>
 #include <sstream>
 
-#include "UseFull/Utils/StdDiagnosticIgnoreEnd.hpp"
+#include "../Utils/StdDiagnosticIgnoreEnd.hpp"
 
 //UseFull SFML Up Drawer module
 //Version 1.0 alfa
 //Make by Graph Don'te-Crypto
 
-#include "../Math/Shape.hpp"
+#include "../Math/Equation.hpp"
 #include "Fonts.hpp"
 #include "View.hpp"
 
@@ -83,6 +86,30 @@ namespace sfup {
 			shape.setOutlineColor(outline);
 			shape.setOutlineThickness(-1);
 			rt.draw(shape, sf::BlendNone);
+		}
+
+		//TODO: FIX
+		void drawHyperplane(
+			sf::RenderTarget & rt, 
+			const EquationHyperplane<2> & eh, 
+			const sf::Color & ort_color,
+			const sf::Color & line_color
+		) {
+			XY start_point;
+			if (abs(eh.ort[0]) > 0.001) {
+				start_point[1] = 1;
+				start_point[0] = ( (-eh.c) - eh.ort[1] * start_point[1]) / eh.ort[0];
+			}
+			else if (abs(eh.ort[1]) > 0.001) {
+				start_point[0] = 1;
+				start_point[1] = ( (-eh.c) - eh.ort[0] * start_point[0]) / eh.ort[1];
+			}
+			else {
+				start_point = {0, 0};
+			}
+			XY p1 = ((eh.ort * (-eh.c)) - start_point).ort() * 30;
+			drawLine(rt, Line(start_point + p1, start_point    ).lengthenBy(30, LengthenWay::TowardsB), line_color);
+			drawLine(rt, Line(start_point, start_point + eh.ort).lengthenBy(20, LengthenWay::TowardsB), ort_color);
 		}
 
 		void drawCircle(const Sphere<2> & circle, const sf::Color & color) {
