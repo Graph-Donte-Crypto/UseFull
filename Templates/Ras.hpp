@@ -94,7 +94,7 @@ namespace uft {
 		}
 		RasRec<T> * remove(RasRec<T> * ptr) {
 			if (ptr->storage != this) {
-				printf("Ras::removeWeak::ptr->storage != this\n");
+				printf("Ras::remove::ptr->storage != this\n");
 				exit(1);
 			}
 			else {
