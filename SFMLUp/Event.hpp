@@ -90,7 +90,7 @@ namespace sfup {
 
 		bool e[limit];
 
-		EventKeeper() : Key(KeyPressed, KeyPressing, KeyReleased) {
+		EventKeeper() : KeyPressed(), KeyPressing(), KeyReleased(), Key(KeyPressed, KeyPressing, KeyReleased) {
 			flushStrong();
 		}
 		

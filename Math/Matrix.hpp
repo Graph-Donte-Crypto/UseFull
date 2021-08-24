@@ -36,14 +36,17 @@ namespace math {
 
 		*/
 		Matrix() {}
-		Matrix(C Matrix & matrix) {
-			memcpy(array, matrix.array, width * sizeof(Vector<height>));
+		constexpr Matrix(C Matrix & matrix) {
+			for (size_t i = 0; i < width; i++)
+				array[i] = matrix.array[i];
 		}
-		Matrix(std::initializer_list<Vector<width>> list) {
+		constexpr Matrix(std::initializer_list<Vector<width>> list) {
 			if (list.size() != height) {
 				::printf("Matrix height = (%llu) and list.size() = (%llu) have different values\n", (unsigned long long)height, (unsigned long long)list.size());
 			}
-			memcpy(array, list.begin(), list.size() * sizeof(D));
+
+			for (size_t i = 0; i < width; i++)
+				array[i] = *(list.begin() + i);
 		}
 		
 		Matrix<height, width> & set(size_t i, size_t j, double d) {
@@ -179,7 +182,7 @@ namespace math {
                     if (++i == width) {
                         i = row;
                         if (++lead == height)
-                            return;
+                            return (*this);
                     }
                 }
 

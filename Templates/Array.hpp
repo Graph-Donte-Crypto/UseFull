@@ -1,12 +1,12 @@
 #ifndef UF_T_Array_H
 #define UF_T_Array_H
 
-#include "../Utils/Bytes.hpp"
-#include "Interface.hpp"
-
 //UseFull Template Array module
 //Version 2.0 alfa
 //Make by Graph Don'te-Crypto
+
+#include "../Utils/Bytes.hpp"
+#include "Interface.hpp"
 
 namespace uft {
 	using namespace utils;

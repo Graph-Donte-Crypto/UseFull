@@ -55,7 +55,7 @@ namespace sfmlup {
 			animation_function(target, current_x);
 		}
 		
-		bool step(double x) {
+		void step(double x) {
 			prefix_unused(x);
 			if (current_x != 1 || current_x != 0) {
 				
