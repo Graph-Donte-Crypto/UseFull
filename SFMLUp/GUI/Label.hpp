@@ -1,14 +1,17 @@
 #ifndef UF_SFMLUp_GUI_Label_H
 #define UF_SFMLUp_GUI_Label_H
 
+#include "../../Utils/StdDiagnosticIgnore.hpp"
+
 #include <SFML/Graphics/Color.hpp>
+
+#include "../../Utils/StdDiagnosticIgnoreEnd.hpp"
 
 //UseFull SFML Up Gui Label module
 //Version 1.0 alfa
 //Make by Graph Don'te-Crypto
 
 #include "BaseGui.hpp"
-#include "UseFull/SFMLUp/GUI/BaseGui.hpp"
 
 namespace sfup { namespace gui {
 
@@ -25,7 +28,7 @@ struct Label : public BaseGui {
 
 		text.setCharacterSize(14);
 		text.setString("");
-		text.setOutlineThickness(0.1);
+		text.setOutlineThickness(1);
 		setTextColor(sf::Color::White);
 		
 		centerTheText();
@@ -33,6 +36,13 @@ struct Label : public BaseGui {
 
 	void setText(const char * str) {
 		text.setString(str);
+		centerTheText();
+	}
+
+	template <typename Type> 
+	void setText(const Type & object) {
+		std::string temp_string = str::toStringFormat(object);
+		text.setString(temp_string);
 		centerTheText();
 	}
 
