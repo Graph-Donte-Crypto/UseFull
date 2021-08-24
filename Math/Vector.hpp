@@ -72,41 +72,44 @@ namespace math {
 			return ret;
 		}
 
-		Vector<dimension>   operator *  (C D  & d1) C {
+		Vector<dimension> operator *  (C D  & d1) C {
 			return Vector<dimension>(*this) *= d1;
 		}
+		Vector<dimension> mul(C D & d1) {return (*this) * d1;}
 
-		Vector<dimension>   operator /  (C D  & d1) C {
+		Vector<dimension> operator /  (C D  & d1) C {
 			return Vector<dimension>(*this) /= d1;
 		}
+		Vector<dimension> div(C D & d1) {return (*this) / d1;}
 
-		Vector<dimension>   operator +  (C Vector<dimension> & p1) C {
+		Vector<dimension> operator +  (C Vector<dimension> & p1) C {
 			return Vector<dimension>(*this) += p1;
 		}
+		Vector<dimension> add(C Vector<dimension> & p1) {return (*this) + p1;}
 
-		Vector<dimension>   operator -  (C Vector<dimension> & p1) C {
+		Vector<dimension> operator -  (C Vector<dimension> & p1) C {
 			return Vector<dimension>(*this) -= p1;
 		}
+		Vector<dimension> sub(C Vector<dimension> & p1) {return (*this) - p1;}
+
 
 		Vector<dimension> & operator *= (C D  & d1) {
 			for (size_t i = 0; i < dimension; i++) coords[i] *= d1;
 			return *this;
 		}
-
 		Vector<dimension> & operator /= (C D  & d1) {
 			for (size_t i = 0; i < dimension; i++) coords[i] /= d1;
 			return *this;
 		}
-
 		Vector<dimension> & operator += (C Vector<dimension> & p1) {
 			for (size_t i = 0; i < dimension; i++) coords[i] += p1[i];
 			return *this;
 		}
-
 		Vector<dimension> & operator -= (C Vector<dimension> & p1) {
 			for (size_t i = 0; i < dimension; i++) coords[i] -= p1[i];
 			return *this;
 		}
+
 
 		bool compareHard(C Vector<dimension> & p1) C {
 			return (!memcmp(coords, p1.coords, dimension * sizeof(D)));
@@ -155,18 +158,15 @@ namespace math {
 			return sqrt(distanceSquaredTo(vector));
 		}
 
-		double norm() C {
-			double sum = 0;
-			for (size_t i = 0; i < dimension; i++)
-				sum += coords[i] * coords[i];
-			return sqrt(sum);
-		}
-
 		double normSquared() C {
 			double sum = 0;
 			for (size_t i = 0; i < dimension; i++)
 				sum += coords[i] * coords[i];
 			return sum;
+		}
+
+		double norm() C {
+			return sqrt(normSquared());
 		}
 
 		double cosWith(const Vector<dimension> & vec) {
