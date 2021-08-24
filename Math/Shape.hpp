@@ -1,8 +1,13 @@
 #ifndef UF_M_Shape_H
 #define UF_M_Shape_H
 
+#include "UseFull/Math/Vector.hpp"
 #include "Vector.hpp"
 #include "../Utils/Minmax.hpp"
+#include <cstddef>
+#include <cstdio>
+#include <cstdlib>
+#include <string>
 #include <tuple>
 
 //UseFull Math Shape module
@@ -18,8 +23,7 @@ namespace math {
 	enum class LengthenWay {
 		TowardsA,
 		TowardsB,
-		Equally,
-		Evenly
+		Equally
 	};
 	
 	template <size_t dimension>
@@ -27,8 +31,7 @@ namespace math {
 		Vector<dimension> a, b;
 		
 		Line(const Vector<dimension> & xa, const Vector<dimension> & xb) {a  = xa; b  = xb;}
-		Line(const Line<dimension> & l) {a = l.a; b = l.b;}
-		Line() {}
+		Line() : a(0), b(0) { }
 		
 		Line & operator += (const Vector<dimension> & vec) {a += vec; b += vec; return *this;}
 		Line & operator -= (const Vector<dimension> & vec) {a -= vec; b -= vec; return *this;}
@@ -39,6 +42,10 @@ namespace math {
 		void printf(const char * format = "%07.3lf ") const {
 			::printf("A: "); a.printf(format);
 			::printf("B: "); b.printf(format);
+		}
+
+		std::string toString(const char * format = "%07.3lf ") {
+			return "A: " + a.toString(format) + "\nB: " + b.toString(format);
 		}
 		
 		Line & lengthenBy(double value, LengthenWay way = LengthenWay::Equally) {
@@ -54,11 +61,11 @@ namespace math {
 				b += ort * value;
 				a -= ort * value;
 				break;
-			case LengthenWay::Evenly: 
-				b += ort * value / 2;
-				a -= ort * value / 2;
-				break;
+			default:
+				::printf("Vector::lengthenBy not implimented\n");
+				exit(1);
 			}
+			return *this;
 		}
 	};
 	
@@ -66,10 +73,7 @@ namespace math {
 	struct Sphere {
 		Vector<dimension> center;
 		double r;
-		Sphere() {
-			center = 0;
-			r = 0;
-		}
+		Sphere() : center(0), r(0) {}
 		Sphere(const Vector<dimension> & xcenter, double xr) : center(xcenter), r(xr){}
 		
 		bool operator == (const Sphere<dimension> & circle) {
@@ -80,6 +84,11 @@ namespace math {
 			::printf("Radius: "); ::printf(format, r);
 			::printf("\n");
 		}
+
+		std::string toString(const char * format = "%07.3lf ") const {
+			return "Center " + center.toString(format) + "\nRadius: " + std::to_string(r);
+		}
+
 		Sphere & operator += (const Vector<dimension> & vec) 
 			{center += vec; return *this;}
 		Sphere & operator -= (const Vector<dimension> & vec) 
