@@ -1,18 +1,22 @@
 #ifndef UF_M_Shape_H
 #define UF_M_Shape_H
 
-#include "UseFull/Math/Vector.hpp"
-#include "Vector.hpp"
-#include "../Utils/Minmax.hpp"
+#include "../Utils/StdDiagnosticIgnore.hpp"
+
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
 #include <string>
 #include <tuple>
 
+#include "../Utils/StdDiagnosticIgnoreEnd.hpp"
+
 //UseFull Math Shape module
 //Version 1.0 alfa
 //Make by Graph Don'te-Crypto
+
+#include "Vector.hpp"
+#include "../Utils/Minmax.hpp"
 
 #define EPS 0.001
 

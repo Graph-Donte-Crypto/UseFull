@@ -1,9 +1,12 @@
 #ifndef UF_U_Stream_H
 #define UF_U_Stream_H
-#include "Concepts.hpp"
-#include "Ok.hpp"
+
+#include "StdDiagnosticIgnore.hpp"
+
 #include <utility>
 #include <stdio.h>
+
+#include "StdDiagnosticIgnoreEnd.hpp"
 
 //UseFull Utils Stream api module
 //Version 1.0 alfa
@@ -11,7 +14,10 @@
 
 //#define STREAM_DEBUG
 
-#include <UseFull/Utils/RuntimeDebug.hpp>
+#include "RuntimeDebug.hpp"
+#include "Concepts.hpp"
+#include "Ok.hpp"
+
 
 #ifdef RUNTIME_DEBUG
 #include <cxxabi.h>

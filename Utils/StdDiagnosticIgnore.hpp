@@ -12,7 +12,6 @@
 #pragma clang diagnostic ignored "-Wnon-virtual-dtor"
 #pragma clang diagnostic ignored "-Wexpansion-to-defined"
 #pragma clang diagnostic ignored "-Wpedantic"
-#pragma clang diagnostic ignored "-pedantic"
 #pragma clang diagnostic ignored "-Wextra"
 #pragma clang diagnostic ignored "-Wexpansion-to-defined"
 

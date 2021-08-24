@@ -22,3 +22,5 @@ Utils/LambdaHolder.hpp
 Utils/Parser.hpp
 Utils/SBuffer.hpp
 Utils/Trace.hpp
+Utils/StdDiagnosticIgnore.hpp
+Utils/StdDiagnosticIgnoreEnd.hpp

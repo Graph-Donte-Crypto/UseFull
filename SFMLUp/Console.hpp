@@ -2,6 +2,8 @@
 #define UF_SFMLUP_Console_H
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Color.hpp>
+#include <SFML/System/Clock.hpp>
 #include "../Math/Shape.hpp"
 #include "../Templates/Array.hpp"
 #include "Event.hpp"
@@ -50,7 +52,7 @@ namespace sfmlup {
 		}
 		
 		void draw() {
-			Drawer.drawCodir(codir, sf::Color::White);
+			Drawer.drawCodir(codir, sf::Color::White, sf::Color::Transparent);
 		}
 	};
 }

@@ -1,7 +1,7 @@
 #ifndef UF_M_Intersect_H
 #define UF_M_Intersect_H
 
-#include "../Utils/Macro.hpp"
+
 #include "../Utils/StdDiagnosticIgnore.hpp"
 
 #include <cstddef>
@@ -10,7 +10,10 @@
 
 #include "../Utils/StdDiagnosticIgnoreEnd.hpp"
 
-#include "UseFull/Math/Equation.hpp"
+//UseFull Math Intersect module
+//Version 2.1 alfa
+//Make by Graph Don'te-Crypto
+
 #include "Vector.hpp"
 #include "Shape.hpp"
 #include "../Utils/Ok.hpp"
@@ -19,11 +22,6 @@
 
 #define EPS 0.001
 #define is_zero(d) (abs(d) < EPS)
-
-
-//UseFull Math Intersect module
-//Version 2.1 alfa
-//Make by Graph Don'te-Crypto
 
 //DM ~ DiMention
 

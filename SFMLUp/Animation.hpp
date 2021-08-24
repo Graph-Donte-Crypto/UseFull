@@ -13,6 +13,7 @@
 //Make by Graph Don'te-Crypto
 
 #include "../Utils/Concepts.hpp"
+#include "../Utils/Macro.hpp"
 
 namespace sfmlup {
 	using namespace utils;
@@ -55,6 +56,7 @@ namespace sfmlup {
 		}
 		
 		bool step(double x) {
+			prefix_unused(x);
 			if (current_x != 1 || current_x != 0) {
 				
 				double time_delta = ( (double)( clock.getElapsedTime().asMilliseconds() ) ) / milliseconds;

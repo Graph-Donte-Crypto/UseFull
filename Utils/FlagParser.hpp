@@ -1,15 +1,19 @@
 #ifndef UF_U_FlagParser_H
 #define UF_U_FlagParser_H
 
+#include "StdDiagnosticIgnore.hpp"
+
 #include <vector>
 #include <string>
 #include <string.h>
+
+#include "StdDiagnosticIgnoreEnd.hpp"
 
 //UseFull Utils Flag Parser module
 //Version 1.0 alfa
 //Make by Graph Don'te-Crypto
 
-#include <UseFull/Utils/Stream.hpp>
+#include "Stream.hpp"
 
 namespace utils {
 
