@@ -96,7 +96,7 @@ namespace uft {
 			}
 
 			void removeNoCheck(const Type * const object) {
-				long long position = getPosition(object);
+				size_t position = getPosition(object);
 				values_exists[position] = false;
 				free_spaces++;
 
