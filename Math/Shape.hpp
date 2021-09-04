@@ -110,10 +110,22 @@ namespace math {
 	struct Codir {
 		Vector<dimension> left_up = Vector<dimension>(), right_down = Vector<dimension>();
 		Codir() {}
+		
+		//From size
+		Codir (const Vector<dimension> & right_down) {
+			left_up = 0;
+			this->right_down = right_down;
+		}
+		//From size
+		static Codir fromSize(const Vector<dimension> & right_down) {
+			return Codir<dimension>(Vector<dimension>(0), right_down);
+		}
+		//From two points
 		Codir(const Vector<dimension> & a, const Vector<dimension> & b) {
 			for (size_t i = 0; i < dimension; i++) 
 				std::tie(left_up[i], right_down[i]) = minmax(a[i], b[i]);
 		}
+		//From line
 		Codir(const Line<dimension> & line) {
 			for (size_t i = 0; i < dimension; i++) 
 				std::tie(left_up[i], right_down[i]) = minmax(line.a[i], line.b[i]);
