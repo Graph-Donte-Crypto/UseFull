@@ -45,7 +45,7 @@ struct Button : public BaseGui {
 		setColor(color_focus_not);
 	}
 
-	void action() {
+	void action() override {
 		if (active) {
 			FocusTracker::focus_offset = getAbsoluteOffset();
 			checkFocus(Mouse.inWorld);
@@ -54,7 +54,7 @@ struct Button : public BaseGui {
 	~Button() {
 
 	}
-	void drawSelf() {
+	void drawSelf() override {
 		BaseGui::drawSelf();
 
 		frame.color = color_current;
@@ -79,20 +79,20 @@ struct Button : public BaseGui {
 		label.setTextColor(color_current);
 		color_outline = color_current;
 	}
-	void actionNotFocused() {
+	void actionNotFocused() override {
 		setColor(color_focus_not);
 	}
-	void actionFocused() {
+	void actionFocused() override {
 		setColor(color_focus);
 	}
-	void actionPressed() {
+	void actionPressed() override {
 		setColor(color_press);
 	}
-	void actionRealized() {
+	void actionRealized() override {
 		setColor(color_focus);
 		if (lambda != nullptr) lambda();
 	}
-	void moveRelative(const XY & delta) {
+	void moveRelative(const XY & delta) override {
 		BaseGui::moveRelative(delta);
 		//label.moveRelative(delta);
 		frame.center  += delta;

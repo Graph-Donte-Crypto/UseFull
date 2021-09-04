@@ -13,13 +13,32 @@ using namespace math;
 
 struct Checkbox : public Button {
 	
-	static Frame frame_true, frame_false;
+	Frame frame_true, frame_false;
+
+	static
+	struct CheckboxTemplatesStruct {
+
+		inline static Frame frame_template_ok;
+		inline static Frame frame_template_x;
+
+		CheckboxTemplatesStruct() {
+			frame_template_ok
+				.addPoint({1, 5})
+				.addPoint({4, 9})
+				.addPoint({9, 2})
+				.addBreak();
+			frame_template_x
+				.addPoint({1, 1})
+				.addPoint({9, 9})
+				.addBreak()
+				.addPoint({9, 1})
+				.addPoint({1, 9})
+				.addBreak();	
+		}
+	} Templates;
 	
 	bool value = false;
-	
-	Checkbox(const Codir<2> & codir) : Button(codir) {
-		frame = Frame(1, codir.center());
-	}
+
 	Checkbox(const Codir<2> & codir, bool value) : Button(codir) {
 		frame = Frame(1, codir.center());
 		this->value = value;
@@ -35,33 +54,15 @@ struct Checkbox : public Button {
 		
 		value = !value;
 	}
-	
-	void actionRealized() {
+
+	void actionRealized() override {
 		switchValue();
 		Button::actionRealized();
 	}
-	void moveRelative(const XY & delta) {
+	void moveRelative(const XY & delta) override {
 		Button::moveRelative(delta);
 	}
 };
-
-struct CheckboxInitValuesStruct {
-	CheckboxInitValuesStruct() {
-		Checkbox::frame_true
-			.addPoint({1, 5})
-			.addPoint({4, 9})
-			.addPoint({9, 2})
-			.addBreak();
-		Checkbox::frame_false
-			.addPoint({1, 1})
-			.addPoint({9, 9})
-			.addBreak()
-			.addPoint({9, 1})
-			.addPoint({1, 9})
-			.addBreak();
-	}
-	
-} CheckboxInitValues;
 	
 }}
 
