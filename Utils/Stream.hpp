@@ -142,11 +142,11 @@ namespace utils {
 			return StreamSelect(*((RealType *)this), new_lambda, (TypeTo *)0, (NewType *)0);
 		}
 
-		auto ForAll(CoVoidLambda<TypeTo> auto new_lambda) {
+		auto ForAll(CoLambda<void, TypeTo> auto new_lambda) {
 			return StreamForAll(*((RealType *)this), new_lambda, (TypeTo *)0, (TypeTo *)0);
 		}
 
-		auto ForOne(CoVoidLambda<TypeTo> auto new_lambda) {
+		auto ForOne(CoLambda<void, TypeTo> auto new_lambda) {
 			return StreamForOne(*((RealType *)this), new_lambda, (TypeTo *)0, (TypeTo *)0);
 		}
 
