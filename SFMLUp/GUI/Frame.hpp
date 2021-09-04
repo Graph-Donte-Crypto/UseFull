@@ -1,7 +1,11 @@
 #ifndef UF_SFMLUp_GUI_Frame_H
 #define UF_SFMLUp_GUI_Frame_H
 
+#include "../../Utils/StdDiagnosticIgnore.hpp"
+
 #include <SFML/Graphics.hpp>
+
+#include "../../Utils/StdDiagnosticIgnoreEnd.hpp"
 
 //UseFull SFML Up Gui Frame module
 //Version 1.0 alfa
@@ -60,22 +64,22 @@ namespace sfup { namespace gui {
 			if (vecs.length > 0) {
 				if (breaks.length > 0) {
 					for (size_t j = 0; j < breaks[0]; j++) 
-						Drawer.drawLine(target, Line<2>(vecs[j] + center, vecs[j + 1] + center), color);
+						Drawer.drawLine(target, Line(vecs[j], vecs[j + 1]) + center, color);
 					
 					for (size_t i = 0; i < breaks.length - 1; i++) {
 						for (size_t j = breaks[i] + 1; j < breaks[i + 1]; j++)
-							Drawer.drawLine(target, Line<2>(vecs[j] + center, vecs[j + 1] + center), color);
+							Drawer.drawLine(target, Line(vecs[j], vecs[j + 1]) + center, color);
 					}
 					
 					for (size_t j = breaks.last() + 1; j < vecs.length; j++) 
-						Drawer.drawLine(target, Line<2>(vecs[j] + center, vecs[j + 1] + center), color);
+						Drawer.drawLine(target, Line(vecs[j], vecs[j + 1]) + center, color);
 					if (breaks.last() != vecs.length - 1)
-						Drawer.drawLine(target, Line<2>(vecs.last() + center, vecs[0] + center), color);
+						Drawer.drawLine(target, Line(vecs.last(), vecs[0]) + center, color);
 				}
 				else {
 					for (size_t j = 0; j < vecs.length; j++)
-						Drawer.drawLine(target, Line<2>(vecs[j] + center, vecs[j + 1] + center), color);
-					Drawer.drawLine(target, Line<2>(vecs.last() + center, vecs[0] + center), color);
+						Drawer.drawLine(target, Line(vecs[j], vecs[j + 1]) + center, color);
+					Drawer.drawLine(target, Line(vecs.last(), vecs[0]) + center, color);
 				}
 			}
 		}
@@ -97,21 +101,16 @@ namespace sfup { namespace gui {
 		//И изменяет текущий центр так, чтобы он находился в средней точке всех векторов
 		void makeRelativeCenter() {
 			XY new_center = {0, 0};
-			vecs.foreach([&new_center](XY & xy){
-				new_center += xy;
-			});
+			vecs.foreach([&new_center](XY & xy){new_center += xy;});
 			new_center /= vecs.length;
+
 			center += new_center;
-			vecs.foreach([&new_center](XY & xy){
-				xy -= new_center;
-			});
+			vecs.foreach([&new_center](XY & xy){xy -= new_center;});
 		}
 		//Перемещает центр не изменяя положение векторов относительно экрана
 		void makeSpecialCenter(const XY & new_center) {
 			XY delta = center - new_center;
-			vecs.foreach([&delta](XY & xy){
-				xy += delta;		
-			});
+			vecs.foreach([&delta](XY & xy){xy += delta;});
 			center = new_center;
 		}
 	};
