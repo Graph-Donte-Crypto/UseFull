@@ -1,15 +1,18 @@
 #ifndef UF_U_Random_H
 #define UF_U_Random_H
 
-#include <stdlib.h>
-#include <initializer_list>
-#include <math.h>
+#include "StdDiagnosticIgnore.hpp"
 
-#include "Concepts.hpp"
+#include <cmath>
+#include <initializer_list>
+
+#include "StdDiagnosticIgnoreEnd.hpp"
 
 //UseFull Random module
 //Version 1.0 alfa
 //Make by Graph Don'te-Crypto
+
+#include "Concepts.hpp"
 
 namespace utils {
 	bool chance(double percent) {
@@ -24,6 +27,11 @@ namespace utils {
 	template <typename Type>
 	Type randomFromInterval(Type from, Type to) {
 		return (Type) (from + randomPercent() * (to - from));
+	}
+
+	template <typename Type>
+	Type randomFromIntervalWithRound(Type from, Type to) {
+		return std::llround(from + randomPercent() * (to - from));
 	}
 	
 	template <typename Type>
