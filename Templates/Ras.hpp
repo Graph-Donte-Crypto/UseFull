@@ -32,7 +32,7 @@ namespace uft {
 	class Ras {
 	public:
 		size_t * current = nullptr;
-		std::queue<size_t> emp_pos;
+		std::queue<size_t> empty_positions;
 		uft::Array<RasRec<T> *> set = uft::Array<RasRec<T> *>(4); 
 		size_t & length = set.length;
 		void * owner = nullptr;
@@ -45,7 +45,7 @@ namespace uft {
 		}
 		Ras<T> * flush() {
 			set.removeAll();
-			clearQueue(emp_pos);
+			clearQueue(empty_positions);
 			return this;
 		}
 		Ras<T> * flushHard() {
@@ -53,82 +53,82 @@ namespace uft {
 				delete set[i]->record;
 				delete set[i];
 			}
-			clearQueue(emp_pos);
+			clearQueue(empty_positions);
 			set.removeAll();
 			return this;
 		}
-		bool contains(T * ptr) {
+		bool contains(T * element) {
 			for (size_t i = 0; i < set.length; i++) 
-				if (set[i]->record == ptr) return true;
+				if (set[i]->record == element) return true;
 			return false;
 		}
-		RasRec<T> * add(T * ptr) {
+		RasRec<T> * add(T * element) {
 			RasRec<T> * buf = new RasRec<T>;
 
 			buf->storage = this;
 			buf->pos = set.length;
-			buf->record = ptr;
+			buf->record = element;
 
 			set.addCopy(buf);
 			return buf;
 		}
 
 		void _fixArray() {
-			while (emp_pos.size()) {
-				size_t bnum = emp_pos.front();
-				emp_pos.pop();
+			while (empty_positions.size()) {
+				size_t empty_position = empty_positions.front();
+				empty_positions.pop();
 				while (set[set.length - 1]->deleted) {
 					delete set[set.length - 1];
 					set.length -= 1;
 					if (set.length == 0) {
-						clearQueue(emp_pos);
+						clearQueue(empty_positions);
 						return;
 					}
 				}
-				if (bnum >= set.length) continue;
-				set[bnum] = set[set.length - 1];
-				set[bnum]->pos = bnum;
+				if (empty_position >= set.length) continue;
+				set[empty_position] = set[set.length - 1];
+				set[empty_position]->pos = empty_position;
 				set[set.length - 1] = nullptr;
 				set.length -= 1;
 			}
 		}
-		RasRec<T> * remove(RasRec<T> * ptr) {
-			if (ptr->storage != this) {
+		RasRec<T> * remove(RasRec<T> * element) {
+			if (element->storage != this) {
 				printf("Ras::remove::ptr->storage != this\n");
 				exit(1);
 			}
 			else {
-				size_t ibuf = ptr->pos;
+				size_t element_position = element->pos;
 				bool active = true;
 				if (current != nullptr) 
-					active = ibuf > *current;
+					active = element_position > *current;
 				if (active) {
-					delete ptr;
-					if (ibuf != set.length - 1) {
-						set[ibuf] = set[set.length - 1];
-						set[ibuf]->pos = ibuf;
+					delete element;
+					if (element_position != set.length - 1) {
+						set[element_position] = set[set.length - 1];
+						set[element_position]->pos = element_position;
 					}
 					set[set.length - 1] = nullptr;
 					set.length -= 1;
 				}
 				else {
-					set[ptr->pos]->deleted = true; //?
-					emp_pos.push(ibuf);
+					set[element->pos]->deleted = true; //?
+					empty_positions.push(element_position);
 				}
 			}
 			return nullptr;
 		}
-		RasRec<T> * removeWeak(RasRec<T> * ptr) {
-			if (ptr->storage != this) {
+		RasRec<T> * removeWeak(RasRec<T> * element) {
+			if (element->storage != this) {
 				printf("Ras::removeWeak::ptr->storage != this\n");
 				exit(1);
 			}
 			else {
-				size_t ibuf = ptr->pos;
-				delete ptr;
-				if (ibuf != set.length - 1) {
-					set[ibuf] = set[set.length - 1];
-					set[ibuf]->pos = ibuf;
+				size_t element_position = element->pos;
+				delete element;
+				if (element_position != set.length - 1) {
+					set[element_position] = set[set.length - 1];
+					set[element_position]->pos = element_position;
 				}
 				set[set.length - 1] = nullptr;
 				set.length -= 1;
