@@ -19,10 +19,10 @@ namespace utils {
 		{ func(input...) } -> std::same_as<RET>;
 	};
 
-	template <typename FUNC, typename ... INPUT>
+	template <typename FUNC, typename RET>
 	concept CoVoidLambda =
-	requires (FUNC func, INPUT ... input) {
-		{ func(input...) } -> std::same_as<void>;
+	requires (FUNC func) {
+		{ func() } -> std::same_as<RET>;
 	};
 
 	/*
